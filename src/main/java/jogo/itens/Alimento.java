@@ -14,7 +14,6 @@ public class Alimento extends Item {
         setPrazoDeValidade(prazoDeValidade);
     }
         
-    @Override
     public void consumir(Personagem personagem) {
         personagem.alterarFome(valorNutricional);
 

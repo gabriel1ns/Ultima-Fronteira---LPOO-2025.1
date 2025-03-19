@@ -1,7 +1,5 @@
 package jogo.itens;
 
-import jogo.personagem.Personagem;
-
 public abstract class Item {
     private String nome;
     private int peso;
@@ -18,6 +16,4 @@ public abstract class Item {
     public int getPeso() {
         return peso;
     }
-
-    public abstract void consumir (Personagem personagem);
 }

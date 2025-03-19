@@ -7,6 +7,8 @@ public class Personagem {
     private final int MAX_VIDA = 100;
     private final int MIN_FOME = 0;
     private final int MAX_FOME = 100;
+    private final int MIN_SEDE = 0;
+    private final int MAX_SEDE = 100;
 
     private String nome;
     private int vida;
@@ -46,10 +48,19 @@ public class Personagem {
     public void alterarFome(int incremento) {
         int novoValor = this.fome + incremento;
         
-        if(novoValor < MIN_FOME) novoValor = 0;
-        if(novoValor > MAX_FOME) novoValor = 100;
+        if(novoValor < MIN_FOME) novoValor = MIN_FOME;
+        if(novoValor > MAX_FOME) novoValor = MAX_FOME;
     
         this.fome = novoValor;
+    }
+
+    public void alterarSede(int incremento) {
+        int novoValor = this.sede + incremento;
+        
+        if(novoValor < MIN_SEDE) novoValor = MIN_SEDE;
+        if(novoValor > MAX_SEDE) novoValor = MAX_SEDE;
+    
+        this.sede = novoValor;
     }
     
     // Getters e Setters

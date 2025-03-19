@@ -3,6 +3,7 @@ package jogo.sistema;
 import java.util.Scanner;
 
 import jogo.gerenciadores.GerenciadorDeAmbientes;
+import jogo.itens.Agua;
 import jogo.itens.Alimento;
 import jogo.personagem.Personagem;
 
@@ -41,11 +42,13 @@ public class Turno {
     }
 
     Alimento alimentoTst = new Alimento("Banana", 1, 5, 5);
+    Agua aguaTst = new Agua(true, 5);
 
     private void faseDeAcao() {
         System.out.println("O que você deseja fazer?");
         System.out.println("1. Mudar de ambiente");
         System.out.println("2. Consumir alimento teste (dbg)");
+        System.out.println("3. Consumir agua teste (dbg)");
         System.out.print("Escolha uma opção: ");
         int escolha = scanner.nextInt();
 
@@ -57,6 +60,10 @@ public class Turno {
             case 2:
                 alimentoTst.consumir(jogador);
                 System.out.println("Jogador consumiu " + alimentoTst);
+                break;
+            case 3:
+                aguaTst.consumir(jogador);
+                System.out.println("Jogador consumiu " + aguaTst);
                 break;
             default:
                 System.out.println("Escolha inválida.");
@@ -81,5 +88,6 @@ public class Turno {
         System.out.println("Energia: " + jogador.getEnergia());
 
         alimentoTst.decrementarPrazoDeValidade();
+        aguaTst.setPureza(!aguaTst.getPureza());
     }
 }
