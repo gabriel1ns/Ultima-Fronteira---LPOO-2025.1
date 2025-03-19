@@ -3,6 +3,11 @@ package jogo.personagem;
 import jogo.ambiente.Ambiente;
 
 public class Personagem {
+    private final int MIN_VIDA = 0;
+    private final int MAX_VIDA = 100;
+    private final int MIN_FOME = 0;
+    private final int MAX_FOME = 100;
+
     private String nome;
     private int vida;
     private int fome;
@@ -29,6 +34,24 @@ public class Personagem {
         this.localizacao = localizacao;
     }
 
+    public void alterarVida(int incremento) {
+        int novoValor = this.vida + incremento;
+        
+        if(novoValor < MIN_VIDA) novoValor = MIN_VIDA;
+        if(novoValor > MAX_VIDA) novoValor = MAX_VIDA;
+    
+        this.vida = novoValor;
+    }
+
+    public void alterarFome(int incremento) {
+        int novoValor = this.fome + incremento;
+        
+        if(novoValor < MIN_FOME) novoValor = 0;
+        if(novoValor > MAX_FOME) novoValor = 100;
+    
+        this.fome = novoValor;
+    }
+    
     // Getters e Setters
     public int getFome() {
         return fome;
