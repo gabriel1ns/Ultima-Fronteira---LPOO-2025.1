@@ -9,8 +9,12 @@ public class Personagem {
     private final int MAX_FOME = 100;
     private final int MIN_SEDE = 0;
     private final int MAX_SEDE = 100;
+    private final int MIN_ENERGIA = 0;
+    private final int MAX_ENERGIA = 100;
+    private final int MIN_SANIDADE = 0;
+    private final int MAX_SANIDADE = 100;
 
-    private String nome;
+    final private String nome;
     private int vida;
     private int fome;
     private int sede;
@@ -35,40 +39,21 @@ public class Personagem {
     public void setLocalizacao(Ambiente localizacao) {
         this.localizacao = localizacao;
     }
-
-    public void alterarVida(int incremento) {
-        int novoValor = this.vida + incremento;
-        
-        if(novoValor < MIN_VIDA) novoValor = MIN_VIDA;
-        if(novoValor > MAX_VIDA) novoValor = MAX_VIDA;
     
-        this.vida = novoValor;
+    private static int checarLimites(int valor, int limInferior, int limSuperior) {
+        if(valor < limInferior) return limInferior;
+        if(valor > limSuperior) return limSuperior;
+        return valor;
     }
 
-    public void alterarFome(int incremento) {
-        int novoValor = this.fome + incremento;
-        
-        if(novoValor < MIN_FOME) novoValor = MIN_FOME;
-        if(novoValor > MAX_FOME) novoValor = MAX_FOME;
-    
-        this.fome = novoValor;
-    }
-
-    public void alterarSede(int incremento) {
-        int novoValor = this.sede + incremento;
-        
-        if(novoValor < MIN_SEDE) novoValor = MIN_SEDE;
-        if(novoValor > MAX_SEDE) novoValor = MAX_SEDE;
-    
-        this.sede = novoValor;
-    }
-    
     // Getters e Setters
     public int getFome() {
         return fome;
     }
 
     public void setFome(int fome) {
+        fome = checarLimites(fome, MIN_FOME, MAX_FOME);
+
         this.fome = fome;
     }
 
@@ -77,6 +62,8 @@ public class Personagem {
     }
 
     public void setSede(int sede) {
+        sede = checarLimites(sede, MIN_SEDE, MAX_SEDE);
+
         this.sede = sede;
     }
 
@@ -85,6 +72,8 @@ public class Personagem {
     }
 
     public void setEnergia(int energia) {
+        energia = checarLimites(energia, MIN_ENERGIA, MAX_ENERGIA);
+
         this.energia = energia;
     }
 
@@ -93,6 +82,8 @@ public class Personagem {
     }
 
     public void setVida(int vida) {
+        vida = checarLimites(vida, MIN_VIDA, MAX_VIDA);
+
         this.vida = vida;
     }
 
@@ -101,6 +92,8 @@ public class Personagem {
     }
 
     public void setSanidade(int sanidade) {
+        sanidade = checarLimites(sanidade, MIN_SANIDADE, MAX_SANIDADE);
+
         this.sanidade = sanidade;
     }
 

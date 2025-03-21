@@ -87,7 +87,6 @@ public class Turno {
         System.out.println("Sede: " + jogador.getSede());
         System.out.println("Energia: " + jogador.getEnergia());
 
-        alimentoTst.decrementarPrazoDeValidade();
         aguaTst.setPureza(!aguaTst.getPureza());
     }
 }

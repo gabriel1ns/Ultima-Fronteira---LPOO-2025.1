@@ -7,17 +7,20 @@ public class Agua extends Item {
     private int volume;
 
     public Agua(boolean pureza, int volume) {
-        super("Agua", volume);
+        super("Agua", volume, 0);
 
         setPureza(pureza);
         setVolume(volume);
     }
 
     public void consumir(Personagem personagem) {
-        personagem.alterarSede(volume);
+        int sedeAtual = personagem.getSede();
+        personagem.setSede(sedeAtual + this.volume);
 
-        if(!pureza)
-            personagem.alterarVida(-1 * volume);
+        if(!pureza) {
+            int vidaAtual = personagem.getVida();
+            personagem.setVida(vidaAtual - volume);
+        }
     }
 
     final public void setPureza(boolean pureza) {
@@ -34,6 +37,9 @@ public class Agua extends Item {
 
     @Override
     public String toString() {
-        return "Agua" + "\nPureza: " + pureza + "\nVolume: " + volume;
+        return  super.toString +
+                "Tipo: Agua\n" + 
+                "Volume: " + this.volume + "\n" +
+                "Pureza: " + this.pureza + "\n";
     }
 }

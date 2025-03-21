@@ -4,45 +4,37 @@ import jogo.personagem.Personagem;
 
 public class Alimento extends Item {
     private int valorNutricional;
-    private String tipo;
-    private int prazoDeValidade;
 
     public Alimento(String tipo, int peso, int valorNutricional, int prazoDeValidade) {
-        super(tipo, peso);
-        setTipo(tipo);
+        super(tipo, peso, prazoDeValidade);
+
         setValorNutricional(valorNutricional);
-        setPrazoDeValidade(prazoDeValidade);
     }
         
     public void consumir(Personagem personagem) {
-        personagem.alterarFome(valorNutricional);
+        int fomeAtual = personagem.getFome();
+        personagem.setFome(fomeAtual + this.valorNutricional);
 
-        if(prazoDeValidade <= 0)
-            personagem.alterarVida(-1 * valorNutricional);
+        if(super.durabilidade <= 0) {
+            int vidaAtual = personagem.getVida();
+            personagem.setVida(vidaAtual - this.valorNutricional);
+        }
 
-    }
-
-    public void decrementarPrazoDeValidade() {
-        this.prazoDeValidade--;
-    }
-
-    final public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
 
     final public void setValorNutricional(int valorNutricional) {
         this.valorNutricional = valorNutricional;
     }
 
-    final public void setPrazoDeValidade(int prazoDeValidade) {
-        this.prazoDeValidade = prazoDeValidade;
+    public int getValorNutricional() {
+        return valorNutricional;
     }
 
     @Override
     public String toString() {
-        return "Alimento: " + tipo 
-                + "\nValor Nutricional: " + valorNutricional
-                + "\nPrazo de validade: " + prazoDeValidade;
+        return  super.toString +
+                "Tipo: Alimento\n" +
+                "Valor nutricional: " + this.valorNutricional + "\n";            
     }
     
 }

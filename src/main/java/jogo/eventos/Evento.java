@@ -1,10 +1,14 @@
 package jogo.eventos;
 
+import jogo.ambiente.Ambiente;
 import jogo.personagem.Personagem;
 
 public abstract class Evento {
-    private String nome;
-    private String descricao;
+    protected String nome;
+    protected String descricao;
+
+    protected String toString = "Evento: " + nome + "\n" +
+                                "Descricao: " + descricao + "\n";
 
     public Evento(String nome, String descricao) {
         this.nome = nome;
@@ -19,5 +23,6 @@ public abstract class Evento {
         return descricao;
     }
 
-    public abstract void executar(Personagem personagem);
+    public abstract void executar(Ambiente ambiente, Personagem personagem);
 } // criar as subclasses dps (dificuldade falar com monitora)
+    // lol
