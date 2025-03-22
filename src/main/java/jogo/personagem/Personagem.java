@@ -3,7 +3,18 @@ package jogo.personagem;
 import jogo.ambiente.Ambiente;
 
 public class Personagem {
-    private String nome;
+    private final int MIN_VIDA = 0;
+    private final int MAX_VIDA = 100;
+    private final int MIN_FOME = 0;
+    private final int MAX_FOME = 100;
+    private final int MIN_SEDE = 0;
+    private final int MAX_SEDE = 100;
+    private final int MIN_ENERGIA = 0;
+    private final int MAX_ENERGIA = 100;
+    private final int MIN_SANIDADE = 0;
+    private final int MAX_SANIDADE = 100;
+
+    final private String nome;
     private int vida;
     private int fome;
     private int sede;
@@ -28,6 +39,12 @@ public class Personagem {
     public void setLocalizacao(Ambiente localizacao) {
         this.localizacao = localizacao;
     }
+    
+    private static int checarLimites(int valor, int limInferior, int limSuperior) {
+        if(valor < limInferior) return limInferior;
+        if(valor > limSuperior) return limSuperior;
+        return valor;
+    }
 
     // Getters e Setters
     public int getFome() {
@@ -35,6 +52,8 @@ public class Personagem {
     }
 
     public void setFome(int fome) {
+        fome = checarLimites(fome, MIN_FOME, MAX_FOME);
+
         this.fome = fome;
     }
 
@@ -43,6 +62,8 @@ public class Personagem {
     }
 
     public void setSede(int sede) {
+        sede = checarLimites(sede, MIN_SEDE, MAX_SEDE);
+
         this.sede = sede;
     }
 
@@ -51,6 +72,8 @@ public class Personagem {
     }
 
     public void setEnergia(int energia) {
+        energia = checarLimites(energia, MIN_ENERGIA, MAX_ENERGIA);
+
         this.energia = energia;
     }
 
@@ -59,6 +82,8 @@ public class Personagem {
     }
 
     public void setVida(int vida) {
+        vida = checarLimites(vida, MIN_VIDA, MAX_VIDA);
+
         this.vida = vida;
     }
 
@@ -67,6 +92,8 @@ public class Personagem {
     }
 
     public void setSanidade(int sanidade) {
+        sanidade = checarLimites(sanidade, MIN_SANIDADE, MAX_SANIDADE);
+
         this.sanidade = sanidade;
     }
 

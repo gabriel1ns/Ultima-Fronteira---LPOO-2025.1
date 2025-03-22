@@ -1,0 +1,9 @@
+/home/agil/dev/Facool/LPOO/Ultima-Fronteira---LPOO-2025.1/src/main/java/jogo/Main.java
+/home/agil/dev/Facool/LPOO/Ultima-Fronteira---LPOO-2025.1/src/main/java/jogo/ambiente/Ambiente.java
+/home/agil/dev/Facool/LPOO/Ultima-Fronteira---LPOO-2025.1/src/main/java/jogo/eventos/Evento.java
+/home/agil/dev/Facool/LPOO/Ultima-Fronteira---LPOO-2025.1/src/main/java/jogo/gerenciadores/GerenciadorDeAmbientes.java
+/home/agil/dev/Facool/LPOO/Ultima-Fronteira---LPOO-2025.1/src/main/java/jogo/gerenciadores/GerenciadorDeEventos.java
+/home/agil/dev/Facool/LPOO/Ultima-Fronteira---LPOO-2025.1/src/main/java/jogo/itens/Item.java
+/home/agil/dev/Facool/LPOO/Ultima-Fronteira---LPOO-2025.1/src/main/java/jogo/personagem/Personagem.java
+/home/agil/dev/Facool/LPOO/Ultima-Fronteira---LPOO-2025.1/src/main/java/jogo/sistema/Inventario.java
+/home/agil/dev/Facool/LPOO/Ultima-Fronteira---LPOO-2025.1/src/main/java/jogo/sistema/Turno.java
