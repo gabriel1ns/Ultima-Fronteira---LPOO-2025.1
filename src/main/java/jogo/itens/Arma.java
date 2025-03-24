@@ -1,6 +1,7 @@
 package jogo.itens;
 
 import jogo.eventos.EventoCriatura;
+import jogo.personagem.Personagem;
 
 public class Arma extends Item {
     private int dano;
@@ -47,5 +48,6 @@ public class Arma extends Item {
                 "Dano: " + this.dano + "\n" +
                 "Alcance: " + this.alcance + "\n";
     }
-    
+
+
 }

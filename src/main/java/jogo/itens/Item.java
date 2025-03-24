@@ -1,13 +1,16 @@
 package jogo.itens;
 
+
 public abstract class Item {
     protected String nome;
     protected int peso;
     protected int durabilidade;
+    private boolean consumivel;
+    protected int quantidade;
 
     protected String toString = "Nome: " + this.nome + "\n" +
-                                "Peso: " + this.peso + "\n" +
-                                "Durabilidade: " + this.durabilidade + "\n";
+            "Peso: " + this.peso + "\n" +
+            "Durabilidade: " + this.durabilidade + "\n";
 
     public Item(String nome, int peso, int durabilidade) {
         setNome(nome);
@@ -31,11 +34,26 @@ public abstract class Item {
         return nome;
     }
 
-    public int getPeso() {
+    public int getPeso() { //caso tenha alguma interação futura, como uma espada mt pesada etc
         return peso;
     }
 
     public int getDurabilidade() {
         return durabilidade;
     }
+
+    public boolean isConsumivel() {
+        return consumivel;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public boolean usar() {
+        return true;
+    }
 }
+
+
+

@@ -1,5 +1,6 @@
 package jogo;
-
+import jogo.itens.Agua;
+import jogo.itens.Alimento;
 import jogo.personagem.Personagem;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.sistema.Turno;
@@ -17,10 +18,17 @@ public class Main {
         System.out.println("Bem-vindo ao ÚLTIMA FRONTEIRA, " + nomePersonagem + "!");
 
         GerenciadorDeAmbientes gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
-        Ambiente localizacaoInicial = gerenciadorDeAmbientes.getAmbientes().get(0);  // mudar isso aqui, ele sempre começa na floresta, o correto é randomizar
+        Ambiente localizacaoInicial = gerenciadorDeAmbientes.getAmbientes().get(0);
+
+        // mudar isso aqui, ele sempre começa na floresta, o correto é randomizar
 
 
         Personagem jogador = new Personagem(nomePersonagem, localizacaoInicial);
+
+        jogador.getInventario().adicionarItem(new Alimento("Banana", 2, 15, 0));
+        jogador.getInventario().adicionarItem(new Agua(true, 20));
+        System.out.println("Tome uma colher de chá, receba itens básicos pra começar a sua jornada:");
+        System.out.println(jogador.getInventario());
 
         Turno turno = new Turno(jogador, gerenciadorDeAmbientes);
 

@@ -36,5 +36,6 @@ public class Alimento extends Item {
                 "Tipo: Alimento\n" +
                 "Valor nutricional: " + this.valorNutricional + "\n";            
     }
-    
+
+
 }

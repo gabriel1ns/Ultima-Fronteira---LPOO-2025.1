@@ -1,5 +1,7 @@
 package jogo.itens;
 
+
+
 import java.util.Map;
 
 public class Material extends Item {
@@ -54,5 +56,8 @@ public class Material extends Item {
                 "Tipo: Material\n" +         
                 "Resistencia: " + resistencia + "\n";
     }
-    
+
+
+
+
 }

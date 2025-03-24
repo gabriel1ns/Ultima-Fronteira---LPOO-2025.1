@@ -50,4 +50,6 @@ public class Ferramenta extends Item {
                 "Tipo: Ferramenta\n" +
                 "Eficiencia: " + this.eficiencia + "\n";
     }
+
+
 }

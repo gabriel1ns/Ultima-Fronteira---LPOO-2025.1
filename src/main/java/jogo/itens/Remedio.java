@@ -12,13 +12,15 @@ public class Remedio extends Item {
         setTipo(tipo);
         setEfeito(efeito);
     }
-
+    /*
     public void usar(Personagem personagem) {
         if(this.tipo.equals("Poção")) {
-            // aumentar vida do jogador
-        } // ...
+             aumentar vida do jogador
+        } /
     }
 
+
+     */
     final public void setTipo(String tipo) {
         this.tipo = tipo;
     }
@@ -41,4 +43,6 @@ public class Remedio extends Item {
                 "Tipo: Remedio\n" + 
                 "Efeito: " + efeito + "\n";
     }
+
+
 }

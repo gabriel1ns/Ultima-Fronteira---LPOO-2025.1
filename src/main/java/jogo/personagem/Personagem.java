@@ -1,6 +1,6 @@
 package jogo.personagem;
-
 import jogo.ambiente.Ambiente;
+import jogo.sistema.Inventario;
 
 public class Personagem {
     private final int MIN_VIDA = 0;
@@ -21,6 +21,7 @@ public class Personagem {
     private int energia;
     private int sanidade;
     private Ambiente localizacao;
+    private Inventario inventario;
 
     public Personagem(String nome, Ambiente localizacaoInicial) {
         this.nome = nome;
@@ -30,6 +31,11 @@ public class Personagem {
         this.energia = 100;
         this.sanidade = 100;
         this.localizacao = localizacaoInicial;
+        this.inventario = new Inventario(10);
+    }
+
+    public Inventario getInventario() {
+        return inventario;
     }
 
     public Ambiente getLocalizacao() {
@@ -101,3 +107,4 @@ public class Personagem {
         return nome;
     }
 }
+
