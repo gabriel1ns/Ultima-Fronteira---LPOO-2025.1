@@ -13,10 +13,11 @@ public class AmbienteCaverna extends Ambiente {
     public AmbienteCaverna(Item[] recursosDisponiveis) {
         super(recursosDisponiveis);
         
-        super.nome = this.nome;
-        super.descricao = this.descricao;
-        super.eventosPossiveis = this.eventosPossiveis;
-        super.probabilidadeDeEventos = this.probabilidadeDeEventos;
+        super.setNome(this.nome);
+        super.setDescricao(descricao);
+        super.setEventosPossiveis(eventosPossiveis);
+        super.setProbabilidadeDeEventos(probabilidadeDeEventos);
+        
         assert(eventosPossiveis.length == probabilidadeDeEventos.length);
 
         // Atributos adicionais

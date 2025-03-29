@@ -1,7 +1,6 @@
-package jogo.itens;
+package jogo.itens.executaveis.ferramentas;
 
-import jogo.ambiente.Ambiente;
-import jogo.personagem.Personagem;
+import jogo.itens.Item;
 
 public class Ferramenta extends Item {
     private String tipo;
@@ -20,12 +19,6 @@ public class Ferramenta extends Item {
 
         setTipo(tipo);
         setEficiencia(eficiencia);
-    }
-
-    public void usar(Ambiente ambiente, Personagem personagem) {
-        if(tipo.equals("Machado")) {
-            // alterar reserva de madeira do ambiente e aumentar reserva do jogador
-        } // ...
     }
 
     final public void setTipo(String tipo) {

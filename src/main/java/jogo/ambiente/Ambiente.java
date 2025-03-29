@@ -6,18 +6,18 @@ import jogo.itens.Item;
 import jogo.personagem.Personagem;
 
 public abstract class Ambiente {
-    protected String nome;
-    protected String descricao;
-    protected int dificuldadeDeExploracao = 5;
-    protected Item[] recursosDisponiveis;
-    protected Evento[] eventosPossiveis;
-    protected int[] probabilidadeDeEventos;
+    private String nome;
+    private String descricao;
+    private int dificuldadeDeExploracao = 5;
+
+    private Item[] recursosDisponiveis;
+    private Evento[] eventosPossiveis;
+    private int[] probabilidadeDeEventos;
 
     protected String toString = "Nome: " + this.nome + "\n" +
                                 "Descricao: " + this.descricao;
 
     public Ambiente(Item[] recursosDisponiveis) {
-        setNome(nome);
         setRecursosDisponiveis(recursosDisponiveis);
     }
 
@@ -51,6 +51,14 @@ public abstract class Ambiente {
         this.recursosDisponiveis = recursosDisponiveis;
     }
 
+    final public void setEventosPossiveis(Evento[] eventosPossiveis) {
+        this.eventosPossiveis = eventosPossiveis;
+    }
+
+    final public void setProbabilidadeDeEventos(int[] probabilidadeDeEventos) {
+        this.probabilidadeDeEventos = probabilidadeDeEventos;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -65,6 +73,14 @@ public abstract class Ambiente {
 
     public Item[] getRecursosDisponiveis() {
         return recursosDisponiveis;
+    }
+
+    public Evento[] getEventosPossiveis() {
+        return eventosPossiveis;
+    }
+    
+    public int[] getProbabilidadeDeEventos() {
+        return probabilidadeDeEventos;
     }
 
     @Override

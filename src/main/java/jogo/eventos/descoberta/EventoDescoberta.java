@@ -1,10 +1,9 @@
-package jogo.eventos;
+package jogo.eventos.descoberta;
 
-import jogo.ambiente.Ambiente;
+import jogo.eventos.Evento;
 import jogo.itens.Item;
-import jogo.personagem.Personagem;
 
-public class EventoDescoberta extends Evento {
+public abstract class EventoDescoberta extends Evento {
     private String tipo;
     private Item[] recursosEncontrados;
 
@@ -12,13 +11,6 @@ public class EventoDescoberta extends Evento {
         super(tipo, descricao);
 
         setRecursosEncontrados(recursosEncontrados);
-    }
-
-    @Override
-    public void executar(Ambiente ambiente, Personagem personagem) {
-        if(this.tipo.equals("FonteDeAgua")) {
-            // adicionar agua no inventario do jogador
-        } // ...
     }
 
     final public void setRecursosEncontrados(Item[] recursosEncontrados) {

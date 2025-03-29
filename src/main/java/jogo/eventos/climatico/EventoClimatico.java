@@ -1,9 +1,8 @@
-package jogo.eventos;
+package jogo.eventos.climatico;
 
-import jogo.ambiente.Ambiente;
-import jogo.personagem.Personagem;
+import jogo.eventos.Evento;
 
-public class EventoClimatico extends Evento {
+public abstract class EventoClimatico extends Evento {
     private String tipo;
     private int duracao;
 
@@ -12,13 +11,6 @@ public class EventoClimatico extends Evento {
 
         setTipo(tipo);
         setDuracao(duracao);
-    }
-
-    @Override
-    public void executar(Ambiente ambiente, Personagem personagem) {
-        if(this.tipo.equals("Calor")) {
-            // aumentar consumo de sede
-        } // ...
     }
 
     final public void setTipo(String tipo) {

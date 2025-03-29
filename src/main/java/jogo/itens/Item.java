@@ -1,16 +1,15 @@
 package jogo.itens;
 
-
 public abstract class Item {
-    protected String nome;
-    protected int peso;
-    protected int durabilidade;
+    private String nome;
+    private int peso;
+    private int durabilidade;
     private boolean consumivel;
-    protected int quantidade;
+    private int quantidade;
 
     protected String toString = "Nome: " + this.nome + "\n" +
-            "Peso: " + this.peso + "\n" +
-            "Durabilidade: " + this.durabilidade + "\n";
+                                "Peso: " + this.peso + "\n" +
+                                "Durabilidade: " + this.durabilidade + "\n";
 
     public Item(String nome, int peso, int durabilidade) {
         setNome(nome);

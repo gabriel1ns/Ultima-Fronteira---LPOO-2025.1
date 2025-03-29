@@ -1,8 +1,9 @@
-package jogo.itens;
-
-
+package jogo.itens.materiais;
 
 import java.util.Map;
+
+import jogo.itens.Item;
+import jogo.itens.executaveis.ferramentas.Ferramenta;
 
 public class Material extends Item {
     final private Map<String, Item> combinacoes = Map.of(
