@@ -1,9 +1,8 @@
-package jogo.eventos;
+package jogo.eventos.doencaFerimento;
 
-import jogo.ambiente.Ambiente;
-import jogo.personagem.Personagem;
+import jogo.eventos.Evento;
 
-public class EventoDoencaFerimento extends Evento {
+public abstract class EventoDoencaFerimento extends Evento {
     private String tipo;
     private int impacto;
     private String curaDisponivel;
@@ -13,13 +12,6 @@ public class EventoDoencaFerimento extends Evento {
 
         setImpacto(impacto);
         setCuraDisponivel(curaDisponivel);
-    }
-
-    @Override
-    public void executar(Ambiente ambiente, Personagem personagem) {
-        if(this.tipo.equals("Infeccao")) {
-            // aumentar taxa de decaimento dos atributos
-        } // ...
     }
 
     final public void setImpacto(int impacto) {

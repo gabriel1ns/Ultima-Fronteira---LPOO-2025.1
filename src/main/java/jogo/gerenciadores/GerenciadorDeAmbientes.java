@@ -18,6 +18,7 @@ public class GerenciadorDeAmbientes {
         ambientes.add(new AmbienteLagoRio(new Item[2]));
         ambientes.add(new AmbienteMontanha(new Item[2]));
         ambientes.add(new AmbienteRuinas(new Item[2]));
+
     }
 
     public List<Ambiente> getAmbientes() {

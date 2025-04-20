@@ -1,8 +1,9 @@
-package jogo.itens;
+package jogo.itens.consumiveis;
 
+import jogo.itens.Item;
 import jogo.personagem.Personagem;
 
-public class Agua extends Item {
+public class Agua extends Item implements Consumivel {
     private boolean pureza;
     private int volume;
 
@@ -13,6 +14,7 @@ public class Agua extends Item {
         setVolume(volume);
     }
 
+    @Override
     public void consumir(Personagem personagem) {
         int sedeAtual = personagem.getSede();
         personagem.setSede(sedeAtual + this.volume);

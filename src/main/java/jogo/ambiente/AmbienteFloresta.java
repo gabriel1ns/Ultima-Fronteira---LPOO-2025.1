@@ -13,14 +13,15 @@ public class AmbienteFloresta extends Ambiente {
     public AmbienteFloresta(Item[] recursosDisponiveis) {
         super(recursosDisponiveis);
         
-        super.nome = this.nome;
-        super.descricao = this.descricao;
-        super.eventosPossiveis = this.eventosPossiveis;
-        super.probabilidadeDeEventos = this.probabilidadeDeEventos;
+        super.setNome(this.nome);
+        super.setDescricao(descricao);
+        super.setEventosPossiveis(eventosPossiveis);
+        super.setProbabilidadeDeEventos(probabilidadeDeEventos);
+        
         assert(eventosPossiveis.length == probabilidadeDeEventos.length);
 
         // Atributos adicionais
-        super.dificuldadeDeExploracao *= 2;
+        
 
     }
 }

@@ -1,6 +1,6 @@
-package jogo.itens;
+package jogo.itens.consumiveis.remedios;
 
-import jogo.personagem.Personagem;
+import jogo.itens.Item;
 
 public class Remedio extends Item {
     private String tipo;
@@ -12,15 +12,7 @@ public class Remedio extends Item {
         setTipo(tipo);
         setEfeito(efeito);
     }
-    /*
-    public void usar(Personagem personagem) {
-        if(this.tipo.equals("Poção")) {
-             aumentar vida do jogador
-        } /
-    }
 
-
-     */
     final public void setTipo(String tipo) {
         this.tipo = tipo;
     }

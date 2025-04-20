@@ -1,9 +1,8 @@
-package jogo.eventos;
+package jogo.eventos.criatura;
 
-import jogo.ambiente.Ambiente;
-import jogo.personagem.Personagem;
+import jogo.eventos.Evento;
 
-public class EventoCriatura extends Evento {
+public abstract class EventoCriatura extends Evento {
     private String tipo;
     private int vida;
     private int dano;
@@ -15,18 +14,6 @@ public class EventoCriatura extends Evento {
         setVida(vida);
         setDano(dano);
         setDistancia(distancia);
-    }
-
-    @Override
-    public void executar(Ambiente ambiente, Personagem personagem) {
-        if(this.vida >= 0) {
-            int vidaAtual = personagem.getVida();
-            personagem.setVida(vidaAtual - this.dano);
-        }        
-
-        if(this.tipo.equals("Cobra")) {
-            // aplicar EventoDoencaFerimento do tipo veneno
-        } // ...
     }
 
     final public void setVida(int vida) {

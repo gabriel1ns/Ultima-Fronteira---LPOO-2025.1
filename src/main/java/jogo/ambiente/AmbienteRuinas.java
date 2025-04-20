@@ -13,10 +13,14 @@ public class AmbienteRuinas extends Ambiente {
     public AmbienteRuinas(Item[] recursosDisponiveis) {
         super(recursosDisponiveis);
 
+
         super.setNome(this.nome);
         super.setDescricao(this.descricao);
         super.setEventosPossiveis(this.eventosPossiveis);
         super.setProbabilidadeDeEventos(this.probabilidadeDeEventos);
+
+        
+        
         assert(eventosPossiveis.length == probabilidadeDeEventos.length);
 
         // Atributos adicionais - adicionar dps

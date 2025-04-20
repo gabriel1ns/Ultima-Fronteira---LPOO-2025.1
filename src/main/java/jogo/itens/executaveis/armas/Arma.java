@@ -1,11 +1,12 @@
-package jogo.itens;
+package jogo.itens.executaveis.armas;
 
-import jogo.eventos.EventoCriatura;
-import jogo.personagem.Personagem;
+import jogo.itens.Item;
 
 public class Arma extends Item {
     private int dano;
     private int alcance;
+    // TODO: adicionar sistema de municao
+    // (no momento, todas as armas teriam "municao infinita")
 
     public Arma(String tipo, int peso, int durabilidade, int dano, int alcance) {
         super(tipo, peso, durabilidade);
@@ -14,7 +15,9 @@ public class Arma extends Item {
         setAlcance(alcance);
     }
 
-    public void atacar(EventoCriatura criatura) {
+    // Possivel implementacao
+    /*
+    public void usar(EventoCriatura criatura) {
         int distancia = criatura.getDistancia();
         
         if(this.alcance <= distancia) {
@@ -22,8 +25,9 @@ public class Arma extends Item {
             criatura.setVida(vidaCriaturaAtual - this.dano);
         }
 
-        super.durabilidade--;
+        super.setDurabilidade(super.getDurabilidade() - 1);
     }
+    */
 
     final public void setDano(int dano) {
         this.dano = dano;
