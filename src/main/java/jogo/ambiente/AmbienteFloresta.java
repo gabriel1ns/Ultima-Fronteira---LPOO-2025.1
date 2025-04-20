@@ -5,8 +5,8 @@ import jogo.itens.Item;
 
 public class AmbienteFloresta extends Ambiente {
 
-    private final String nome = "";
-    private final String descricao = "";
+    private final String nome = "Floresta";
+    private final String descricao = "Uma área rica em recursos naturais, mas também habitada por predadores.";
     private final Evento[] eventosPossiveis = {};
     private final int[] probabilidadeDeEventos = {};
 

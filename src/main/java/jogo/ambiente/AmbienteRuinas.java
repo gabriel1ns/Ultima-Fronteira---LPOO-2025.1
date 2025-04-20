@@ -5,21 +5,21 @@ import jogo.itens.Item;
 
 public class AmbienteRuinas extends Ambiente {
 
-    private final String nome = "";
-    private final String descricao = "";
+    private final String nome = "Ruínas Abandonadas";
+    private final String descricao = "Restos de antigas construções que podem conter suprimentos valiosos ou armadilhas.";
     private final Evento[] eventosPossiveis = {};
     private final int[] probabilidadeDeEventos = {};
 
     public AmbienteRuinas(Item[] recursosDisponiveis) {
         super(recursosDisponiveis);
-        
-        super.nome = this.nome;
-        super.descricao = this.descricao;
-        super.eventosPossiveis = this.eventosPossiveis;
-        super.probabilidadeDeEventos = this.probabilidadeDeEventos;
+
+        super.setNome(this.nome);
+        super.setDescricao(this.descricao);
+        super.setEventosPossiveis(this.eventosPossiveis);
+        super.setProbabilidadeDeEventos(this.probabilidadeDeEventos);
         assert(eventosPossiveis.length == probabilidadeDeEventos.length);
 
-        // Atributos adicionais
+        // Atributos adicionais - adicionar dps
         
 
     }

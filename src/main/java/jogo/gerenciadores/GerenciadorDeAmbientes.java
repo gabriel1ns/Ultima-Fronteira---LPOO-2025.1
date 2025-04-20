@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import jogo.ambiente.Ambiente;
-import jogo.ambiente.AmbienteFloresta;
+import jogo.ambiente.*;
 import jogo.itens.Item;
 import jogo.personagem.Personagem;
 
@@ -14,16 +13,11 @@ public class GerenciadorDeAmbientes {
 
     public GerenciadorDeAmbientes() {
         this.ambientes = new ArrayList<>();
-
-
-        // maneira mais simplória de chamar e definir os ambientes transformar em subclasses para adicionar atributos dps
         ambientes.add(new AmbienteFloresta(new Item[2]));
-
-        ambientes.add(new Ambiente("Montanha", "Uma região de difícil acesso, mas rica em minérios e pedras preciosas."));
-        ambientes.add(new Ambiente("Caverna", "Um ambiente subterrâneo que pode oferecer abrigo contra o clima, mas esconde perigos desconhecidos."));
-        ambientes.add(new Ambiente("Lago e Rio", "Regiões ricas em água, mas que podem esconder riscos como afogamento ou criaturas aquáticas."));
-        ambientes.add(new Ambiente("Ruínas Abandonadas", "Restos de antigas construções que podem conter suprimentos valiosos ou armadilhas."));
-
+        ambientes.add(new AmbienteCaverna(new Item[2]));
+        ambientes.add(new AmbienteLagoRio(new Item[2]));
+        ambientes.add(new AmbienteMontanha(new Item[2]));
+        ambientes.add(new AmbienteRuinas(new Item[2]));
     }
 
     public List<Ambiente> getAmbientes() {
@@ -40,14 +34,21 @@ public class GerenciadorDeAmbientes {
         int escolha = scanner.nextInt();
         if (escolha > 0 && escolha <= ambientes.size()) {
             Ambiente novoAmbiente = ambientes.get(escolha - 1);
+
+
+            if (jogador.getLocalizacao() == novoAmbiente) {
+                System.out.println("Você já está em " + novoAmbiente.getNome());
+                return;
+            }
+
+            System.out.println("Viajando para " + novoAmbiente.getNome());
+
+
             jogador.setLocalizacao(novoAmbiente);
-            System.out.println("Você está na " + novoAmbiente.getNome());
         } else {
-            System.out.println("Escolha inválida. Tente novamente.");
+            System.out.println("Escolha inválida.");
         }
     }
-
-    public void modificarRecursos(Ambiente ambiente) {
-        // alterar ambiente.recursosDisponiveis
-    }
 }
+
+   

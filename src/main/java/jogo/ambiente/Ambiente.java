@@ -71,4 +71,10 @@ public abstract class Ambiente {
     public String toString() {
         return nome + ": " + descricao;
     }
+
+    public void setEventosPossiveis(Evento[] eventosPossiveis) {
+    }
+
+    public void setProbabilidadeDeEventos(int[] probabilidadeDeEventos) {
+    }
 }
