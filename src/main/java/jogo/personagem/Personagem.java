@@ -42,14 +42,20 @@ public class Personagem {
         return localizacao;
     }
 
-    public void setLocalizacao(Ambiente localizacao) {
-        this.localizacao = localizacao;
-    }
-    
     private static int checarLimites(int valor, int limInferior, int limSuperior) {
         if(valor < limInferior) return limInferior;
         if(valor > limSuperior) return limSuperior;
         return valor;
+    }
+
+    public Ambiente getlocalizacao(){
+        return localizacao;
+    }
+
+    public void setLocalizacao(Ambiente novoAmbiente) {
+        this.localizacao = novoAmbiente;
+        System.out.println("Você chegou em: " + novoAmbiente.getNome());
+        System.out.println(novoAmbiente.getDescricao());
     }
 
     // Getters e Setters
