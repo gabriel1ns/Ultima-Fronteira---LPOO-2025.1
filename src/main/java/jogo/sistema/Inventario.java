@@ -6,7 +6,6 @@ public class Inventario {
     private int capacidadeMaxima = 10;
     private int quantidadeAtual;
 
-
     public Inventario(int capacidadeMaxima) {
         this.itens = new Item[capacidadeMaxima];
         this.capacidadeMaxima = capacidadeMaxima;
@@ -14,38 +13,42 @@ public class Inventario {
     }
 
     public boolean adicionarItem(Item item) {
-        if (quantidadeAtual >= capacidadeMaxima) {
+        if (estaCheio())
             return false;
-        }
 
         itens[quantidadeAtual] = item;
         quantidadeAtual++;
+
         return true;
     }
 
     public boolean removerItem(Item item) {
-        for (int i = 0; i < quantidadeAtual; i++) {
-            if (itens[i] == item) {
+        int indice = encontrarItem(item);
+        boolean contemItem = indice >= 0;
+        
+        if(contemItem) {
+            for (int i = indice; i < quantidadeAtual - 1; i++)
+                itens[i] = itens[i + 1];
 
-                for (int j = i; j < quantidadeAtual - 1; j++) {
-                    itens[j] = itens[j + 1];
-                }
-                itens[quantidadeAtual - 1] = null;
-                quantidadeAtual--;
-                return true;
-            }
+            itens[quantidadeAtual - 1] = null;
+            quantidadeAtual--;
         }
-        return false;
+
+        return contemItem;
     }
 
 
-    public boolean contemItem(Item item) {
+    public int encontrarItem(Item item) {
+        int indice = -1;
+        
         for (int i = 0; i < quantidadeAtual; i++) {
             if (itens[i] == item) {
-                return true;
+                indice = i;
+                break;
             }
         }
-        return false;
+
+        return indice;
     }
 
 
@@ -53,17 +56,19 @@ public class Inventario {
         if (indice >= 0 && indice < quantidadeAtual) {
             return itens[indice];
         }
+
+        // TODO: Adicionar excecao
         return null;
     }
 
 
     public int getCapacidadeMaxima() {
-        return capacidadeMaxima;
+        return this.capacidadeMaxima;
     }
 
 
     public int getQuantidadeAtual() {
-        return quantidadeAtual;
+        return this.quantidadeAtual;
     }
 
 
@@ -72,7 +77,7 @@ public class Inventario {
     }
 
 
-    public void limpar() {
+    public void esvaziar() {
         for (int i = 0; i < quantidadeAtual; i++) {
             itens[i] = null;
         }
@@ -81,26 +86,23 @@ public class Inventario {
 
 
     public boolean usarItem(Item item) {
-        if (contemItem(item)) {
-            boolean resultado = item.usar();
+        int indice = encontrarItem(item);
+        boolean contemItem = indice >= 0;
 
-            if (resultado && item.isConsumivel()) {
-                removerItem(item);
-            }
-
-            return resultado;
+        if (contemItem) {
+            /*
+             * TODO: Definir como "usar" diferentes tipos de item
+             * (uma ferramenta e combinar materiais, por exemplo)
+             * (interface?)
+             */
         }
 
-        return false;
+        return contemItem;
     }
 
 
-    public Item[] getTodosItens() {
-        Item[] resultado = new Item[quantidadeAtual];
-        for (int i = 0; i < quantidadeAtual; i++) {
-            resultado[i] = itens[i];
-        }
-        return resultado;
+    public Item[] getItens() {
+        return this.itens;
     }
 
 
