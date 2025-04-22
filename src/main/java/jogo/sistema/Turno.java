@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.sistema.Inventario;
-import jogo.itens.Agua;
-import jogo.itens.Alimento;
+import jogo.itens.consumiveis.Agua;
+import jogo.itens.consumiveis.Alimento;
 import jogo.itens.Item;
 import jogo.personagem.Personagem;
 

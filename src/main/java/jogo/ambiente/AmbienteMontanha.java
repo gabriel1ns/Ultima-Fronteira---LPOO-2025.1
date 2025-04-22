@@ -13,14 +13,14 @@ public class AmbienteMontanha extends Ambiente {
     public AmbienteMontanha(Item[] recursosDisponiveis) {
         super(recursosDisponiveis);
         
-        super.nome = this.nome;
-        super.descricao = this.descricao;
-        super.eventosPossiveis = this.eventosPossiveis;
-        super.probabilidadeDeEventos = this.probabilidadeDeEventos;
+        super.setNome(this.nome);
+        super.setDescricao(this.descricao);
+        super.setEventosPossiveis(this.eventosPossiveis);
+        super.setProbabilidadeDeEventos(this.probabilidadeDeEventos);
         assert(eventosPossiveis.length == probabilidadeDeEventos.length);
 
         // Atributos adicionais
-        super.dificuldadeDeExploracao *= 4;
+       // super.dificuldadeDeExploracao *= 4;
 
     }
 }

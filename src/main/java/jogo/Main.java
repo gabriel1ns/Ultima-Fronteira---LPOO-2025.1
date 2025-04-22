@@ -1,6 +1,6 @@
 package jogo;
-import jogo.itens.Agua;
-import jogo.itens.Alimento;
+import jogo.itens.consumiveis.Agua;
+import jogo.itens.consumiveis.Alimento;
 import jogo.personagem.Personagem;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.sistema.Turno;

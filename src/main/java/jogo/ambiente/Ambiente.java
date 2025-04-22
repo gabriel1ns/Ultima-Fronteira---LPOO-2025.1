@@ -88,9 +88,4 @@ public abstract class Ambiente {
         return nome + ": " + descricao;
     }
 
-    public void setEventosPossiveis(Evento[] eventosPossiveis) {
-    }
-
-    public void setProbabilidadeDeEventos(int[] probabilidadeDeEventos) {
-    }
 }
