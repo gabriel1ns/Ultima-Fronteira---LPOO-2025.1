@@ -22,7 +22,7 @@
                 <configuration>
                     <source>23</source>
                     <target>23</target>
-                    <compilerArgs>//(trocar // por --)enable-preview</compilerArgs>
+                    <compilerArgs>//(trocar // por - -)enable-preview</compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
