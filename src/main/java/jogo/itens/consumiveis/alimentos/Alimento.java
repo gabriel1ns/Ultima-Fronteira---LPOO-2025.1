@@ -1,6 +1,7 @@
-package jogo.itens.consumiveis;
+package jogo.itens.consumiveis.alimentos;
 
 import jogo.itens.Item;
+import jogo.itens.consumiveis.Consumivel;
 import jogo.personagem.Personagem;
 
 public class Alimento extends Item implements Consumivel {
@@ -35,7 +36,6 @@ public class Alimento extends Item implements Consumivel {
     @Override
     public String toString() {
         return  super.toString() +
-                "Tipo: Alimento\n" +
                 "Valor nutricional: " + this.valorNutricional + "\n";            
     }
 
