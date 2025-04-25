@@ -7,10 +7,6 @@ public abstract class Item {
     private boolean consumivel;
     private int quantidade;
 
-    protected String toString = "Nome: " + this.nome + "\n" +
-                                "Peso: " + this.peso + "\n" +
-                                "Durabilidade: " + this.durabilidade + "\n";
-
     public Item(String nome, int peso, int durabilidade) {
         setNome(nome);
         setPeso(peso);
@@ -51,6 +47,13 @@ public abstract class Item {
 
     public boolean usar() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return  "Nome: " + this.nome + "\n" + 
+                "Peso: " + this.peso + "\n" + 
+                "Durabilidade: " + this.durabilidade + "\n";
     }
 }
 

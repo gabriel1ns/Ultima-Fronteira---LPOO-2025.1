@@ -34,7 +34,7 @@ public class Alimento extends Item implements Consumivel {
 
     @Override
     public String toString() {
-        return  super.toString +
+        return  super.toString() +
                 "Tipo: Alimento\n" +
                 "Valor nutricional: " + this.valorNutricional + "\n";            
     }

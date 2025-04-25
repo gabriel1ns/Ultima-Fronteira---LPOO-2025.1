@@ -39,7 +39,7 @@ public class Ferramenta extends Item {
 
     @Override
     public String toString() {
-        return  super.toString + 
+        return  super.toString() + 
                 "Tipo: Ferramenta\n" +
                 "Eficiencia: " + this.eficiencia + "\n";
     }

@@ -39,7 +39,7 @@ public class Agua extends Item implements Consumivel {
 
     @Override
     public String toString() {
-        return  super.toString +
+        return  super.toString() +
                 "Tipo: Agua\n" + 
                 "Volume: " + this.volume + "\n" +
                 "Pureza: " + this.pureza + "\n";

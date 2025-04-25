@@ -31,7 +31,7 @@ public class Remedio extends Item {
 
     @Override
     public String toString() {
-        return  super.toString + 
+        return  super.toString() + 
                 "Tipo: Remedio\n" + 
                 "Efeito: " + efeito + "\n";
     }

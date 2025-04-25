@@ -53,7 +53,7 @@ public class Material extends Item {
 
     @Override
     public String toString() {
-        return  super.toString +
+        return  super.toString() +
                 "Tipo: Material\n" +         
                 "Resistencia: " + resistencia + "\n";
     }

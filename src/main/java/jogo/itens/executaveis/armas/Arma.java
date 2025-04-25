@@ -1,5 +1,6 @@
 package jogo.itens.executaveis.armas;
 
+import jogo.eventos.criatura.EventoCriatura;
 import jogo.itens.Item;
 
 public class Arma extends Item {
@@ -16,18 +17,16 @@ public class Arma extends Item {
     }
 
     // Possivel implementacao
-    /*
     public void usar(EventoCriatura criatura) {
         int distancia = criatura.getDistancia();
         
-        if(this.alcance <= distancia) {
+        if(this.alcance >= distancia) {
             int vidaCriaturaAtual = criatura.getVida();
             criatura.setVida(vidaCriaturaAtual - this.dano);
         }
 
         super.setDurabilidade(super.getDurabilidade() - 1);
     }
-    */
 
     final public void setDano(int dano) {
         this.dano = dano;
@@ -47,8 +46,7 @@ public class Arma extends Item {
 
     @Override
     public String toString() {
-        return  super.toString +
-                "Tipo: Arma\n" + 
+        return  super.toString() +
                 "Dano: " + this.dano + "\n" +
                 "Alcance: " + this.alcance + "\n";
     }
