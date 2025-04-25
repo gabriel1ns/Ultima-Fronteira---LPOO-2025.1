@@ -13,6 +13,7 @@
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <!-- aparentemente isso nao builda no vscode, ou eu nao configurei diretio
     <build>
         <plugins>
             <plugin>
@@ -21,10 +22,10 @@
                 <configuration>
                     <source>23</source>
                     <target>23</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
+                    <compilerArgs>//(trocar // por --)enable-preview</compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
-    </build>
+    </build> -->
 
 </project>
