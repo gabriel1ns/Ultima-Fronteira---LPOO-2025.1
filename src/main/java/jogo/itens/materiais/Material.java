@@ -13,8 +13,8 @@ public class Material extends Item {
     private String tipo;
     private int resistencia;
 
-    public Material(String tipo, int resistencia) {
-        super(tipo, resistencia, 0);
+    public Material(String tipo, int peso, int resistencia) {
+        super(tipo, peso, 0);
         
         setTipo(tipo);
         setResistencia(resistencia);
@@ -54,7 +54,6 @@ public class Material extends Item {
     @Override
     public String toString() {
         return  super.toString() +
-                "Tipo: Material\n" +         
                 "Resistencia: " + resistencia + "\n";
     }
 
