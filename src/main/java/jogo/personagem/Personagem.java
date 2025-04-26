@@ -1,18 +1,18 @@
 package jogo.personagem;
-import jogo.ambiente.Ambiente;
 import jogo.sistema.Inventario;
 
 public class Personagem {
-    private final int MIN_VIDA = 0;
-    private final int MAX_VIDA = 100;
-    private final int MIN_FOME = 0;
-    private final int MAX_FOME = 100;
-    private final int MIN_SEDE = 0;
-    private final int MAX_SEDE = 100;
-    private final int MIN_ENERGIA = 0;
-    private final int MAX_ENERGIA = 100;
-    private final int MIN_SANIDADE = 0;
-    private final int MAX_SANIDADE = 100;
+    private int MIN_VIDA = 0;
+    private int MIN_FOME = 0;
+    private int MIN_SEDE = 0;
+    private int MIN_ENERGIA = 0;
+    private int MIN_SANIDADE = 0;
+
+    private int MAX_VIDA = 100;
+    private int MAX_FOME = 100;
+    private int MAX_SEDE = 100;
+    private int MAX_ENERGIA = 100;
+    private int MAX_SANIDADE = 100;
 
     final private String nome;
     private int vida;
@@ -20,42 +20,38 @@ public class Personagem {
     private int sede;
     private int energia;
     private int sanidade;
-    private Ambiente localizacao;
     private Inventario inventario;
 
-    public Personagem(String nome, Ambiente localizacaoInicial) {
+    public static Personagem novoPersonagem(String nome, String classeEscolhida) {
+        // TODO adicionar mais classes de personagem
+        if(classeEscolhida.equals("Lenhador")) return new PersonagemLenhador(nome);
+        else return new PersonagemSobrevivente(nome);
+    }
+
+    public Personagem(String nome, int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade, int capacidadeDoInventario) {
         this.nome = nome;
-        this.vida = 100;
-        this.fome = 100;
-        this.sede = 100;
-        this.energia = 100;
-        this.sanidade = 100;
-        this.localizacao = localizacaoInicial;
-        this.inventario = new Inventario(10);
+        this.MAX_VIDA = maxVida;
+        this.MAX_FOME = maxFome;
+        this.MAX_SEDE = maxSede;
+        this.MAX_ENERGIA = maxEnergia;
+        this.MAX_SANIDADE = maxSanidade;
+
+        setVida(MAX_VIDA);
+        setFome(MAX_FOME);
+        setSede(MAX_SEDE);
+        setEnergia(MAX_ENERGIA);
+        setSanidade(MAX_SANIDADE);
+        this.inventario = new Inventario(capacidadeDoInventario);
     }
 
     public Inventario getInventario() {
         return inventario;
     }
 
-    public Ambiente getLocalizacao() {
-        return localizacao;
-    }
-
-    private static int checarLimites(int valor, int limInferior, int limSuperior) {
+    private int checarLimites(int valor, int limInferior, int limSuperior) {
         if(valor < limInferior) return limInferior;
         if(valor > limSuperior) return limSuperior;
         return valor;
-    }
-
-    public Ambiente getlocalizacao(){
-        return localizacao;
-    }
-
-    public void setLocalizacao(Ambiente novoAmbiente) {
-        this.localizacao = novoAmbiente;
-        System.out.println("Você chegou em: " + novoAmbiente.getNome());
-        System.out.println(novoAmbiente.getDescricao());
     }
 
     // Getters e Setters

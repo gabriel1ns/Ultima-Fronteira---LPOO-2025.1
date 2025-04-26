@@ -2,6 +2,7 @@ package jogo.sistema;
 
 import java.util.Scanner;
 
+import jogo.ambiente.Ambiente;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.sistema.Inventario;
 import jogo.itens.consumiveis.Agua;
@@ -9,16 +10,20 @@ import jogo.itens.consumiveis.alimentos.Alimento;
 import jogo.itens.Item;
 import jogo.itens.consumiveis.alimentos.Alimento;
 import jogo.personagem.Personagem;
+import jogo.utils.InputOutput;
 
 public class Turno {
     private final Personagem jogador;
+    private final Ambiente ambienteAtual;
     private final GerenciadorDeAmbientes gerenciadorDeAmbientes;
-    private final Scanner scanner;
+    private final InputOutput io;
 
-    public Turno(Personagem jogador, GerenciadorDeAmbientes gerenciadorDeAmbientes) {
+    public Turno(Personagem jogador, Ambiente ambienteInicial, GerenciadorDeAmbientes gerenciadorDeAmbientes,
+                InputOutput io) {
         this.jogador = jogador;
+        this.ambienteAtual = ambienteInicial;
         this.gerenciadorDeAmbientes = gerenciadorDeAmbientes;
-        this.scanner = new Scanner(System.in);
+        this.io = io;
     }
 
     public void iniciarTurno() {
