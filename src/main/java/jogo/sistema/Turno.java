@@ -13,44 +13,48 @@ import jogo.personagem.Personagem;
 import jogo.utils.InputOutput;
 
 public class Turno {
-    private final Personagem jogador;
+    private final Personagem personagem;
     private final Ambiente ambienteAtual;
     private final GerenciadorDeAmbientes gerenciadorDeAmbientes;
     private final InputOutput io;
 
-    public Turno(Personagem jogador, Ambiente ambienteInicial, GerenciadorDeAmbientes gerenciadorDeAmbientes,
+    public Turno(Personagem personagem, Ambiente ambienteInicial, GerenciadorDeAmbientes gerenciadorDeAmbientes,
                 InputOutput io) {
-        this.jogador = jogador;
+        this.personagem = personagem;
         this.ambienteAtual = ambienteInicial;
         this.gerenciadorDeAmbientes = gerenciadorDeAmbientes;
         this.io = io;
     }
 
     public void iniciarTurno() {
-        System.out.println(" INÍCIO DO TURNO ");
-
+        io.print(" INÍCIO DO TURNO ");
 
         faseDeInicio();
         faseDeAcao();
+        faseDeEeventos();
         faseDeManutencao();
 
-        System.out.println("FIM DO TURNO");
+        io.print("FIM DO TURNO");
     }
 
     private void faseDeInicio() {
-        System.out.println("");
-        System.out.println("Status do Personagem:");
-        System.out.println("Nome: " + jogador.getNome());
-        System.out.println("Vida: " + jogador.getVida());
-        System.out.println("Fome: " + jogador.getFome());
-        System.out.println("Sede: " + jogador.getSede());
-        System.out.println("Energia: " + jogador.getEnergia());
-        System.out.println("Sanidade: " + jogador.getSanidade());
-        System.out.println("Ambiente atual: " + jogador.getLocalizacao().getNome());
-    }
+        io.print("Status do personagem: ");
+        io.print(personagem.toString());
 
-    Alimento alimentoTst = new Alimento("Banana", 1, 5, 5);
-    Agua aguaTst = new Agua(true, 5);
+        io.print("Ambiente atual");
+        io.print(ambienteAtual.toString());
+
+        int opcao = Integer.parseInt(io.getInput("Deseja remover algum item do inventário?"));
+
+        while(opcao != 0 && personagem.getInventario().getQuantidadeAtual() > 0) {
+            io.print(personagem.getInventario().toString());
+            opcao = Integer.parseInt(io.getInput("Digite o item que deseja remover ou 0"));
+
+            Item item = personagem.getInventario().getItem(opcao);
+            personagem.getInventario().removerItem(item);
+        }
+
+    }
 
     private void faseDeAcao() {
         System.out.println("O que você deseja fazer?");

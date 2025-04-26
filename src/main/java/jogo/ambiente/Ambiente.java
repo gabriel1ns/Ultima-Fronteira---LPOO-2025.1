@@ -85,7 +85,7 @@ public abstract class Ambiente {
 
     @Override
     public String toString() {
-        return nome + ": " + descricao;
+        return this.nome + "n";
     }
 
 }

@@ -108,5 +108,16 @@ public class Personagem {
     public String getNome() {
         return nome;
     }
+
+    @Override
+    public String toString() {
+        return  "Nome: " + this.nome + "\n" +
+                "Vida: " + this.vida + "\n" +
+                "Fome: " + this.fome + "\n" +
+                "Sede: " + this.sede + "\n" +
+                "Energia: " + this.energia + "\n" +
+                "Sanidade: " + this.sanidade + "\n" +
+                "Inventario: " + this.inventario.toString() + "\n";
+    }
 }
 
