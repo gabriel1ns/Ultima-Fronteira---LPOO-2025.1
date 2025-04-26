@@ -5,8 +5,9 @@ import java.util.Scanner;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.sistema.Inventario;
 import jogo.itens.consumiveis.Agua;
-import jogo.itens.consumiveis.Alimento;
+import jogo.itens.consumiveis.alimentos.Alimento;
 import jogo.itens.Item;
+import jogo.itens.consumiveis.alimentos.Alimento;
 import jogo.personagem.Personagem;
 
 public class Turno {

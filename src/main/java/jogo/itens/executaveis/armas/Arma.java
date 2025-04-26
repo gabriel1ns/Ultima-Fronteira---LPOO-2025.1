@@ -1,7 +1,11 @@
 package jogo.itens.executaveis.armas;
 
+import com.sun.jdi.event.ExceptionEvent;
+
+import jogo.eventos.Evento;
 import jogo.eventos.criatura.EventoCriatura;
 import jogo.itens.Item;
+import jogo.itens.executaveis.Executavel;
 
 public class Arma extends Item {
     private int dano;
@@ -17,16 +21,22 @@ public class Arma extends Item {
     }
 
     // Possivel implementacao
-    public void usar(EventoCriatura criatura) {
-        int distancia = criatura.getDistancia();
-        
-        if(this.alcance >= distancia) {
-            int vidaCriaturaAtual = criatura.getVida();
-            criatura.setVida(vidaCriaturaAtual - this.dano);
-        }
+    // @Override
+    // public void usar(Evento eventoCriatura) {
+    //     if(!EventoCriatura.class.isInstance(eventoCriatura)) {
+    //         // rodar excecao
+    //     }
+    //     EventoCriatura criatura = EventoCriatura.class.cast(eventoCriatura);
 
-        super.setDurabilidade(super.getDurabilidade() - 1);
-    }
+    //     int distancia = criatura.getDistancia();
+        
+    //     if(this.alcance >= distancia) {
+    //         int vidaCriaturaAtual = criatura.getVida();
+    //         criatura.setVida(vidaCriaturaAtual - this.dano);
+    //     }
+
+    //     super.setDurabilidade(super.getDurabilidade() - 1);
+    // }
 
     final public void setDano(int dano) {
         this.dano = dano;

@@ -1,12 +1,14 @@
 package jogo;
 import jogo.itens.consumiveis.Agua;
-import jogo.itens.consumiveis.Alimento;
+import jogo.itens.consumiveis.alimentos.Alimento;
 import jogo.personagem.Personagem;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.sistema.Turno;
 import jogo.ambiente.Ambiente;
 
 import java.util.Scanner;
+
+import jogo.itens.consumiveis.alimentos.Alimento;
 
 public class Main {
     public static void main(String[] args) {
