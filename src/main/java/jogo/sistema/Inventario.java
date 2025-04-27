@@ -1,5 +1,8 @@
 package jogo.sistema;
 import jogo.itens.Item;
+import jogo.itens.consumiveis.Consumivel;
+import jogo.itens.materiais.Material;
+import jogo.personagem.Personagem;
 
 public class Inventario {
     private Item[] itens;
@@ -84,20 +87,26 @@ public class Inventario {
         quantidadeAtual = 0;
     }
 
+    public boolean usarItemConsumivel(Consumivel consumivel, Personagem personagem) {
+        int indice = encontrarItem(consumivel);
+        if(indice < 0) return false;
 
-    public boolean usarItem(Item item) {
-        int indice = encontrarItem(item);
-        boolean contemItem = indice >= 0;
+        consumivel.consumir(personagem);
+        removerItem(consumivel);
 
-        if (contemItem) {
-            /*
-             * TODO: Definir como "usar" diferentes tipos de item
-             * (uma ferramenta e combinar materiais, por exemplo)
-             * (interface?)
-             */
-        }
+        return true;
+    }
 
-        return contemItem;
+    public boolean usarItemMaterial(Material material, Material[] materiais) {
+        int indice = encontrarItem(material);
+        if(indice < 0) return false;
+
+        removerItem(material);
+        for(Material m : materiais) removerItem(m);
+
+        adicionarItem(material.combinar(materiais));
+
+        return true;
     }
 
 

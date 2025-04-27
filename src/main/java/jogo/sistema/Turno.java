@@ -4,19 +4,29 @@ import java.util.Scanner;
 
 import jogo.ambiente.Ambiente;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
+import jogo.gerenciadores.GerenciadorDeEventos;
 import jogo.sistema.Inventario;
 import jogo.itens.consumiveis.Agua;
 import jogo.itens.consumiveis.alimentos.Alimento;
 import jogo.itens.Item;
+import jogo.itens.consumiveis.Consumivel;
 import jogo.itens.consumiveis.alimentos.Alimento;
 import jogo.personagem.Personagem;
 import jogo.utils.InputOutput;
 
 public class Turno {
     private final Personagem personagem;
-    private final Ambiente ambienteAtual;
+    private Ambiente ambienteAtual;
     private final GerenciadorDeAmbientes gerenciadorDeAmbientes;
+    private final GerenciadorDeEventos gerenciadorDeEventos;
     private final InputOutput io;
+
+    private int dVida;
+    private int dSede;
+    private int dFome;
+    private int dEnergia;
+    private int dSanidade;
+    private Item[] itensDescobertos = new Item[100];
 
     public Turno(Personagem personagem, Ambiente ambienteInicial, GerenciadorDeAmbientes gerenciadorDeAmbientes,
                 InputOutput io) {
@@ -24,10 +34,17 @@ public class Turno {
         this.ambienteAtual = ambienteInicial;
         this.gerenciadorDeAmbientes = gerenciadorDeAmbientes;
         this.io = io;
+
+        this.gerenciadorDeEventos = new GerenciadorDeEventos();
     }
 
     public void iniciarTurno() {
         io.print(" INÍCIO DO TURNO ");
+
+        dVida = 0;
+        dSede = 2;
+        dFome = 5;
+        dEnergia = ambienteAtual.getDificuldadeDeExploracao();
 
         faseDeInicio();
         faseDeAcao();
@@ -42,154 +59,136 @@ public class Turno {
         io.print(personagem.toString());
 
         io.print("Ambiente atual");
-        io.print(ambienteAtual.toString());
+        io.print(ambienteAtual.getNome());
 
-        int opcao = Integer.parseInt(io.getInput("Deseja remover algum item do inventário?"));
+        // int opcao = Integer.parseInt(io.getInput("Deseja remover algum item do inventário?"));
 
-        while(opcao != 0 && personagem.getInventario().getQuantidadeAtual() > 0) {
-            io.print(personagem.getInventario().toString());
-            opcao = Integer.parseInt(io.getInput("Digite o item que deseja remover ou 0"));
+        // while(opcao != 0 && personagem.getInventario().getQuantidadeAtual() > 0) {
+        //     io.print(personagem.getInventario().toString());
+        //     opcao = Integer.parseInt(io.getInput("Digite o item que deseja remover ou 0"));
 
-            Item item = personagem.getInventario().getItem(opcao);
-            personagem.getInventario().removerItem(item);
-        }
+        //     Item item = personagem.getInventario().getItem(opcao);
+        //     personagem.getInventario().removerItem(item);
+        // }
 
     }
 
     private void faseDeAcao() {
-        System.out.println("O que você deseja fazer?");
-        System.out.println("1. Mudar de ambiente");
-        /*
-        System.out.println("2. Consumir alimento teste (dbg)");
-        System.out.println("3. Consumir agua teste (dbg)");
-         */
-        System.out.println("2. Abrir inventário");
-        System.out.print("Escolha uma opção: ");
-        int escolha = scanner.nextInt();
-        scanner.nextLine();
+        io.print("O que você deseja fazer?");
+        io.print("1. Mudar de ambiente");
+        io.print("2. Usar item do inventário");
+        if(/*TODO checker para um EventoCriatura ativo */)
+            io.print("3. Explorar " + ambienteAtual.getNome());
+        else
+            io.print("3. Batalhar " /* + criatura.getNome() */);
 
+        int escolha = Integer.parseInt(io.getInput("Escolha uma opção: "));
 
         switch (escolha) {
-            case 1:
-                gerenciadorDeAmbientes.mudarAmbiente(jogador, scanner);
-                break;
+        case 1:
+            dEnergia *= 5;
+            dSede *= 5;    
+            dFome *= 5;    
 
-                /*
-            case 2:
-                alimentoTst.consumir(jogador);
-                System.out.println("Jogador consumiu " + alimentoTst);
-                break;
+            this.ambienteAtual = gerenciadorDeAmbientes.sortearAmbiente();
+            break;
+        case 2:
+            dEnergia = -5;
 
-            case 3:
-                aguaTst.consumir(jogador);
-                System.out.println("Jogador consumiu " + aguaTst);
-                break;
-
-                 */
-            case 2:
-                gerenciarInventario();
-                break;
-            default:
-                System.out.println("Escolha inválida.");
+            gerenciarInventario();
+            break;
+        default:
+            System.out.println("Escolha inválida.");
         }
     }
 
     private void gerenciarInventario() {
-        Inventario inventario = jogador.getInventario();
+        Inventario inventario = personagem.getInventario();
         boolean fecharInventario = false;
 
         while (!fecharInventario) {
-            System.out.println("\nInventário");
-            System.out.println(inventario);
+            io.print("\nInventário");
+            io.print(inventario.toString());
 
-            System.out.println("\n1. Usar item");
-            System.out.println("2. Descartar item");
-            System.out.println("3. Voltar ao turno");
-            System.out.print("Escolha uma opção: ");
+            io.print("\n1. Usar item");
+            io.print("2. Descartar item");
+            io.print("3. Acabar o turno");
 
-            int escolha = scanner.nextInt();
-            scanner.nextLine();
+            int escolha = Integer.parseInt(io.getInput("Escolha uma opção: "));
 
             switch (escolha) {
-                case 1:
-                    usarItemDoInventario(inventario);
-                    break;
-                case 2:
-                    descartarItemDoInventario(inventario);
-                    break;
-                case 3:
-                    fecharInventario = true;
-                    break;
-                default:
-                    System.out.println("Opção inválida!");
+            case 1:
+                usarItemDoInventario(inventario);
+                break;
+            case 2:
+                descartarItemDoInventario(inventario);
+                break;
+            case 3:
+                fecharInventario = true;
+                break;
+            default:
+                System.out.println("Opção inválida!");
             }
         }
     }
 
     private void usarItemDoInventario(Inventario inventario) {
         if (inventario.getQuantidadeAtual() == 0) {
-            System.out.println("Inventário vazio!");
+            io.print("Inventário vazio!");
             return;
         }
 
-        System.out.println("Escolha o item: (1-" + inventario.getQuantidadeAtual() + "):");
-        int indice = scanner.nextInt();
-        scanner.nextLine();
-
-        if (indice < 1 || indice > inventario.getQuantidadeAtual()) {
-            System.out.println("Você não possui item nesse slot.");
-            return;
-        }
+        int indice = 0;
+        while(indice < 1 || indice > inventario.getQuantidadeAtual())
+            indice = Integer.parseInt(io.getInput("Escolha o item: (1-" + inventario.getQuantidadeAtual() + "):"));
 
         Item item = inventario.getItem(indice - 1);
+
         if (item != null) {
-            if (inventario.usarItem(item)) {
-                System.out.println("Item usado com sucesso!");
+            if(item instanceof Consumivel consumivel && 
+            inventario.usarItemConsumivel(consumivel, personagem)) {
+                io.print("Item consumido");
+            } else if(item instanceof Material material &&
+            inventario.usarItemMaterial(material, materiais)) {
+                io.print("Materiais combinados");
             } else {
-                System.out.println("Não foi possível usar o item.");
+                io.print("Não foi possível usar o item.");
             }
         }
     }
 
     private void descartarItemDoInventario(Inventario inventario) {
         if (inventario.getQuantidadeAtual() == 0) {
-            System.out.println("Inventário vazio!");
+            io.print("Inventário vazio!");
             return;
         }
 
-        System.out.println("Qual item deseja descartar? (1-" + inventario.getQuantidadeAtual() + "):");
-        int indice = scanner.nextInt();
-        scanner.nextLine();
-
-        if (indice < 1 || indice > inventario.getQuantidadeAtual()) {
-            System.out.println("Você não possui item nesse slot.");
-            return;
-        }
+        int indice = 0;
+        while(indice < 1 || indice > inventario.getQuantidadeAtual())
+            indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeAtual() + "):"));
 
         Item item = inventario.getItem(indice - 1);
         if (item != null) {
             inventario.removerItem(item);
-            System.out.println("Item " + item.getNome() + " descartado!");
+            io.print("Item " + item.getNome() + " descartado!");
         }
     }
 
 
     private void faseDeManutencao() {
-        System.out.println("Atualizando atributos:");
-        jogador.setFome(jogador.getFome() - 10);
-        jogador.setSede(jogador.getSede() - 15);
-        jogador.setEnergia(jogador.getEnergia() - 5);
+        personagem.setFome(personagem.getFome() - dFome);
+        personagem.setSede(personagem.getSede() - dSede);
+        personagem.setEnergia(personagem.getEnergia() - dEnergia);
 
-        if (jogador.getFome() <= 0 || jogador.getSede() <= 0 || jogador.getEnergia() <= 0) {
+        if (personagem.getVida() <= 0) {
             System.out.println("Você morreu");
             System.exit(0);
         }
 
-        System.out.println("Status do jogador após o turno:");
-        System.out.println("Fome: " + jogador.getFome());
-        System.out.println("Sede: " + jogador.getSede());
-        System.out.println("Energia: " + jogador.getEnergia());
+        while(personagem.getInventario().estaCheio()) {
+            io.print("Necessário remover itens do inventário");
 
-        aguaTst.setPureza(!aguaTst.getPureza());
+            descartarItemDoInventario(personagem.getInventario());
+        }
     }
 }
