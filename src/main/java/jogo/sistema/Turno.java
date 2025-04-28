@@ -1,13 +1,18 @@
 package jogo.sistema;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import jogo.ambiente.Ambiente;
+import jogo.eventos.Evento;
+import jogo.eventos.criatura.EventoCriatura;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;
 import jogo.sistema.Inventario;
 import jogo.itens.consumiveis.Agua;
 import jogo.itens.consumiveis.alimentos.Alimento;
+import jogo.itens.executaveis.armas.Arma;
+import jogo.itens.materiais.Material;
 import jogo.itens.Item;
 import jogo.itens.consumiveis.Consumivel;
 import jogo.itens.consumiveis.alimentos.Alimento;
@@ -26,7 +31,6 @@ public class Turno {
     private int dFome;
     private int dEnergia;
     private int dSanidade;
-    private Item[] itensDescobertos = new Item[100];
 
     public Turno(Personagem personagem, Ambiente ambienteInicial, GerenciadorDeAmbientes gerenciadorDeAmbientes,
                 InputOutput io) {
@@ -35,7 +39,8 @@ public class Turno {
         this.gerenciadorDeAmbientes = gerenciadorDeAmbientes;
         this.io = io;
 
-        this.gerenciadorDeEventos = new GerenciadorDeEventos();
+        this.gerenciadorDeEventos = new GerenciadorDeEventos(ambienteInicial.getEventosPossiveis(),
+                                                            ambienteInicial.getProbabilidadeDeEventos());
     }
 
     public void iniciarTurno() {
@@ -61,26 +66,20 @@ public class Turno {
         io.print("Ambiente atual");
         io.print(ambienteAtual.getNome());
 
-        // int opcao = Integer.parseInt(io.getInput("Deseja remover algum item do inventário?"));
-
-        // while(opcao != 0 && personagem.getInventario().getQuantidadeAtual() > 0) {
-        //     io.print(personagem.getInventario().toString());
-        //     opcao = Integer.parseInt(io.getInput("Digite o item que deseja remover ou 0"));
-
-        //     Item item = personagem.getInventario().getItem(opcao);
-        //     personagem.getInventario().removerItem(item);
-        // }
-
     }
 
     private void faseDeAcao() {
+        EventoCriatura criatura = gerenciadorDeEventos.getEventoCriaturaAtivo();
+        boolean isEventoCriaturaAtivo = criatura != null;
+        
         io.print("O que você deseja fazer?");
         io.print("1. Mudar de ambiente");
-        io.print("2. Usar item do inventário");
-        if(/*TODO checker para um EventoCriatura ativo */)
+        io.print("2. Gerenciar inventário");
+        if(!isEventoCriaturaAtivo) {
             io.print("3. Explorar " + ambienteAtual.getNome());
-        else
-            io.print("3. Batalhar " /* + criatura.getNome() */);
+        } else {
+            io.print("3. Batalhar " + criatura.getNome());
+        }
 
         int escolha = Integer.parseInt(io.getInput("Escolha uma opção: "));
 
@@ -91,15 +90,66 @@ public class Turno {
             dFome *= 5;    
 
             this.ambienteAtual = gerenciadorDeAmbientes.sortearAmbiente();
+
+            gerenciadorDeEventos.setEventosPossiveis(ambienteAtual.getEventosPossiveis());
+            gerenciadorDeEventos.setProbabilidadeDeEventos(ambienteAtual.getProbabilidadeDeEventos());
+
             break;
         case 2:
             dEnergia = -5;
 
             gerenciarInventario();
+
+            break;
+        case 3:
+            if(isEventoCriaturaAtivo) {
+                faseDeAtaque(criatura);
+
+                break;
+            }
+
+            gerenciadorDeEventos.adicionarEventoAleatorio();
+
             break;
         default:
-            System.out.println("Escolha inválida.");
+            io.print("Escolha inválida.");
         }
+    }
+
+    private void faseDeEeventos() {
+        gerenciadorDeEventos.acionarEventos(ambienteAtual, personagem);
+    }
+
+    private void faseDeManutencao() {
+        personagem.setFome(personagem.getFome() - dFome);
+        personagem.setSede(personagem.getSede() - dSede);
+        personagem.setEnergia(personagem.getEnergia() - dEnergia);
+
+        if (personagem.getVida() <= 0) {
+            io.print("Você morreu");
+            
+            // TODO alterar
+            System.exit(0);
+        }
+
+        while(personagem.getInventario().estaCheio()) {
+            io.print("Necessário remover itens do inventário");
+
+            descartarItemDoInventario(personagem.getInventario());
+        }
+    }
+
+    private void faseDeAtaque(EventoCriatura criatura) {
+        Arma[] armas = personagem.getInventario().getArmas();
+
+        for(int i = 1; i <= armas.length; i++) {
+            if(armas[i] == null) break;
+            io.print(i + ". " + armas[i].toString());
+        }
+
+        int escolha = Integer.parseInt(io.getInput("Escolha sua arma (1-" + armas.length + ")"));
+            
+        personagem.getInventario().usarItemArma(escolha, criatura);
     }
 
     private void gerenciarInventario() {
@@ -127,20 +177,20 @@ public class Turno {
                 fecharInventario = true;
                 break;
             default:
-                System.out.println("Opção inválida!");
+                io.print("Opção inválida!");
             }
         }
     }
 
     private void usarItemDoInventario(Inventario inventario) {
-        if (inventario.getQuantidadeAtual() == 0) {
+        if (inventario.getQuantidadeItens() == 0) {
             io.print("Inventário vazio!");
             return;
         }
 
         int indice = 0;
-        while(indice < 1 || indice > inventario.getQuantidadeAtual())
-            indice = Integer.parseInt(io.getInput("Escolha o item: (1-" + inventario.getQuantidadeAtual() + "):"));
+        while(indice < 1 || indice > inventario.getQuantidadeItens())
+            indice = Integer.parseInt(io.getInput("Escolha o item: (1-" + inventario.getQuantidadeItens() + "):"));
 
         Item item = inventario.getItem(indice - 1);
 
@@ -158,37 +208,19 @@ public class Turno {
     }
 
     private void descartarItemDoInventario(Inventario inventario) {
-        if (inventario.getQuantidadeAtual() == 0) {
+        if (inventario.getQuantidadeItens() == 0) {
             io.print("Inventário vazio!");
             return;
         }
 
         int indice = 0;
-        while(indice < 1 || indice > inventario.getQuantidadeAtual())
-            indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeAtual() + "):"));
+        while(indice < 1 || indice > inventario.getQuantidadeItens())
+            indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeItens() + "):"));
 
         Item item = inventario.getItem(indice - 1);
         if (item != null) {
             inventario.removerItem(item);
             io.print("Item " + item.getNome() + " descartado!");
-        }
-    }
-
-
-    private void faseDeManutencao() {
-        personagem.setFome(personagem.getFome() - dFome);
-        personagem.setSede(personagem.getSede() - dSede);
-        personagem.setEnergia(personagem.getEnergia() - dEnergia);
-
-        if (personagem.getVida() <= 0) {
-            System.out.println("Você morreu");
-            System.exit(0);
-        }
-
-        while(personagem.getInventario().estaCheio()) {
-            io.print("Necessário remover itens do inventário");
-
-            descartarItemDoInventario(personagem.getInventario());
         }
     }
 }

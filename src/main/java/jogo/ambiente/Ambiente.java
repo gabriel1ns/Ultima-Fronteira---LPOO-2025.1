@@ -1,38 +1,21 @@
 package jogo.ambiente;
 
 import jogo.eventos.Evento;
-import jogo.gerenciadores.GerenciadorDeEventos;
 import jogo.itens.Item;
-import jogo.personagem.Personagem;
 
 public abstract class Ambiente {
     private String nome;
     private String descricao;
-    private int dificuldadeDeExploracao = 5;
+    private int dificuldadeDeExploracao;
 
     private Item[] recursosDisponiveis;
     private Evento[] eventosPossiveis;
     private int[] probabilidadeDeEventos;
 
-    protected String toString = "Nome: " + this.nome + "\n" +
-                                "Descricao: " + this.descricao;
-
-    public Ambiente(Item[] recursosDisponiveis) {
+    public Ambiente(Item[] recursosDisponiveis, int[] probabilidadeDeEventos, int dificuldadeDeExploracao) {
         setRecursosDisponiveis(recursosDisponiveis);
-    }
-
-    public void explorar(Personagem personagem) {
-        int energiaAtual = personagem.getEnergia();
-        personagem.setEnergia(energiaAtual - dificuldadeDeExploracao);
-
-        gerarEvento(personagem);
-    }
-
-    public void gerarEvento(Personagem personagem) {
-        GerenciadorDeEventos gerenciador = new GerenciadorDeEventos(eventosPossiveis, probabilidadeDeEventos);
-        Evento evento = gerenciador.sortearEvento();
-        
-        evento.executar(this, personagem);
+        setProbabilidadeDeEventos(probabilidadeDeEventos);
+        setDificuldadeDeExploracao(dificuldadeDeExploracao);
     }
 
     final public void setNome(String nome) {
