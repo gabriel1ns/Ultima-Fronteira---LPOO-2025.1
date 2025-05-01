@@ -1,6 +1,7 @@
 package jogo.eventos.doencaFerimento;
 
 import jogo.eventos.Evento;
+import jogo.personagem.Personagem;
 
 public abstract class EventoDoencaFerimento extends Evento {
     private String tipo;
@@ -32,9 +33,10 @@ public abstract class EventoDoencaFerimento extends Evento {
 
     @Override
     public String toString() {
-        return  super.toString + 
+        return  super.toString() +
                 "Impacto: " + this.impacto + "\n" +
                 "Cura disponivel: " + this.curaDisponivel + "\n";
     }
 
+    public abstract void aplicarFerimento(Personagem personagem);
 }

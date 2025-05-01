@@ -2,6 +2,8 @@ package jogo.ambiente;
 
 import jogo.eventos.Evento;
 import jogo.itens.Item;
+import jogo.itens.materiais.Ferro;
+import jogo.itens.materiais.Pedra;
 
 public class AmbienteCaverna extends Ambiente {
 
@@ -11,7 +13,7 @@ public class AmbienteCaverna extends Ambiente {
     private final int[] probabilidadeDeEventos = {};
 
     public AmbienteCaverna(Item[] recursosDisponiveis) {
-        super(recursosDisponiveis);
+        super(new Item[] {new Pedra(), new Ferro()}, new int[] {10}, 5);
         
         super.setNome(this.nome);
         super.setDescricao(descricao);
@@ -20,7 +22,6 @@ public class AmbienteCaverna extends Ambiente {
         
         assert(eventosPossiveis.length == probabilidadeDeEventos.length);
 
-        // Atributos adicionais
         
 
     }
