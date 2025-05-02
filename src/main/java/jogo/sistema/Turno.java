@@ -47,9 +47,9 @@ public class Turno {
         io.print(" INÍCIO DO TURNO ");
 
         dVida = 0;
-        dSede = 2;
-        dFome = 5;
-        dEnergia = ambienteAtual.getDificuldadeDeExploracao();
+        dSede = -2;
+        dFome = -5;
+        dEnergia = -ambienteAtual.getDificuldadeDeExploracao();
 
         faseDeInicio();
         faseDeAcao();
@@ -96,7 +96,7 @@ public class Turno {
 
             break;
         case 2:
-            dEnergia = -5;
+            dEnergia = +15;
 
             gerenciarInventario();
 
@@ -104,7 +104,12 @@ public class Turno {
         case 3:
             if(isEventoCriaturaAtivo) {
                 faseDeAtaque(criatura);
+                break;
+            }
 
+            if(personagem.getEnergia() == 0) {
+                io.print(personagem.getNome() + "está cansado demais para explorar!");
+                dEnergia += 2;
                 break;
             }
 
@@ -121,15 +126,23 @@ public class Turno {
     }
 
     private void faseDeManutencao() {
-        personagem.setFome(personagem.getFome() - dFome);
-        personagem.setSede(personagem.getSede() - dSede);
-        personagem.setEnergia(personagem.getEnergia() - dEnergia);
+        if(personagem.getFome() == 0) {
+            io.print(personagem.getNome() + "está com fome!");
+            dVida -= 5;
+        }
+        if(personagem.getSede() == 0) {
+            io.print(personagem.getNome() + "está com sede!");
+            dVida -= 2;
+        }
 
-        if (personagem.getVida() <= 0) {
-            io.print("Você morreu");
-            
-            // TODO alterar
-            System.exit(0);
+        personagem.setVida(personagem.getVida() + dVida);
+        personagem.setFome(personagem.getFome() + dFome);
+        personagem.setSede(personagem.getSede() + dSede);
+        personagem.setEnergia(personagem.getEnergia() + dEnergia);
+
+        if (personagem.getVida() == 0) {
+            io.print("Você morreu!");
+            return;
         }
 
         while(personagem.getInventario().estaCheio()) {

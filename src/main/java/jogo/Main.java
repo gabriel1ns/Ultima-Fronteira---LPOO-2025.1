@@ -33,10 +33,10 @@ public class Main {
             io.print("Turno" + i);
             turno.iniciarTurno();
 
-            if(personagem.getVida() <= 0) break;
+            if(personagem.getVida() == 0) break;
             io.print("");
         } // resolver saida do turno quando implementar as outras classes que faltam
 
-        System.out.println("Fim do jogo!");
+        io.print("Fim do jogo!");
     }
 }
