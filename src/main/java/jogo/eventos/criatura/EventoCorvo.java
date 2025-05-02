@@ -10,14 +10,10 @@ public class EventoCorvo extends EventoCriatura {
         super(tipo, descricao, vida, dano, distancia);
     }
 
-    public void passar(int distancia){
-        if(distancia < 2){
-        System.out.println("CUÁÁÁÁÁÁAÁÁ! CUÁÁÁ");
-        }
-    }
-
     @Override
     public void executar(Ambiente ambiente, Personagem personagem) {
-
+        System.out.println("CUÁÁÁÁÁÁAÁÁ! CUÁÁÁ");
     }
 }
+
+

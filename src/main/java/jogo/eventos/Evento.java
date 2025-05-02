@@ -8,11 +8,10 @@ public abstract class Evento implements EventoInterface {
     private int duracao;
     private Item[] itensDescobertos;
 
-    public Evento(String nome, String descricao, int duracao, Item[] itensDescobertos) {
+    public Evento(String nome, String descricao, int duracao) {
         this.nome = nome;
         this.descricao = descricao;
         setDuracao(duracao);
-        setItensDescobertos(itensDescobertos);
     }
 
     public String getNome() {
@@ -38,5 +37,4 @@ public abstract class Evento implements EventoInterface {
     public void setItensDescobertos(Item[] itensDescobertos) {
         this.itensDescobertos = itensDescobertos;
     }
-} // criar as subclasses dps (dificuldade falar com monitora)
-    // lol
+}

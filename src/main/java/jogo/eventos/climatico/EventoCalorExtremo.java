@@ -13,13 +13,8 @@ public class EventoCalorExtremo extends EventoClimatico{
     }
 
     @Override
-    public void aplicarEventoClimatico(Personagem personagem) {
+    public void executar(Ambiente ambiente, Personagem personagem) {
         personagem.setSede(personagem.getSede() + aumentoSede);
         personagem.setEnergia(personagem.getEnergia() - reducaoEnergia);
-    }
-
-    @Override
-    public void executar(Ambiente ambiente, Personagem personagem) {
-
     }
 }

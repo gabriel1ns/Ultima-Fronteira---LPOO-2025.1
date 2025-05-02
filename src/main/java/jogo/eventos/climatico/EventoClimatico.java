@@ -8,8 +8,7 @@ public abstract class EventoClimatico extends Evento {
     private int duracao;
 
     public EventoClimatico(String tipo, String descricao, int duracao) {
-        super(tipo, descricao);
-
+        super(tipo, descricao, duracao);
         setTipo(tipo);
         setDuracao(duracao);
     }
@@ -36,5 +35,5 @@ public abstract class EventoClimatico extends Evento {
                 "Duracao: " + this.duracao + "\n";
     }
 
-    public abstract void aplicarEventoClimatico(Personagem personagem);
+
 }

@@ -11,17 +11,12 @@ public class EventoNevasca extends EventoClimatico{
         super("Nevasca", "", duracao);
     }
 
-    @Override
-    public void aplicarEventoClimatico(Personagem personagem) {
-        personagem.setSanidade(personagem.getSanidade() - reducaoSanidade);
-        personagem.setEnergia(personagem.getEnergia() - reducaoEnergia);
-    }
-
 
 
     @Override
     public void executar(Ambiente ambiente, Personagem personagem) {
-
+        personagem.setSanidade(personagem.getSanidade() - reducaoSanidade);
+        personagem.setEnergia(personagem.getEnergia() - reducaoEnergia);
     }
 
 

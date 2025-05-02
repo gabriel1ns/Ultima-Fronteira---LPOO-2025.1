@@ -12,13 +12,8 @@ public class EventoTempestade extends EventoClimatico{
     }
 
     @Override
-    public void aplicarEventoClimatico(Personagem personagem) {
+    public void executar(Ambiente ambiente, Personagem personagem) {
         personagem.setSanidade(personagem.getSanidade() - reducaoSanidade);
         personagem.setEnergia(personagem.getEnergia() - reducaoEnergia);
-    }
-
-    @Override
-    public void executar(Ambiente ambiente, Personagem personagem) {
-
     }
 }
