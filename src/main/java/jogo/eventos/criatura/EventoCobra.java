@@ -24,7 +24,6 @@ public class EventoCobra extends EventoCriatura {
 
     @Override
     public void executar(Ambiente ambiente, Personagem personagem) {
-
         io.print("Você encontrou uma cobra! " + getDescricao());
         io.print("A cobra tem " + getVida() + " pontos de vida.");
 
@@ -33,12 +32,12 @@ public class EventoCobra extends EventoCriatura {
         while (combateAtivo) {
             io.print("\n--- Turno de Combate ---");
 
-            // Aplicar efeito de veneno se o personagem estiver envenenado
+            // efeito de veneno
             if (personagemEnvenenado) {
                 aplicarEfeitoVeneno(personagem);
             }
 
-            // Verificar se o personagem morreu pelo veneno
+
             if (personagem.getVida() <= 0) {
                 io.print("Você morreu envenenado!");
                 combateAtivo = false;
