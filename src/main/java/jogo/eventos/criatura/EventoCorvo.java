@@ -5,9 +5,13 @@ import jogo.personagem.Personagem;
 
 public class EventoCorvo extends EventoCriatura {
 
+    public EventoCorvo(){
+        super("Corvo", "", 10, 0, 20, 1);
+    }
 
-    public EventoCorvo(String tipo, String descricao, int vida, int dano, int distancia) {
-        super(tipo, descricao, vida, dano, distancia);
+    @Override
+    protected int getQuantProteina() {
+        return 0;
     }
 
     @Override
