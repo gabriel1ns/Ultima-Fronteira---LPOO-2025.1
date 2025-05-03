@@ -1,12 +1,12 @@
 package jogo.itens.consumiveis.remedios;
 
-public class CuraUniversal extends Remedio {
+public class RemedioCuraUniversal extends Remedio {
     private final static String TIPO        = "Cura Universal";
     private final static int PESO           = 1;
     private final static int DURABILIDADE   = 100;
     private final static int EFEITO         = 100;
 
-    public CuraUniversal() {
+    public RemedioCuraUniversal() {
         super(TIPO, PESO, DURABILIDADE, EFEITO);
     }
 }

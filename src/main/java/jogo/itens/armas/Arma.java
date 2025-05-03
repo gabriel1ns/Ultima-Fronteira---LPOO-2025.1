@@ -1,4 +1,4 @@
-package jogo.itens.executaveis.armas;
+package jogo.itens.armas;
 
 import com.sun.jdi.event.ExceptionEvent;
 

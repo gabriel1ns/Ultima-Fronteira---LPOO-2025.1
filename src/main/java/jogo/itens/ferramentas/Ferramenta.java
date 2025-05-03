@@ -1,4 +1,4 @@
-package jogo.itens.executaveis.ferramentas;
+package jogo.itens.ferramentas;
 
 import jogo.itens.Item;
 

@@ -1,11 +1,11 @@
 package jogo.itens.materiais;
 
-public class Corda extends Material {
+public class MaterialCorda extends Material {
     private final static String TIPO        = "Corda";
     private final static int PESO           = 2;
     private final static int RESISTENCIA    = 5;
 
-    public Corda() {
+    public MaterialCorda() {
         super(TIPO, PESO, RESISTENCIA);
     }
 }
