@@ -1,7 +1,7 @@
 package jogo.itens;
 
 public abstract class Item {
-    private final static int QUANTIDADE_MAXIMA = 4;
+    public final static int QUANTIDADE_MAXIMA = 4;
 
     private String nome;
     private int peso;
