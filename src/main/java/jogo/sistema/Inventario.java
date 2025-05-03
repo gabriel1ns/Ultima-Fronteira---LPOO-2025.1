@@ -5,6 +5,7 @@ import jogo.itens.consumiveis.IConsumivel;
 import jogo.itens.ferramentas.Ferramenta;
 import jogo.itens.materiais.Material;
 import jogo.personagem.Personagem;
+import jogo.utils.IntMath;
 
 public class Inventario {
     private Item[] itens;
@@ -15,9 +16,11 @@ public class Inventario {
     private Arma[] armas;
     private Ferramenta[] ferramentas;
     private IConsumivel[] consumiveis;
+    private Material[] materiais;
     private int quantidadeArmas;
     private int quantidadeFerramentas;
     private int quantidadeConsumiveis;
+    private int quantidadeMateriais;
 
     public Inventario(int capacidadeMaxima) {
         this.itens = new Item[capacidadeMaxima + 10];
@@ -27,10 +30,35 @@ public class Inventario {
         this.armas = new Arma[capacidadeMaxima];
         this.armas[0] = new Punhos();
         this.quantidadeArmas = 1;
+
         this.ferramentas = new Ferramenta[capacidadeMaxima];
         this.quantidadeFerramentas = 0;
+
         this.consumiveis = new IConsumivel[capacidadeMaxima];
         this.quantidadeConsumiveis = 0;
+    
+        this.materiais = new Material[capacidadeMaxima];
+        this.quantidadeMateriais = 0;
+    }
+
+    public boolean combinarMateriais(Material[] materiaisCombinados) {
+        int combinacaoID = 0;
+        Item itemCombinado;
+
+        for(Material material: materiaisCombinados) 
+            combinacaoID += material.getQuantidade() * IntMath.pow(Item.QUANTIDADE_MAXIMA, material.getID());
+
+        itemCombinado = Material.combinacoesPossiveis.get(combinacaoID);
+        
+        if((itemCombinado == null)) 
+            return false;
+
+        for(Material material: materiaisCombinados) 
+            removerItem(material);
+        
+        adicionarItem(itemCombinado);
+
+        return true;
     }
 
     public boolean adicionarItem(Item item) {

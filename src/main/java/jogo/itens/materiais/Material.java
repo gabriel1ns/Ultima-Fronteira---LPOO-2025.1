@@ -30,7 +30,7 @@ public abstract class Material extends Item {
 
     private static final int QUANTIDADE_MAXIMA = Item.QUANTIDADE_MAXIMA;
 
-    private static final Map<Integer, Item> combinacoesPossiveis = Map.of(
+    public static final Map<Integer, Item> combinacoesPossiveis = Map.of(
         // sum(id, id=idMax, quantidade_id * QMAX^id), itemCorrespodente
         
         // MACHADO
