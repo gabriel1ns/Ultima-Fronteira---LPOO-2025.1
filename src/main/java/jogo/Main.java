@@ -1,8 +1,8 @@
 package jogo;
 import jogo.ambiente.Ambiente;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
-import jogo.itens.consumiveis.Agua;
-import jogo.itens.consumiveis.alimentos.Alimento;
+import jogo.itens.consumiveis.agua.Agua;
+import jogo.itens.consumiveis.alimentos.AlimentoFruta;
 import jogo.personagem.Personagem;
 import jogo.sistema.Turno;
 import jogo.utils.InputOutput;
@@ -19,7 +19,7 @@ public class Main {
         Personagem personagem = Personagem.novoPersonagem(nomePersonagem, classePersonagem);
         
         // DBG - REMOVER OU ALTERAR DEPOIS
-        personagem.getInventario().adicionarItem(new Alimento("Banana", 2, 15, 0));
+        personagem.getInventario().adicionarItem(new AlimentoFruta());
         personagem.getInventario().adicionarItem(new Agua(true, 20));
         System.out.println("Tome uma colher de chá, receba itens básicos pra começar a sua jornada:");
         System.out.println(personagem.getInventario());

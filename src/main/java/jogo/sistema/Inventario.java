@@ -1,8 +1,8 @@
 package jogo.sistema;
 import jogo.itens.Item;
-import jogo.itens.consumiveis.Consumivel;
-import jogo.itens.executaveis.armas.Arma;
-import jogo.itens.executaveis.ferramentas.Ferramenta;
+import jogo.itens.armas.Arma;
+import jogo.itens.consumiveis.IConsumivel;
+import jogo.itens.ferramentas.Ferramenta;
 import jogo.itens.materiais.Material;
 import jogo.personagem.Personagem;
 
@@ -14,7 +14,7 @@ public class Inventario {
     // TODO métodos para remoção de armas, ferramentas e consumíveis de seus subconteiners
     private Arma[] armas;
     private Ferramenta[] ferramentas;
-    private Consumivel[] consumiveis;
+    private IConsumivel[] consumiveis;
     private int quantidadeArmas;
     private int quantidadeFerramentas;
     private int quantidadeConsumiveis;
@@ -29,7 +29,7 @@ public class Inventario {
         this.quantidadeArmas = 1;
         this.ferramentas = new Ferramenta[capacidadeMaxima];
         this.quantidadeFerramentas = 0;
-        this.consumiveis = new Consumivel[capacidadeMaxima];
+        this.consumiveis = new IConsumivel[capacidadeMaxima];
         this.quantidadeConsumiveis = 0;
     }
 
@@ -46,7 +46,7 @@ public class Inventario {
         } else if(item instanceof Ferramenta ferramenta) {
             ferramentas[quantidadeFerramentas] = ferramenta;
             quantidadeFerramentas++;
-        } else if(item instanceof Consumivel consumivel) {
+        } else if(item instanceof IConsumivel consumivel) {
             consumiveis[quantidadeConsumiveis] = consumivel;
             quantidadeConsumiveis++;
         }
@@ -116,7 +116,7 @@ public class Inventario {
         quantidadeItens = 0;
     }
 
-    public boolean usarItemConsumivel(Consumivel consumivel, Personagem personagem) {
+    public boolean usarItemConsumivel(IConsumivel consumivel, Personagem personagem) {
         int indice = encontrarItem(consumivel);
         if(indice < 0) return false;
 

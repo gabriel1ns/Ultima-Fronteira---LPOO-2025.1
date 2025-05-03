@@ -1,42 +1,26 @@
 package jogo.itens.armas;
 
-import com.sun.jdi.event.ExceptionEvent;
-
-import jogo.eventos.Evento;
 import jogo.eventos.criatura.EventoCriatura;
 import jogo.itens.Item;
-import jogo.itens.executaveis.Executavel;
 
-public class Arma extends Item {
+public abstract class Arma extends Item {
     private int dano;
     private int alcance;
-    // TODO: adicionar sistema de municao
-    // (no momento, todas as armas teriam "municao infinita")
+    // TODO adicionar sistema de municao (no momento todas as armas teriam "municao infinita")
 
-    public Arma(String tipo, int peso, int durabilidade, int dano, int alcance) {
-        super(tipo, peso, durabilidade);
+    public Arma(String nome, int peso, int durabilidade, int dano, int alcance) {
+        super(nome, peso, durabilidade, 1);
 
         setDano(dano);
         setAlcance(alcance);
     }
 
-    // Possivel implementacao
-    // @Override
-    // public void usar(Evento eventoCriatura) {
-    //     if(!EventoCriatura.class.isInstance(eventoCriatura)) {
-    //         // rodar excecao
-    //     }
-    //     EventoCriatura criatura = EventoCriatura.class.cast(eventoCriatura);
+    public void usar(EventoCriatura criatura) {
+        if(this.alcance >= criatura.getDistancia())
+            criatura.setVida(criatura.getVida() - this.dano);
 
-    //     int distancia = criatura.getDistancia();
-        
-    //     if(this.alcance >= distancia) {
-    //         int vidaCriaturaAtual = criatura.getVida();
-    //         criatura.setVida(vidaCriaturaAtual - this.dano);
-    //     }
-
-    //     super.setDurabilidade(super.getDurabilidade() - 1);
-    // }
+        super.setDurabilidade(super.getDurabilidade() - 1);
+    }
 
     final public void setDano(int dano) {
         this.dano = dano;

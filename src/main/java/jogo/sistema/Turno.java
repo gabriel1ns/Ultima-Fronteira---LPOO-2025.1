@@ -9,12 +9,12 @@ import jogo.eventos.criatura.EventoCriatura;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;
 import jogo.sistema.Inventario;
-import jogo.itens.consumiveis.Agua;
 import jogo.itens.consumiveis.alimentos.Alimento;
-import jogo.itens.executaveis.armas.Arma;
 import jogo.itens.materiais.Material;
 import jogo.itens.Item;
-import jogo.itens.consumiveis.Consumivel;
+import jogo.itens.armas.Arma;
+import jogo.itens.consumiveis.IConsumivel;
+import jogo.itens.consumiveis.agua.Agua;
 import jogo.itens.consumiveis.alimentos.Alimento;
 import jogo.personagem.Personagem;
 import jogo.utils.InputOutput;
@@ -208,7 +208,7 @@ public class Turno {
         Item item = inventario.getItem(indice - 1);
 
         if (item != null) {
-            if(item instanceof Consumivel consumivel && 
+            if(item instanceof IConsumivel consumivel && 
             inventario.usarItemConsumivel(consumivel, personagem)) {
                 io.print("Item consumido");
             } else if(item instanceof Material material &&

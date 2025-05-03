@@ -3,13 +3,13 @@ package jogo.eventos.criatura;
 import jogo.eventos.Evento;
 
 public abstract class EventoCriatura extends Evento {
-    private String tipo;
+    private String nome;
     private int vida;
     private int dano;
     private int distancia;
 
-    public EventoCriatura(String tipo, String descricao, int vida, int dano, int distancia) {
-        super(tipo, descricao);
+    public EventoCriatura(String nome, String descricao, int vida, int dano, int distancia) {
+        super(nome, descricao);
 
         setVida(vida);
         setDano(dano);

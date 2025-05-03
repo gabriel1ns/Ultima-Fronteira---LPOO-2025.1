@@ -2,35 +2,17 @@ package jogo.itens.ferramentas;
 
 import jogo.itens.Item;
 
-public class Ferramenta extends Item {
-    private String tipo;
+public abstract class Ferramenta extends Item {
     private int eficiencia;
 
-    public Ferramenta(String tipo, int eficiencia, int peso, int durabilidade) {
-        super(tipo, peso, durabilidade);
+    public Ferramenta(String nome, int eficiencia, int peso, int durabilidade) {
+        super(nome, peso, durabilidade, 1);
 
-        setTipo(tipo);
         setEficiencia(eficiencia);
-    }
-
-    // combinacao de materiais
-    public Ferramenta(String tipo, int eficiencia) {
-        super(tipo, 0, 0);
-
-        setTipo(tipo);
-        setEficiencia(eficiencia);
-    }
-
-    final public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
 
     final public void setEficiencia(int eficiencia) {
         this.eficiencia = eficiencia;
-    }
-
-    public String getTipo() {
-        return tipo;
     }
 
     public int getEficiencia() {

@@ -2,6 +2,6 @@ package jogo.itens.consumiveis;
 
 import jogo.personagem.Personagem;
 
-public interface Consumivel {
+public interface IConsumivel {
     public void consumir(Personagem personagem);
 }

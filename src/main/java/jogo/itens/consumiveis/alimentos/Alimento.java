@@ -1,28 +1,24 @@
 package jogo.itens.consumiveis.alimentos;
 
 import jogo.itens.Item;
-import jogo.itens.consumiveis.Consumivel;
+import jogo.itens.consumiveis.IConsumivel;
 import jogo.personagem.Personagem;
 
-public class Alimento extends Item implements Consumivel {
+public abstract class Alimento extends Item implements IConsumivel {
     private int valorNutricional;
 
-    public Alimento(String tipo, int peso, int valorNutricional, int prazoDeValidade) {
-        super(tipo, peso, prazoDeValidade);
+    public Alimento(String nome, int peso, int valorNutricional, int prazoDeValidade) {
+        super(nome, peso, prazoDeValidade, 1);
 
         setValorNutricional(valorNutricional);
     }
         
     @Override
     public void consumir(Personagem personagem) {
-        int fomeAtual = personagem.getFome();
-        personagem.setFome(fomeAtual + this.valorNutricional);
+        personagem.setFome(personagem.getFome() + this.valorNutricional);
 
-        if(super.getDurabilidade() <= 0) {
-            int vidaAtual = personagem.getVida();
-            personagem.setVida(vidaAtual - this.valorNutricional);
-        }
-
+        if(super.getDurabilidade() <= 0)
+            personagem.setVida(personagem.getVida() - this.valorNutricional);
     }
 
     final public void setValorNutricional(int valorNutricional) {

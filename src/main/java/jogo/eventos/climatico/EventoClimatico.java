@@ -3,26 +3,26 @@ package jogo.eventos.climatico;
 import jogo.eventos.Evento;
 
 public abstract class EventoClimatico extends Evento {
-    private String tipo;
+    private String nome;
     private int duracao;
 
-    public EventoClimatico(String tipo, String descricao, int duracao) {
-        super(tipo, descricao);
+    public EventoClimatico(String nome, String descricao, int duracao) {
+        super(nome, descricao);
 
-        setTipo(tipo);
+        setNome(nome);
         setDuracao(duracao);
     }
 
-    final public void setTipo(String tipo) {
-        this.tipo = tipo;
+    final public void setNome(String nome) {
+        this.nome = nome;
     }
 
     final public void setDuracao(int duracao) {
         this.duracao = duracao;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getNome() {
+        return nome;
     }
 
     public int getDuracao() {

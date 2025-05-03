@@ -1,11 +1,12 @@
 package jogo.itens.materiais;
 
 public class MaterialFerro extends Material {
-    private final static String TIPO        = "Ferro";
-    private final static int PESO           = 5;
-    private final static int RESISTENCIA    = 10;
+    private final static int ID = 1;
 
-    public MaterialFerro() {
-        super(TIPO, PESO, RESISTENCIA);
+    private final static String NOME        = "Ferro";
+    private final static int PESO           = 5;
+
+    public MaterialFerro(int quantidade) {
+        super(NOME, PESO, quantidade, ID);
     }
 }

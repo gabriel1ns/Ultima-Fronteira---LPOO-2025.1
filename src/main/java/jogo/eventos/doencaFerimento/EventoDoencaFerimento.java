@@ -3,12 +3,12 @@ package jogo.eventos.doencaFerimento;
 import jogo.eventos.Evento;
 
 public abstract class EventoDoencaFerimento extends Evento {
-    private String tipo;
+    private String nome;
     private int impacto;
     private String curaDisponivel;
 
-    public EventoDoencaFerimento(String tipo, String descricao, int impacto, String curaDisponivel) {
-        super(tipo, descricao);
+    public EventoDoencaFerimento(String nome, String descricao, int impacto, String curaDisponivel) {
+        super(nome, descricao);
 
         setImpacto(impacto);
         setCuraDisponivel(curaDisponivel);

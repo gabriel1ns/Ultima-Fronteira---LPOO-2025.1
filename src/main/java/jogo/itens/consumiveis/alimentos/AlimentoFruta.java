@@ -1,12 +1,12 @@
 package jogo.itens.consumiveis.alimentos;
 
-public class Fruta extends Alimento {
-    private final static String TIPO            = "Banana";
+public class AlimentoFruta extends Alimento {
+    private final static String NOME            = "Banana";
     private final static int PESO               = 1;
     private final static int VALOR_NUTRICIONAL  = 5;
     private final static int DURABILIDADE       = 20;
 
-    public Fruta() {
-        super(TIPO, PESO, VALOR_NUTRICIONAL, DURABILIDADE);
+    public AlimentoFruta() {
+        super(NOME, PESO, VALOR_NUTRICIONAL, DURABILIDADE);
     }
 }

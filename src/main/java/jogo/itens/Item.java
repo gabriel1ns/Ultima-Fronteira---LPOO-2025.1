@@ -1,16 +1,18 @@
 package jogo.itens;
 
 public abstract class Item {
+    private final static int QUANTIDADE_MAXIMA = 4;
+
     private String nome;
     private int peso;
     private int durabilidade;
-    private boolean consumivel;
     private int quantidade;
 
-    public Item(String nome, int peso, int durabilidade) {
+    public Item(String nome, int peso, int durabilidade, int quantidade) {
         setNome(nome);
         setPeso(peso);
         setDurabilidade(durabilidade);
+        setQuantidade(quantidade);
     }
 
     final public void setNome(String nome) {
@@ -25,6 +27,12 @@ public abstract class Item {
         this.durabilidade = durabilidade;
     }
 
+    final public void setQuantidade(int quantidade) {
+        if(quantidade > QUANTIDADE_MAXIMA) this.quantidade = QUANTIDADE_MAXIMA;
+        else if(quantidade < 0) this.quantidade = 0;
+        else this.quantidade = quantidade;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -37,23 +45,16 @@ public abstract class Item {
         return durabilidade;
     }
 
-    public boolean isConsumivel() {
-        return consumivel;
-    }
-
     public int getQuantidade() {
         return quantidade;
-    }
-
-    public boolean usar() {
-        return true;
     }
 
     @Override
     public String toString() {
         return  "Nome: " + this.nome + "\n" + 
                 "Peso: " + this.peso + "\n" + 
-                "Durabilidade: " + this.durabilidade + "\n";
+                "Durabilidade: " + this.durabilidade + "\n" + 
+                "Quantidade: " + this.quantidade + "\n";
     }
 }
 

@@ -4,11 +4,11 @@ import jogo.eventos.Evento;
 import jogo.itens.Item;
 
 public abstract class EventoDescoberta extends Evento {
-    private String tipo;
+    private String nome;
     private Item[] recursosEncontrados;
 
-    public EventoDescoberta(String tipo, String descricao, Item[] recursosEncontrados) {
-        super(tipo, descricao);
+    public EventoDescoberta(String nome, String descricao, Item[] recursosEncontrados) {
+        super(nome, descricao);
 
         setRecursosEncontrados(recursosEncontrados);
     }
