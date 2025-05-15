@@ -11,11 +11,11 @@ import jogo.utils.IntMath;
 
 public abstract class Material extends Item {
     static enum MateriaisEnum {
-        CORDA(1),
-        FERRO(2),
-        MADEIRA(3),
-        PEDRA(4),
-        PLANTA(5);
+        CORDA(0),
+        FERRO(1),
+        MADEIRA(2),
+        PEDRA(3),
+        PLANTA(4);
 
         private int id;
 
@@ -28,6 +28,7 @@ public abstract class Material extends Item {
         }
     }
 
+    private static String TIPO = "Material";
     private static final int QUANTIDADE_MAXIMA = Item.QUANTIDADE_MAXIMA;
 
     public static final Map<Integer, Item> combinacoesPossiveis = Map.of(
@@ -55,7 +56,7 @@ public abstract class Material extends Item {
         new ArmaArcoFlecha(),
 
         // CORDA
-        2 * IntMath.pow(QUANTIDADE_MAXIMA, MateriaisEnum.CORDA.getId()),
+        2 * IntMath.pow(QUANTIDADE_MAXIMA, MateriaisEnum.PLANTA.getId()),
         new MaterialCorda(1)
 
     );
@@ -63,7 +64,7 @@ public abstract class Material extends Item {
     private final int ID;
     
     public Material(String nome, int peso, int quantidade) {
-        super(nome, peso, 0, quantidade);
+        super(nome, TIPO, peso, 0, quantidade);
 
         this.ID = MateriaisEnum.valueOf(nome).getId();
     }

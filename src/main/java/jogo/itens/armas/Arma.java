@@ -4,12 +4,14 @@ import jogo.eventos.criatura.EventoCriatura;
 import jogo.itens.Item;
 
 public abstract class Arma extends Item {
+    static private String TIPO = "Arma";
+
     private int dano;
     private int alcance;
     // TODO adicionar sistema de municao (no momento todas as armas teriam "municao infinita")
 
     public Arma(String nome, int peso, int durabilidade, int dano, int alcance) {
-        super(nome, peso, durabilidade, 1);
+        super(nome, TIPO, peso, durabilidade, 1);
 
         setDano(dano);
         setAlcance(alcance);

@@ -1,10 +1,9 @@
 package jogo.itens.consumiveis.remedios;
 
-import jogo.itens.Item;
-import jogo.itens.consumiveis.IConsumivel;
+import jogo.itens.consumiveis.Consumivel;
 import jogo.personagem.Personagem;
 
-public abstract class Remedio extends Item implements IConsumivel {
+public abstract class Remedio extends Consumivel {
     private int efeito;
 
     public Remedio(String nome, int peso, int durabilidade, int efeito) {

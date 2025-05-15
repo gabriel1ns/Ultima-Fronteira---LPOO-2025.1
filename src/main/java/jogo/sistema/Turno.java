@@ -153,14 +153,14 @@ public class Turno {
     }
 
     private void faseDeAtaque(EventoCriatura criatura) {
-        Arma[] armas = personagem.getInventario().getArmas();
+        ArrayList<Item> armas = personagem.getInventario().getItens(Inventario.InventarioEnum.ARMA.getIndice());
 
-        for(int i = 1; i <= armas.length; i++) {
-            if(armas[i] == null) break;
-            io.print(i + ". " + armas[i].toString());
+        for(int i = 1; i <= armas.size(); i++) {
+            if(armas.get(i) == null) break;
+            io.print(i + ". " + armas.get(i).toString());
         }
 
-        int escolha = Integer.parseInt(io.getInput("Escolha sua arma (1-" + armas.length + ")"));
+        int escolha = Integer.parseInt(io.getInput("Escolha sua arma (1-" + armas.size() + ")"));
             
         personagem.getInventario().usarItemArma(escolha, criatura);
     }

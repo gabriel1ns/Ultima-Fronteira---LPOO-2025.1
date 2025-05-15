@@ -1,10 +1,9 @@
 package jogo.itens.consumiveis.alimentos;
 
-import jogo.itens.Item;
-import jogo.itens.consumiveis.IConsumivel;
+import jogo.itens.consumiveis.Consumivel;
 import jogo.personagem.Personagem;
 
-public abstract class Alimento extends Item implements IConsumivel {
+public abstract class Alimento extends Consumivel {
     private int valorNutricional;
 
     public Alimento(String nome, int peso, int valorNutricional, int prazoDeValidade) {

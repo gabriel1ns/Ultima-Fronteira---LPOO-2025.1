@@ -1,10 +1,9 @@
 package jogo.itens.consumiveis.agua;
 
-import jogo.itens.Item;
-import jogo.itens.consumiveis.IConsumivel;
+import jogo.itens.consumiveis.Consumivel;
 import jogo.personagem.Personagem;
 
-public class Agua extends Item implements IConsumivel {
+public class Agua extends Consumivel {
     private boolean pureza;
     private int volume;
 

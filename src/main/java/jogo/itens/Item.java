@@ -3,38 +3,36 @@ package jogo.itens;
 public abstract class Item {
     public final static int QUANTIDADE_MAXIMA = 4;
 
-    private String nome;
-    private int peso;
+    final private String nome;
+    final private String tipo;
+    final private int peso;
+
     private int durabilidade;
     private int quantidade;
 
-    public Item(String nome, int peso, int durabilidade, int quantidade) {
-        setNome(nome);
-        setPeso(peso);
+    public Item(String nome, String tipo, int peso, int durabilidade, int quantidade) {
+        this.nome = nome;
+        this.tipo = tipo;
+        this.peso = peso;
         setDurabilidade(durabilidade);
         setQuantidade(quantidade);
     }
 
-    final public void setNome(String nome) {
-        this.nome = nome;
+    public void mudarQuantidade(int dQuantidade) {
+        setQuantidade(getQuantidade() + dQuantidade);
     }
 
-    final public void setPeso(int peso) {
-        this.peso = peso;
-    }
-
-    final public void setDurabilidade(int durabilidade) {
-        this.durabilidade = durabilidade;
-    }
-
-    final public void setQuantidade(int quantidade) {
-        if(quantidade > QUANTIDADE_MAXIMA) this.quantidade = QUANTIDADE_MAXIMA;
-        else if(quantidade < 0) this.quantidade = 0;
-        else this.quantidade = quantidade;
+    public void decrementarDurabilidade() {
+        setDurabilidade(getDurabilidade() - 1);
     }
 
     public String getNome() {
         return nome;
+    }
+
+
+    public String getTipo() {
+        return tipo;
     }
 
     public int getPeso() { //caso tenha alguma interação futura, como uma espada mt pesada etc
@@ -45,9 +43,19 @@ public abstract class Item {
         return durabilidade;
     }
 
+    final public void setDurabilidade(int durabilidade) {
+        this.durabilidade = durabilidade;
+    }
+
     public int getQuantidade() {
         return quantidade;
     }
+
+    final public void setQuantidade(int quantidade) {
+        if(quantidade > QUANTIDADE_MAXIMA) this.quantidade = QUANTIDADE_MAXIMA;
+        else if(quantidade < 0) this.quantidade = 0;
+        else this.quantidade = quantidade;
+    }    
 
     @Override
     public String toString() {
