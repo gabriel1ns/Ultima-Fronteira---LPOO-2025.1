@@ -103,26 +103,24 @@ public class Inventario {
         quantidadeItens++;
     }
 
-    public boolean removerItem(Item item, int quantidade) {
+    public boolean removerItem(int indice, int quantidade) {
+        Item item = itens[0].get(indice); 
+
         int N = InventarioEnum.valueOf(item.getTipo().toUpperCase()).getIndice();
 
-        int indiceEm0 = encontrarItem(item, 0, 0, true);
+        int indiceEm0 = indice;
         int indiceEmN = encontrarItem(item, 0, N, true);
         
         if(indiceEm0 == -1) return false;
 
-        while(indiceEm0 != -1 && quantidade > 0) {
-            int diff = itens[0].get(indiceEm0).getQuantidade() - quantidade;
+        int diff = itens[0].get(indiceEm0).getQuantidade() - quantidade;
 
-            itens[0].get(indiceEm0).mudarQuantidade(-quantidade);
-            itens[N].get(indiceEmN).mudarQuantidade(-quantidade);
+        itens[0].get(indiceEm0).mudarQuantidade(-quantidade);
+        itens[N].get(indiceEmN).mudarQuantidade(-quantidade);
 
-            if(diff <= 0){
-                itens[0].remove(indiceEm0);
-                itens[N].remove(indiceEmN);
-            }
-
-            quantidade = (diff <= 0)? -1*diff : 0;
+        if(diff <= 0){
+            itens[0].remove(indiceEm0);
+            itens[N].remove(indiceEmN);
         }
 
         quantidadeItens--;

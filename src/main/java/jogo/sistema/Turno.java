@@ -2,23 +2,13 @@ package jogo.sistema;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Scanner;
-import java.util.Set;
 
 import jogo.ambiente.Ambiente;
-import jogo.eventos.Evento;
 import jogo.eventos.criatura.EventoCriatura;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;
-import jogo.sistema.Inventario;
-import jogo.itens.consumiveis.alimentos.Alimento;
-import jogo.itens.materiais.Material;
 import jogo.itens.Item;
-import jogo.itens.armas.Arma;
-import jogo.itens.consumiveis.IConsumivel;
-import jogo.itens.consumiveis.agua.Agua;
-import jogo.itens.consumiveis.alimentos.Alimento;
+import jogo.itens.materiais.Material;
 import jogo.personagem.Personagem;
 import jogo.utils.InputOutput;
 
@@ -220,7 +210,7 @@ public class Turno {
     }
 
     private void combinarMateriaisDoInventario(Inventario inventario) {
-        ArrayList materiais = inventario.getItens(Inventario.InventarioEnum.MATERIAL.getIndice());
+        ArrayList<Item> materiais = inventario.getItens(Inventario.InventarioEnum.MATERIAL.getIndice());
 
         if(materiais.isEmpty()) {
             io.print("Nenhum material para combinar");
