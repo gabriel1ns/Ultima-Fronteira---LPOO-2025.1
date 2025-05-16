@@ -2,6 +2,9 @@ package jogo.ambiente;
 
 import jogo.eventos.Evento;
 import jogo.itens.Item;
+import jogo.itens.consumiveis.alimentos.Fruta;
+import jogo.itens.consumiveis.alimentos.Proteina;
+import jogo.itens.materiais.Pedra;
 
 public class AmbienteMontanha extends Ambiente {
 
@@ -11,7 +14,8 @@ public class AmbienteMontanha extends Ambiente {
     private final int[] probabilidadeDeEventos = {};
 
     public AmbienteMontanha(Item[] recursosDisponiveis) {
-        super(recursosDisponiveis);
+        super(new Item[] {new Pedra(), new Fruta(), new Proteina()}, new int[] {10}, 5);
+        //falar com nick quais serão os itens das montanhas
         
         super.setNome(this.nome);
         super.setDescricao(this.descricao);

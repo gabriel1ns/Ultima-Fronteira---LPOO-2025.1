@@ -12,8 +12,8 @@ public abstract class Ambiente {
     private Evento[] eventosPossiveis;
     private int[] probabilidadeDeEventos;
 
-    public Ambiente(Item[] recursosDisponiveis, int[] probabilidadeDeEventos, int dificuldadeDeExploracao) {
-        setRecursosDisponiveis(recursosDisponiveis);
+    public Ambiente(Evento[] eventosPossiveis, int[] probabilidadeDeEventos, int dificuldadeDeExploracao) {
+        setEventosPossiveis(eventosPossiveis);
         setProbabilidadeDeEventos(probabilidadeDeEventos);
         setDificuldadeDeExploracao(dificuldadeDeExploracao);
     }

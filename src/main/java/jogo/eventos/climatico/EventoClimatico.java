@@ -1,15 +1,15 @@
 package jogo.eventos.climatico;
 
 import jogo.eventos.Evento;
+import jogo.personagem.Personagem;
 
 public abstract class EventoClimatico extends Evento {
     private String nome;
     private int duracao;
 
-    public EventoClimatico(String nome, String descricao, int duracao) {
-        super(nome, descricao);
-
-        setNome(nome);
+    public EventoClimatico(String tipo, String descricao, int duracao) {
+        super(tipo, descricao, duracao);
+        setTipo(tipo);
         setDuracao(duracao);
     }
 
@@ -31,7 +31,9 @@ public abstract class EventoClimatico extends Evento {
 
     @Override
     public String toString() {
-        return  super.toString + 
+        return  super.toString() +
                 "Duracao: " + this.duracao + "\n";
     }
+
+
 }
