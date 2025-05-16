@@ -103,13 +103,17 @@ public class Inventario {
         quantidadeItens++;
     }
 
-    public boolean removerItem(int indice, int quantidade) {
-        Item item = itens[0].get(indice); 
+    public boolean removerItem(int indiceEm0, int quantidade) {
+        Item item = itens[0].get(indiceEm0); 
 
+        return removerItem(item, quantidade);
+    }
+
+    public boolean removerItem(Item item, int quantidade) {
         int N = InventarioEnum.valueOf(item.getTipo().toUpperCase()).getIndice();
 
-        int indiceEm0 = indice;
-        int indiceEmN = encontrarItem(item, 0, N, true);
+        int indiceEm0 = encontrarItem(item, itens[0].size()-1, 0, true);
+        int indiceEmN = encontrarItem(item, itens[N].size()-1, N, true);
         
         if(indiceEm0 == -1) return false;
 
@@ -143,7 +147,8 @@ public class Inventario {
         int incremento = reverso? -1 : 1;
         
         for (int i = indiceInicial; i != limite; i += incremento) {
-            if ((itens[indiceSubArray].get(i).getNome()).equals(item.getNome())) {
+            if ((itens[indiceSubArray].get(i).getNome()).equals(item.getNome()) &&
+                (itens[indiceSubArray].get(i).getDurabilidade()) == item.getDurabilidade())  {
                 indice = i;
                 break;
             }
