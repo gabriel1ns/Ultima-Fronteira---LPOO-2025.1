@@ -1,7 +1,10 @@
 package jogo.sistema;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import jogo.ambiente.Ambiente;
 import jogo.eventos.Evento;
@@ -173,20 +176,24 @@ public class Turno {
             io.print("\nInventário");
             io.print(inventario.toString());
 
-            io.print("\n1. Usar item");
-            io.print("2. Descartar item");
-            io.print("3. Acabar o turno");
+            io.print("\n1. Usar consumivel");
+            io.print("2. Combinar materiais");
+            io.print("3. Descartar itens");
+            io.print("4. Acabar o turno");
 
             int escolha = Integer.parseInt(io.getInput("Escolha uma opção: "));
 
             switch (escolha) {
             case 1:
-                usarItemDoInventario(inventario);
+                usarConsumivelDoInventario(inventario);
                 break;
             case 2:
-                descartarItemDoInventario(inventario);
+                combinarMateriaisDoInventario(inventario);
                 break;
             case 3:
+                descartarItemDoInventario(inventario);
+                break;
+            case 4:
                 fecharInventario = true;
                 break;
             default:
@@ -195,45 +202,77 @@ public class Turno {
         }
     }
 
-    private void usarItemDoInventario(Inventario inventario) {
-        if (inventario.getQuantidadeItens() == 0) {
-            io.print("Inventário vazio!");
+    private void usarConsumivelDoInventario(Inventario inventario) {
+        ArrayList<Item> consumiveis = inventario.getItens(Inventario.InventarioEnum.CONSUMIVEL.getIndice());
+
+        if (consumiveis.isEmpty()) {
+            io.print("Nenhum consumivel disponivel");
             return;
         }
 
+        io.print(consumiveis.toString());
+
         int indice = 0;
-        while(indice < 1 || indice > inventario.getQuantidadeItens())
-            indice = Integer.parseInt(io.getInput("Escolha o item: (1-" + inventario.getQuantidadeItens() + "):"));
+        while(indice < 1 || indice > consumiveis.size())
+            indice = Integer.parseInt(io.getInput("Escolha o consumivel: (1-" + consumiveis.size() + "):"));
 
-        Item item = inventario.getItem(indice - 1);
+        inventario.usarItemConsumivel(indice, personagem);
+    }
 
-        if (item != null) {
-            if(item instanceof IConsumivel consumivel && 
-            inventario.usarItemConsumivel(consumivel, personagem)) {
-                io.print("Item consumido");
-            } else if(item instanceof Material material &&
-            inventario.usarItemMaterial(material, materiais)) {
-                io.print("Materiais combinados");
-            } else {
-                io.print("Não foi possível usar o item.");
-            }
+    private void combinarMateriaisDoInventario(Inventario inventario) {
+        ArrayList materiais = inventario.getItens(Inventario.InventarioEnum.MATERIAL.getIndice());
+
+        if(materiais.isEmpty()) {
+            io.print("Nenhum material para combinar");
+            return;
         }
+
+        io.print(materiais.toString());
+
+        ArrayList<Material> materiaisEscolhidos = new ArrayList<>();
+        HashSet<Integer> indicesMarcados = new HashSet<>();
+
+        int indice = 0;
+        while(0 <= indice || indice < materiais.size()) {
+            indice = Integer.parseInt(io.getInput("Escolha o material: (1-" + materiais.size() + "):")) - 1;
+
+            if(indicesMarcados.contains(indice)) {
+                io.print("Material já escolhido");
+                continue;
+            }
+
+            indicesMarcados.add(indice);
+
+            int quantidade = Integer.parseInt(io.getInput("Digite a quantidade: "));
+
+            Material material = (Material) materiais.get(indice);
+            material.setQuantidade(quantidade);
+
+            materiaisEscolhidos.add(material);
+        }
+        
+        Material[] materiaisEscolhidosArr = materiaisEscolhidos.toArray(new Material[materiaisEscolhidos.size()]);
+
+        inventario.combinarMateriais(materiaisEscolhidosArr);
     }
 
     private void descartarItemDoInventario(Inventario inventario) {
-        if (inventario.getQuantidadeItens() == 0) {
+        if (inventario.estaVazio()) {
             io.print("Inventário vazio!");
             return;
         }
 
-        int indice = 0;
-        while(indice < 1 || indice > inventario.getQuantidadeItens())
-            indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeItens() + "):"));
+        ArrayList<Item> itens = inventario.getItens();
 
-        Item item = inventario.getItem(indice - 1);
-        if (item != null) {
-            inventario.removerItem(item);
-            io.print("Item " + item.getNome() + " descartado!");
+        int indice = 0;
+
+        while(0 <= indice && indice < inventario.getQuantidadeItens()) {
+            io.print(itens.toString());
+            
+            indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeItens() + "):")) - 1;
+            int quantidade = Integer.parseInt(io.getInput("Digite a quantidade: "));
+
+            inventario.removerItem(indice, quantidade);
         }
     }
 }

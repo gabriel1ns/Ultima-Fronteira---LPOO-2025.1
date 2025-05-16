@@ -130,16 +130,7 @@ public class Inventario {
     }
 
     public int encontrarItem(Item item) {
-        int indice = -1;
-        
-        for (int i = 0; i < quantidadeItens; i++) {
-            if ((itens[0].get(i).getNome()).equals(item.getNome())) {
-                indice = i;
-                break;
-            }
-        }
-
-        return indice;
+        return encontrarItem(item, 0, 0, false);
     }
 
     public int encontrarItem(Item item, int indiceInicial, int indiceSubArray, boolean reverso) throws IndexOutOfBoundsException {
@@ -186,6 +177,10 @@ public class Inventario {
         return quantidadeItens >= capacidadeMaxima;
     }
 
+    public boolean estaVazio() {
+        return quantidadeItens == 0;
+    }
+
     public void esvaziar() {
         for (int i = 0; i < quantidadeItens; i++) {
             itens[i] = null;
@@ -194,7 +189,7 @@ public class Inventario {
     }
 
     public ArrayList<Item> getItens() {
-        return itens[0];
+        return getItens(0);
     }
     
     public ArrayList<Item> getItens(int indiceSubArray) {
