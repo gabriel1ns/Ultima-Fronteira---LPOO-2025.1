@@ -7,27 +7,13 @@ import jogo.eventos.criatura.EventoUrso;
 
 public class AmbienteFloresta extends Ambiente {
 
-    private final String nome = "Floresta";
-    private final String descricao = "Uma área rica em recursos naturais, mas também habitada por predadores.";
-    private final Evento[] eventosPossiveis = {new EventoLobo(),
-    new EventoUrso(), new EventoTempestade(2)};
-    private final int[] probabilidadeDeEventos = {5,5,6};
+    private static final String NOME = "Floresta";
+    private static final String DESCRICAO = "Uma área rica em recursos naturais, mas também habitada por predadores.";
+    private static final Evento[] EVENTOS_POSSIVEIS = {new EventoLobo(),
+        new EventoUrso(), new EventoTempestade(2)};
+    private static final int[] PROBABILIDADE_DE_EVENTOS = {5,5,6};
 
-    public AmbienteFloresta(Evento[] eventosPossiveis) {
-        super(new Evento[]{new EventoLobo(),
-                new EventoUrso(), new EventoTempestade(2)},
-                new int[] {5,5,6}, 3);
-        // mexer na probabilidade de eventos após criar subclasses dos eventos
-        
-        super.setNome(this.nome);
-        super.setDescricao(descricao);
-        super.setEventosPossiveis(eventosPossiveis);
-        super.setProbabilidadeDeEventos(probabilidadeDeEventos);
-        
-        assert(eventosPossiveis.length == probabilidadeDeEventos.length);
-
-
-        
-
+    public AmbienteFloresta() {
+        super(NOME, DESCRICAO, EVENTOS_POSSIVEIS, PROBABILIDADE_DE_EVENTOS, 5);
     }
 }

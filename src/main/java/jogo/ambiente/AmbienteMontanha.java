@@ -28,6 +28,6 @@ public class AmbienteMontanha extends Ambiente {
         // super.dificuldadeDeExploracao *= 4;
 
 
-        /*
+        */
     }
 }
