@@ -2,9 +2,6 @@ package jogo.ambiente;
 
 import jogo.eventos.Evento;
 import jogo.itens.Item;
-import jogo.itens.consumiveis.alimentos.Fruta;
-import jogo.itens.consumiveis.alimentos.Proteina;
-import jogo.itens.materiais.Pedra;
 
 public class AmbienteMontanha extends Ambiente {
 

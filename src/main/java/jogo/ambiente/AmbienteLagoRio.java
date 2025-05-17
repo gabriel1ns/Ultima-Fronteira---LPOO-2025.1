@@ -3,8 +3,6 @@ package jogo.ambiente;
 import jogo.eventos.Evento;
 import jogo.eventos.climatico.EventoTempestade;
 import jogo.itens.Item;
-import jogo.itens.consumiveis.Agua;
-import jogo.itens.consumiveis.alimentos.Proteina;
 
 public class AmbienteLagoRio extends Ambiente {
 

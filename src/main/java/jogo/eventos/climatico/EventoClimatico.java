@@ -1,10 +1,9 @@
 package jogo.eventos.climatico;
 
 import jogo.eventos.Evento;
-import jogo.personagem.Personagem;
 
 public abstract class EventoClimatico extends Evento {
-    private String nome;
+    private String tipo;
     private int duracao;
 
     public EventoClimatico(String tipo, String descricao, int duracao) {
@@ -13,16 +12,16 @@ public abstract class EventoClimatico extends Evento {
         setDuracao(duracao);
     }
 
-    final public void setNome(String nome) {
-        this.nome = nome;
+    final public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     final public void setDuracao(int duracao) {
         this.duracao = duracao;
     }
 
-    public String getNome() {
-        return nome;
+    public String getTipo() {
+        return tipo;
     }
 
     public int getDuracao() {

@@ -1,10 +1,7 @@
 package jogo.eventos.criatura;
 
 import jogo.ambiente.Ambiente;
-import jogo.itens.consumiveis.alimentos.Proteina;
 import jogo.personagem.Personagem;
-
-import jogo.utils.InputOutput;
 
 public class EventoUrso extends EventoCriatura {
 

@@ -1,11 +1,11 @@
 package jogo.eventos.criatura;
 
 import jogo.eventos.Evento;
-import jogo.itens.consumiveis.alimentos.Proteina;
+import jogo.itens.consumiveis.alimentos.AlimentoProteina;
 import jogo.personagem.Personagem;
 
 public abstract class EventoCriatura extends Evento {
-    private String nome;
+    private String tipo;
     private int vida;
     private int dano;
     private int distancia;
@@ -29,7 +29,7 @@ public abstract class EventoCriatura extends Evento {
     public void adicionarProteina(Personagem personagem) {
         if (this.getVida() <= 0) {
 
-            Proteina proteina = new Proteina(getQuantProteina());
+            AlimentoProteina proteina = new AlimentoProteina();
             personagem.getInventario().adicionarItem(proteina);
         }
     }

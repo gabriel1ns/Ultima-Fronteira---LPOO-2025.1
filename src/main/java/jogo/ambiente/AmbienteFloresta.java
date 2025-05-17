@@ -4,11 +4,6 @@ import jogo.eventos.Evento;
 import jogo.eventos.climatico.EventoTempestade;
 import jogo.eventos.criatura.EventoLobo;
 import jogo.eventos.criatura.EventoUrso;
-import jogo.itens.Item;
-import jogo.itens.consumiveis.alimentos.Fruta;
-import jogo.itens.consumiveis.alimentos.Proteina;
-import jogo.itens.materiais.Madeira;
-import jogo.itens.materiais.Pedra;
 
 public class AmbienteFloresta extends Ambiente {
 
