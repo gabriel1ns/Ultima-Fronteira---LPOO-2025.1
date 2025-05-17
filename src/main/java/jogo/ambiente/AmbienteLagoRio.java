@@ -11,7 +11,7 @@ public class AmbienteLagoRio extends Ambiente {
     private final Evento[] eventosPossiveis = {new EventoTempestade(2)};
     private final int[] probabilidadeDeEventos = {7};
 
-    public AmbienteLagoRio(Item[] recursosDisponiveis) {
+    public AmbienteLagoRio(Evento[] eventosPossiveis) {
         super(new Evento[]{ new EventoTempestade(2)}, new int[] {7}, 1); //resolver agua
         
         super.setNome(this.nome);

@@ -2,15 +2,20 @@ package jogo.eventos.descoberta;
 
 import jogo.eventos.Evento;
 import jogo.itens.Item;
+import jogo.personagem.Personagem;
 
 public abstract class EventoDescoberta extends Evento {
     private String nome;
     private Item[] recursosEncontrados;
 
-    public EventoDescoberta(String nome, String descricao, Item[] recursosEncontrados) {
-        super(nome, descricao);
+    public EventoDescoberta(String tipo, String descricao, Item[] recursosEncontrados) {
+        super(tipo, descricao, 1);
 
         setRecursosEncontrados(recursosEncontrados);
+    }
+
+    public void atualizarInventario(Personagem personagem, Item item) {
+        personagem.getInventario().adicionarItem(item);
     }
 
     final public void setRecursosEncontrados(Item[] recursosEncontrados) {
@@ -28,7 +33,7 @@ public abstract class EventoDescoberta extends Evento {
             itens += item.getNome();
         }
 
-        return  super.toString + 
+        return  super.toString() +
                 "Recursos encontrados: " + itens + "\n";
     }
 }

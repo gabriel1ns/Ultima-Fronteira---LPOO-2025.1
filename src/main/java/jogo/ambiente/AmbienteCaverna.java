@@ -11,7 +11,7 @@ public class AmbienteCaverna extends Ambiente {
     private final Evento[] eventosPossiveis = {new EventoUrso()};
     private final int[] probabilidadeDeEventos = {1};
 
-    public AmbienteCaverna(Item[] items) {
+    public AmbienteCaverna(Evento[] eventosPossiveis) {
         super(new Evento[]{new EventoUrso()}, new int[] {1}, 5);
         
         super.setNome(this.nome);

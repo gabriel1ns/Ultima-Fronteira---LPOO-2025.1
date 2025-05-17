@@ -10,18 +10,24 @@ public class AmbienteMontanha extends Ambiente {
     private final Evento[] eventosPossiveis = {};
     private final int[] probabilidadeDeEventos = {};
 
+
+    /*
+     RESOLVER ISSO AQUI
+
     public AmbienteMontanha(Item[] recursosDisponiveis) {
-        super(new Item[] {new Pedra(), new Fruta(), new Proteina()}, new int[] {10}, 5);
+        super(new Item[]{new Pedra(), new Fruta(), new Proteina()}, new int[]{10}, 5);
         //falar com nick quais serão os itens das montanhas
-        
+
         super.setNome(this.nome);
         super.setDescricao(this.descricao);
         super.setEventosPossiveis(this.eventosPossiveis);
         super.setProbabilidadeDeEventos(this.probabilidadeDeEventos);
-        assert(eventosPossiveis.length == probabilidadeDeEventos.length);
+        assert (eventosPossiveis.length == probabilidadeDeEventos.length);
 
         // Atributos adicionais
-       // super.dificuldadeDeExploracao *= 4;
+        // super.dificuldadeDeExploracao *= 4;
 
+
+        /*
     }
 }
