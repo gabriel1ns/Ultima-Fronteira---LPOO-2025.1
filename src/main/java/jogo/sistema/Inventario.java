@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import jogo.eventos.criatura.EventoCriatura;
 import jogo.itens.Item;
 import jogo.itens.armas.Arma;
+import jogo.itens.armas.ArmaPunhos;
 import jogo.itens.consumiveis.Consumivel;
 import jogo.itens.ferramentas.Ferramenta;
 import jogo.itens.materiais.Material;
@@ -52,6 +53,8 @@ public class Inventario {
             new ArrayList<Material>()
         };
 
+        itens[InventarioEnum.ARMA.getIndice()].add(new ArmaPunhos());
+
         //his.itens = new Item[capacidadeMaxima + 10];
         this.capacidadeMaxima = capacidadeMaxima;
         this.quantidadeItens = 0;
@@ -80,7 +83,7 @@ public class Inventario {
     public void adicionarItem(Item item) {
         int N = InventarioEnum.valueOf(item.getTipo().toUpperCase()).getIndice();
 
-        int indiceEm0 = encontrarItem(item, 0, 0, false);
+        int indiceEm0 = encontrarItem(item);
         int indiceEmN = encontrarItem(item, 0, N, false);
 
         while(indiceEm0 != -1 && item.getQuantidade() > 0) {
@@ -135,11 +138,11 @@ public class Inventario {
         return encontrarItem(item, 0, 0, false);
     }
 
-    public int encontrarItem(Item item, int indiceInicial, int indiceSubArray, boolean reverso) throws IndexOutOfBoundsException {
+    public int encontrarItem(Item item, int indiceInicial, int indiceSubArray, boolean reverso) {
         if(indiceInicial < 0 || indiceInicial >= itens[indiceSubArray].size())
-            throw new IndexOutOfBoundsException("'indiceInicial' fora dos limites");
+            return -1;
         if(indiceSubArray < 0 || indiceSubArray >= 1 + InventarioEnum.values().length)
-            throw new IndexOutOfBoundsException("'indiceSubArray' fora dos limites");
+            return -1;
         
         int indice = -1;
         

@@ -202,9 +202,9 @@ public class Turno {
 
         io.print(consumiveis.toString());
 
-        int indice = 0;
-        while(indice < 1 || indice > consumiveis.size())
-            indice = Integer.parseInt(io.getInput("Escolha o consumivel: (1-" + consumiveis.size() + "):"));
+        int indice = -1;
+        while(indice < 0 || indice > consumiveis.size())
+            indice = Integer.parseInt(io.getInput("Escolha o consumivel: (1-" + consumiveis.size() + "):")) - 1;
 
         inventario.usarItemConsumivel(indice, personagem);
     }
