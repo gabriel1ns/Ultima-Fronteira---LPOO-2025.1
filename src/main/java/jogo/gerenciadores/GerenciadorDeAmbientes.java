@@ -10,6 +10,7 @@ import jogo.ambiente.AmbienteFloresta;
 import jogo.ambiente.AmbienteLagoRio;
 import jogo.ambiente.AmbienteMontanha;
 import jogo.ambiente.AmbienteRuinas;
+import jogo.eventos.Evento;
 import jogo.itens.Item;
 
 public class GerenciadorDeAmbientes {
@@ -18,11 +19,11 @@ public class GerenciadorDeAmbientes {
 
     public GerenciadorDeAmbientes() {
         this.ambientes = new ArrayList<>();
-        ambientes.add(new AmbienteFloresta(new Item[2]));
-        ambientes.add(new AmbienteCaverna(new Item[2]));
-        ambientes.add(new AmbienteLagoRio(new Item[2]));
-        ambientes.add(new AmbienteMontanha(new Item[2]));
-        ambientes.add(new AmbienteRuinas(new Item[2]));
+        ambientes.add(new AmbienteFloresta(new Evento[2]));
+        ambientes.add(new AmbienteCaverna(new Evento[2]));
+        ambientes.add(new AmbienteLagoRio(new Evento[2]));
+        //ambientes.add(new AmbienteMontanha(new Evento[2])); - resolver esse pq precisa da picareta por exemplo
+        ambientes.add(new AmbienteRuinas(new Evento[2]));
 
     }
 

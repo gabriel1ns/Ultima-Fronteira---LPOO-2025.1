@@ -1,6 +1,7 @@
 package jogo.ambiente;
 
 import jogo.eventos.Evento;
+import jogo.eventos.climatico.EventoTempestade;
 import jogo.itens.Item;
 import jogo.itens.materiais.Madeira;
 
@@ -11,8 +12,8 @@ public class AmbienteRuinas extends Ambiente {
     private final Evento[] eventosPossiveis = {};
     private final int[] probabilidadeDeEventos = {};
 
-    public AmbienteRuinas(Item[] recursosDisponiveis) {
-        super(new Item[] {new Madeira()}, new int[] {5}, 4);
+    public AmbienteRuinas(Evento[] eventosPossiveis) {
+        super(new Evento[]{ new EventoTempestade(2)}, new int[] {7}, 4);
 
 
         super.setNome(this.nome);
