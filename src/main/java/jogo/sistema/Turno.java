@@ -248,7 +248,11 @@ public class Turno {
         Material[] materiaisEscolhidosArr = materiaisEscolhidos.toArray(new Material[materiaisEscolhidos.size()]);
 
         io.print(materiais.toString());
-        inventario.combinarMateriais(materiaisEscolhidosArr);
+        boolean res = inventario.combinarMateriais(materiaisEscolhidosArr);
+
+        if(!res) {
+            io.print("Item não existe");
+        }
     }
 
     private void descartarItemDoInventario(Inventario inventario) {

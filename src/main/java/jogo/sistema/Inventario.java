@@ -94,8 +94,8 @@ public class Inventario {
             
             item.mudarQuantidade(-diff);
 
-            indiceEm0 = encontrarItem(item, indiceEm0, 0, false);
-            indiceEmN = encontrarItem(item, indiceEmN, N, false);
+            indiceEm0 = encontrarItem(item, indiceEm0+1, 0, false);
+            indiceEmN = encontrarItem(item, indiceEmN+1, N, false);
         }
 
         if(item.getQuantidade() > 0) {
