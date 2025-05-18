@@ -19,9 +19,9 @@ public abstract class Arma extends Item {
 
     public void usar(EventoCriatura criatura) {
         if(this.alcance >= criatura.getDistancia())
-            criatura.setVida(criatura.getVida() - this.dano);
+            criatura.diminuirVida(dano);
 
-        super.setDurabilidade(super.getDurabilidade() - 1);
+        super.decrementarDurabilidade();
     }
 
     final public void setDano(int dano) {

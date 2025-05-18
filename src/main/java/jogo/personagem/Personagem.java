@@ -50,7 +50,8 @@ public class Personagem {
 
     public void mudarAtributo(String statusAfetado, int efeito) {
         // TODO implementacao temporaria
-        if(statusAfetado == "Energia") setEnergia(getEnergia() + efeito);
+        if(statusAfetado.equals("Energia")) setEnergia(getEnergia() + efeito);
+        if(statusAfetado.equals("Vida")) setVida(getVida() + efeito);
     }
 
     private int checarLimites(int valor, int limInferior, int limSuperior) {

@@ -3,7 +3,7 @@ package jogo.eventos.criatura;
 import jogo.ambiente.Ambiente;
 import jogo.personagem.Personagem;
 
-public class EventoCorvo extends EventoCriatura {
+public class EventoCriaturaCorvo extends EventoCriatura {
 
     public EventoCorvo(){
         super("Corvo", "", 10, 0, 20, 1);

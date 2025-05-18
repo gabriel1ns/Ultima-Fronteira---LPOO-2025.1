@@ -57,7 +57,7 @@ public class GerenciadorDeEventos {
         quantidadeDeEventos++;
     }
 
-    public void acionarEventos(Ambiente ambiente, Personagem personagem) {
+    public void executarEventos(Ambiente ambiente, Personagem personagem) {
         ArrayList<Evento> eventosParaRemocao = new ArrayList<>();
         
         for(int i = 0; i < quantidadeDeEventos; i++) {

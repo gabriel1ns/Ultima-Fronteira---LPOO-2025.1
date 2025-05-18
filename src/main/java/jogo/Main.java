@@ -1,6 +1,6 @@
 package jogo;
 import jogo.ambiente.Ambiente;
-import jogo.ambiente.AmbienteLagoRio;
+import jogo.ambiente.AmbienteCaverna;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.itens.consumiveis.agua.Agua;
 import jogo.itens.consumiveis.alimentos.AlimentoFruta;
@@ -33,7 +33,7 @@ public class Main {
 
         GerenciadorDeAmbientes gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
         //Ambiente ambienteInicial = gerenciadorDeAmbientes.sortearAmbiente();
-        Ambiente ambienteInicial = new AmbienteLagoRio();
+        Ambiente ambienteInicial = new AmbienteCaverna();
 
         Turno turno = new Turno(personagem, ambienteInicial, gerenciadorDeAmbientes, io);
 

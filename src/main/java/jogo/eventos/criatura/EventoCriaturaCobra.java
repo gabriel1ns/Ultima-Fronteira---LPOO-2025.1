@@ -3,21 +3,20 @@ package jogo.eventos.criatura;
 import jogo.ambiente.Ambiente;
 import jogo.personagem.Personagem;
 
+public class EventoCriaturaCobra extends EventoCriatura {
 
-public class EventoLobo extends EventoCriatura {
-
-    public EventoLobo() {
-        super("Lobo", "", 60, 10, 2, 4);
+    public EventoCobra(String descricao, int vida, int dano) {
+        super("Cobra", "", 30, 8, 1, 3);
 
     }
 
     @Override
     public void executar(Ambiente ambiente, Personagem personagem) {
-        atacarPersonagem(personagem);
-    }
+    atacarPersonagem(personagem);
+}
 
     @Override
     protected int getQuantProteina() {
-        return 2;
+        return 1;
     }
 }

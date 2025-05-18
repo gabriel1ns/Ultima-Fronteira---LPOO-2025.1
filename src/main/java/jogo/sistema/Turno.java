@@ -115,7 +115,7 @@ public class Turno {
     }
 
     private void faseDeEeventos() {
-        gerenciadorDeEventos.acionarEventos(ambienteAtual, personagem);
+        gerenciadorDeEventos.executarEventos(ambienteAtual, personagem);
     }
 
     private void faseDeManutencao() {
