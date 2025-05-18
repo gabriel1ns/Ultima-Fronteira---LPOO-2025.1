@@ -6,7 +6,7 @@ import jogo.personagem.Personagem;
 public class EventoUrso extends EventoCriatura {
 
     public EventoUrso() {
-        super("Urso", "", 100, 15, 1, 3);
+        super("Urso", "", 2, 15, 1, 3);
 
     }
 

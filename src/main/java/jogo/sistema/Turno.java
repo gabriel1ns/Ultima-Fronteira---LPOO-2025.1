@@ -148,12 +148,12 @@ public class Turno {
     private void faseDeAtaque(EventoCriatura criatura) {
         ArrayList<Item> armas = personagem.getInventario().getItens(Inventario.InventarioEnum.ARMA.getIndice());
 
-        for(int i = 1; i <= armas.size(); i++) {
+        for(int i = 0; i < armas.size(); i++) {
             if(armas.get(i) == null) break;
             io.print(i + ". " + armas.get(i).toString());
         }
 
-        int escolha = Integer.parseInt(io.getInput("Escolha sua arma (1-" + armas.size() + ")"));
+        int escolha = Integer.parseInt(io.getInput("Escolha sua arma (1-" + armas.size() + ")")) - 1;
             
         personagem.getInventario().usarItemArma(escolha, criatura);
     }
@@ -254,15 +254,16 @@ public class Turno {
 
         ArrayList<Item> itens = inventario.getItens();
 
-        int indice = 0;
+        io.print(itens.toString());
+        int indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeItens() + "):")) - 1;
 
-        while(0 <= indice && indice < inventario.getQuantidadeItens()) {
-            io.print(itens.toString());
-            
-            indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeItens() + "):")) - 1;
+        while(0 <= indice && indice < inventario.getQuantidadeItens()) {            
             int quantidade = Integer.parseInt(io.getInput("Digite a quantidade: "));
 
             inventario.removerItem(indice, quantidade);
+
+            io.print(itens.toString());
+            indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeItens() + "):")) - 1;
         }
     }
 }

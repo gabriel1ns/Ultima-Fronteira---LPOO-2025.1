@@ -120,17 +120,15 @@ public class Inventario {
         
         if(indiceEm0 == -1) return false;
 
-        int diff = itens[0].get(indiceEm0).getQuantidade() - quantidade;
-
         itens[0].get(indiceEm0).mudarQuantidade(-quantidade);
-        itens[N].get(indiceEmN).mudarQuantidade(-quantidade);
 
-        if(diff <= 0){
+        if(itens[0].get(indiceEm0).getQuantidade() == 0){
             itens[0].remove(indiceEm0);
             itens[N].remove(indiceEmN);
+
+            quantidadeItens--;
         }
 
-        quantidadeItens--;
         return true;
     }
 
