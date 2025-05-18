@@ -66,7 +66,7 @@ public abstract class Material extends Item {
     public Material(String nome, int peso, int quantidade) {
         super(nome, TIPO, peso, 0, quantidade);
 
-        this.ID = MateriaisEnum.valueOf(nome).getId();
+        this.ID = MateriaisEnum.valueOf(nome.toUpperCase()).getId();
     }
 
     public int getID() {

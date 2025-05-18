@@ -1,35 +1,49 @@
 package jogo.eventos.descoberta;
 
+import jogo.ambiente.Ambiente;
 import jogo.eventos.Evento;
 import jogo.itens.Item;
 import jogo.personagem.Personagem;
+import jogo.sistema.Inventario;
+import jogo.utils.InputOutput;
 
 public abstract class EventoDescoberta extends Evento {
-    private String nome;
-    private Item[] recursosEncontrados;
 
-    public EventoDescoberta(String tipo, String descricao, Item[] recursosEncontrados) {
-        super(tipo, descricao, 1);
+    private final Item[] itensDescobertos;
+    private final Item itemNecessario;
 
-        setRecursosEncontrados(recursosEncontrados);
+    public EventoDescoberta(String nome, String descricao, Item[] itensDescobertos, Item itemNecessario) {
+        super(nome, descricao, 1);
+
+        this.itensDescobertos = itensDescobertos;
+        this.itemNecessario = itemNecessario;
     }
 
-    public void atualizarInventario(Personagem personagem, Item item) {
-        personagem.getInventario().adicionarItem(item);
-    }
+    public void executar(Ambiente ambiente, Personagem personagem) {
+        InputOutput io = new InputOutput();
+        io.print("Encontrou " + super.getNome());
+        
+        Inventario inventario = personagem.getInventario();
 
-    final public void setRecursosEncontrados(Item[] recursosEncontrados) {
-        this.recursosEncontrados = recursosEncontrados;
-    }
+        int indice = inventario.encontrarItem(itemNecessario);
 
-    public Item[] getRecursosEncontrados() {
-        return recursosEncontrados;
+        if(indice == -1) {
+            io.print("Voce não tem " + this.itemNecessario);
+            // TODO mensagem para item nao encontrado
+            return;
+        }
+
+        for(Item item: this.itensDescobertos) {
+            inventario.adicionarItem(item);
+        }
+
+        inventario.getItens().get(indice).decrementarDurabilidade();
     }
 
     @Override
     public String toString() {
         String itens = "";
-        for(Item item : recursosEncontrados) {
+        for(Item item : this.itensDescobertos) {
             itens += item.getNome();
         }
 

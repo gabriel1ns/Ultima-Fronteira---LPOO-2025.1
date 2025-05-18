@@ -148,8 +148,7 @@ public class Inventario {
         int incremento = reverso? -1 : 1;
         
         for (int i = indiceInicial; i != limite; i += incremento) {
-            if ((itens[indiceSubArray].get(i).getNome()).equals(item.getNome()) &&
-                (itens[indiceSubArray].get(i).getDurabilidade()) == item.getDurabilidade())  {
+            if ((itens[indiceSubArray].get(i).getNome()).equals(item.getNome()))  {
                 indice = i;
                 break;
             }

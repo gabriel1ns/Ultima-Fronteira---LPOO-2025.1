@@ -222,9 +222,10 @@ public class Turno {
         ArrayList<Material> materiaisEscolhidos = new ArrayList<>();
         HashSet<Integer> indicesMarcados = new HashSet<>();
 
-        int indice = 0;
-        while(0 <= indice || indice < materiais.size()) {
-            indice = Integer.parseInt(io.getInput("Escolha o material: (1-" + materiais.size() + "):")) - 1;
+        io.print(materiais.toString());
+        int indice = Integer.parseInt(io.getInput("Escolha o material: (1-" + materiais.size() + "):")) - 1;
+        
+        while(0 <= indice && indice < materiais.size()) {
 
             if(indicesMarcados.contains(indice)) {
                 io.print("Material já escolhido");
@@ -239,10 +240,14 @@ public class Turno {
             material.setQuantidade(quantidade);
 
             materiaisEscolhidos.add(material);
+
+            io.print(materiais.toString());
+            indice = Integer.parseInt(io.getInput("Escolha o material: (1-" + materiais.size() + "):")) - 1;
         }
         
         Material[] materiaisEscolhidosArr = materiaisEscolhidos.toArray(new Material[materiaisEscolhidos.size()]);
 
+        io.print(materiais.toString());
         inventario.combinarMateriais(materiaisEscolhidosArr);
     }
 

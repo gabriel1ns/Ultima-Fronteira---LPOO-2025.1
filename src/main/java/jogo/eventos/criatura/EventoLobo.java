@@ -7,7 +7,7 @@ import jogo.personagem.Personagem;
 public class EventoLobo extends EventoCriatura {
 
     public EventoLobo() {
-        super("Lobo", "",60, 10, 2, 4);
+        super("Lobo", "", 60, 10, 2, 4);
 
     }
 

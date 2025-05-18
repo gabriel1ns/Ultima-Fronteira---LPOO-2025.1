@@ -13,7 +13,7 @@ public abstract class EventoCriatura extends Evento {
     private int duracao;
 
     public EventoCriatura(String tipo, String descricao, int vida, int dano, int distancia, int duracao) {
-        super(tipo, descricao, distancia);
+        super(tipo, descricao, duracao);
 
         setVida(vida);
         setDano(dano);
