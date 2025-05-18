@@ -7,6 +7,7 @@ import jogo.ambiente.Ambiente;
 import jogo.eventos.Evento;
 import jogo.eventos.criatura.EventoCriatura;
 import jogo.personagem.Personagem;
+import jogo.utils.InputOutput;
 
 
 public class GerenciadorDeEventos {
@@ -67,6 +68,9 @@ public class GerenciadorDeEventos {
                 continue;
             }
 
+            InputOutput io = new InputOutput();
+            io.print("Executando " + evento.getNome());
+            
             evento.executar(ambiente, personagem);
 
             if(!(evento instanceof EventoCriatura))

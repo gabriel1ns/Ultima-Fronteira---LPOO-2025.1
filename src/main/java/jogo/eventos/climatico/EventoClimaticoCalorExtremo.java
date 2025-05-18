@@ -3,7 +3,7 @@ package jogo.eventos.climatico;
 import jogo.ambiente.Ambiente;
 import jogo.personagem.Personagem;
 
-public class EventoCalorExtremo extends EventoClimatico{
+public class EventoClimaticoCalorExtremo extends EventoClimatico{
 
     private final int aumentoSede = 10;
     private final int reducaoEnergia = 7;

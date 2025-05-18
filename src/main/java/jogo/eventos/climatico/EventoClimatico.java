@@ -1,38 +1,32 @@
 package jogo.eventos.climatico;
 
+import jogo.ambiente.Ambiente;
 import jogo.eventos.Evento;
+import jogo.personagem.Personagem;
 
 public abstract class EventoClimatico extends Evento {
-    private String tipo;
-    private int duracao;
+    private final String[] statusAfetados;
+    private final int[] efeitos;
 
-    public EventoClimatico(String tipo, String descricao, int duracao) {
-        super(tipo, descricao, duracao);
-        setTipo(tipo);
-        setDuracao(duracao);
-    }
+    public EventoClimatico(String nome, String descricao, int duracao, String[] statusAfetados, int[] efeitos) {
+        super(nome, descricao, duracao);
+        this.statusAfetados = statusAfetados;
+        this.efeitos = efeitos;
 
-    final public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    final public void setDuracao(int duracao) {
-        this.duracao = duracao;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public int getDuracao() {
-        return duracao;
+        assert(statusAfetados.length == efeitos.length);
     }
 
     @Override
-    public String toString() {
-        return  super.toString() +
-                "Duracao: " + this.duracao + "\n";
+    public void executar(Ambiente ambiente, Personagem personagem) {
+        for(int i = 0; i < statusAfetados.length; i++)
+            personagem.mudarAtributo(statusAfetados[i], efeitos[i]);
     }
+
+    // @Override
+    // public String toString() {
+    //     return  super.toString() +
+    //             "Duracao: " + this.duracao + "\n";
+    // }
 
 
 }

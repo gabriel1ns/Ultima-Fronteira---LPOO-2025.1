@@ -48,6 +48,11 @@ public class Personagem {
         return inventario;
     }
 
+    public void mudarAtributo(String statusAfetado, int efeito) {
+        // TODO implementacao temporaria
+        if(statusAfetado == "Energia") setEnergia(getEnergia() + efeito);
+    }
+
     private int checarLimites(int valor, int limInferior, int limSuperior) {
         if(valor < limInferior) return limInferior;
         if(valor > limSuperior) return limSuperior;
