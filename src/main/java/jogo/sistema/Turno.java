@@ -8,6 +8,8 @@ import jogo.eventos.criatura.EventoCriatura;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;
 import jogo.itens.Item;
+import jogo.itens.armas.Arma;
+import jogo.itens.consumiveis.Consumivel;
 import jogo.itens.materiais.Material;
 import jogo.personagem.Personagem;
 import jogo.utils.InputOutput;
@@ -74,43 +76,58 @@ public class Turno {
             io.print("3. Batalhar " + criatura.getNome());
         }
 
-        int escolha = Integer.parseInt(io.getInput("Escolha uma opção: "));
+        while(true){
+            int escolha = Integer.parseInt(io.getInput("Escolha uma opção: "));
 
-        switch (escolha) {
-        case 1:
-            dEnergia *= 5;
-            dSede *= 5;    
-            dFome *= 5;    
+            switch (escolha) {
+            case 1:
+                if(personagem.getEnergia() < 15) {
+                    io.print(personagem.getNome() + " está cansado demais para explorar!");
+                    continue;
+                }
 
-            this.ambienteAtual = gerenciadorDeAmbientes.sortearAmbiente();
+                if(isEventoCriaturaAtivo) {
+                    io.print(personagem.getNome() + " está no meio de uma batalha!");
+                    continue;
+                }
 
-            gerenciadorDeEventos.setEventosPossiveis(ambienteAtual.getEventosPossiveis());
-            gerenciadorDeEventos.setProbabilidadeDeEventos(ambienteAtual.getProbabilidadeDeEventos());
+                dEnergia *= 5;
+                dSede *= 5;    
+                dFome *= 5;    
 
-            break;
-        case 2:
-            dEnergia = +15;
+                this.ambienteAtual = gerenciadorDeAmbientes.sortearAmbiente();
 
-            gerenciarInventario();
+                gerenciadorDeEventos.setEventosPossiveis(ambienteAtual.getEventosPossiveis());
+                gerenciadorDeEventos.setProbabilidadeDeEventos(ambienteAtual.getProbabilidadeDeEventos());
 
-            break;
-        case 3:
-            if(isEventoCriaturaAtivo) {
-                faseDeAtaque(criatura);
                 break;
+            case 2:
+                dEnergia = +15;
+
+                gerenciarInventario();
+
+                break;
+            case 3:
+                if(isEventoCriaturaAtivo) {
+                    faseDeAtaque(criatura);
+                    break;
+                }
+
+                if(personagem.getEnergia() == 0) {
+                    io.print(personagem.getNome() + "está cansado demais para explorar!");
+                    dEnergia += 2;
+                    continue;
+                }
+
+                gerenciadorDeEventos.adicionarEventoAleatorio();
+
+                break;
+            default:
+                io.print("Escolha inválida.");
+                continue;
             }
 
-            if(personagem.getEnergia() == 0) {
-                io.print(personagem.getNome() + "está cansado demais para explorar!");
-                dEnergia += 2;
-                break;
-            }
-
-            gerenciadorDeEventos.adicionarEventoAleatorio();
-
             break;
-        default:
-            io.print("Escolha inválida.");
         }
     }
 
@@ -148,12 +165,7 @@ public class Turno {
     private void faseDeAtaque(EventoCriatura criatura) {
         ArrayList<Item> armas = personagem.getInventario().getItens(Inventario.InventarioEnum.ARMA.getIndice());
 
-        for(int i = 0; i < armas.size(); i++) {
-            if(armas.get(i) == null) break;
-            io.print(i + ". " + armas.get(i).toString());
-        }
-
-        int escolha = Integer.parseInt(io.getInput("Escolha sua arma (1-" + armas.size() + ")")) - 1;
+        int escolha = io.decisaoEmIntervalo("Escolha sua arma", armas.toArray(Arma[]::new), armas.size());
             
         personagem.getInventario().usarItemArma(escolha, criatura);
     }
@@ -200,11 +212,7 @@ public class Turno {
             return;
         }
 
-        io.print(consumiveis.toString());
-
-        int indice = -1;
-        while(indice < 0 || indice > consumiveis.size())
-            indice = Integer.parseInt(io.getInput("Escolha o consumivel: (1-" + consumiveis.size() + "):")) - 1;
+        int indice = io.decisaoEmIntervalo("Escolha o consumível", consumiveis.toArray(Consumivel[]::new), consumiveis.size());
 
         inventario.usarItemConsumivel(indice, personagem);
     }
@@ -217,15 +225,13 @@ public class Turno {
             return;
         }
 
-        io.print(materiais.toString());
-
         ArrayList<Material> materiaisEscolhidos = new ArrayList<>();
         HashSet<Integer> indicesMarcados = new HashSet<>();
 
-        io.print(materiais.toString());
-        int indice = Integer.parseInt(io.getInput("Escolha o material: (1-" + materiais.size() + "):")) - 1;
-        
-        while(0 <= indice && indice < materiais.size()) {
+        while(true) {
+            int indice = io.decisaoEmIntervalo("Escolha os materiais, ou digite 0 para parar", materiais.toArray(Material[]::new), materiais.size());
+
+            if(indice == -1) break;
 
             if(indicesMarcados.contains(indice)) {
                 io.print("Material já escolhido");
@@ -240,14 +246,10 @@ public class Turno {
             material.setQuantidade(quantidade);
 
             materiaisEscolhidos.add(material);
-
-            io.print(materiais.toString());
-            indice = Integer.parseInt(io.getInput("Escolha o material: (1-" + materiais.size() + "):")) - 1;
         }
         
         Material[] materiaisEscolhidosArr = materiaisEscolhidos.toArray(new Material[materiaisEscolhidos.size()]);
 
-        io.print(materiais.toString());
         boolean res = inventario.combinarMateriais(materiaisEscolhidosArr);
 
         if(!res) {
@@ -263,16 +265,14 @@ public class Turno {
 
         ArrayList<Item> itens = inventario.getItens();
 
-        io.print(itens.toString());
-        int indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeItens() + "):")) - 1;
+        while(true) { 
+            int indice = io.decisaoEmIntervalo("Escolha o item para descarte ou digite 0 para parar", itens.toArray(Item[]::new), itens.size());
 
-        while(0 <= indice && indice < inventario.getQuantidadeItens()) {            
+            if(indice == -1) break;
+
             int quantidade = Integer.parseInt(io.getInput("Digite a quantidade: "));
 
             inventario.removerItem(indice, quantidade);
-
-            io.print(itens.toString());
-            indice = Integer.parseInt(io.getInput("Qual item deseja descartar? (1-" + inventario.getQuantidadeItens() + "):")) - 1;
         }
     }
 }

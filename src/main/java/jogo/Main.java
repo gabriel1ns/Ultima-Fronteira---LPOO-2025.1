@@ -1,6 +1,5 @@
 package jogo;
 import jogo.ambiente.Ambiente;
-import jogo.ambiente.AmbienteCaverna;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.itens.consumiveis.agua.Agua;
 import jogo.itens.consumiveis.alimentos.AlimentoFruta;
@@ -18,9 +17,9 @@ public class Main {
         io.print("Bem-vindo ao ÚLTIMA FRONTEIRA!");
 
         String nomePersonagem = io.getInput("Diga o seu nome");
-        String classePersonagem = io.getInput("Decida sua classe");
+        int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", Personagem.CLASSES, Personagem.CLASSES.length);
 
-        Personagem personagem = Personagem.novoPersonagem(nomePersonagem, classePersonagem);
+        Personagem personagem = Personagem.novoPersonagem(nomePersonagem, escolhaClassePersonagem);
         
         // DBG - REMOVER OU ALTERAR DEPOIS
         personagem.getInventario().adicionarItem(new AlimentoFruta());
@@ -32,8 +31,8 @@ public class Main {
         System.out.println(personagem.getInventario());
 
         GerenciadorDeAmbientes gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
-        //Ambiente ambienteInicial = gerenciadorDeAmbientes.sortearAmbiente();
-        Ambiente ambienteInicial = new AmbienteCaverna();
+        Ambiente ambienteInicial = gerenciadorDeAmbientes.sortearAmbiente();
+        //Ambiente ambienteInicial = new AmbienteCaverna();
 
         Turno turno = new Turno(personagem, ambienteInicial, gerenciadorDeAmbientes, io);
 

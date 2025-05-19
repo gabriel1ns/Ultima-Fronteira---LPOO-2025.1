@@ -22,10 +22,16 @@ public class Personagem {
     private int sanidade;
     private Inventario inventario;
 
-    public static Personagem novoPersonagem(String nome, String classeEscolhida) {
+    public static final String[] CLASSES = {"Lenhador", "Sobrevivente"};
+
+    public static Personagem novoPersonagem(String nome, int escolha) {
         // TODO adicionar mais classes de personagem
-        if(classeEscolhida.equals("Lenhador")) return new PersonagemLenhador(nome);
-        else return new PersonagemSobrevivente(nome);
+        switch(escolha){
+        case 1:
+            return new PersonagemLenhador(nome); 
+        default:
+            return new PersonagemSobrevivente(nome);
+        }
     }
 
     public Personagem(String nome, int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade, int capacidadeDoInventario) {

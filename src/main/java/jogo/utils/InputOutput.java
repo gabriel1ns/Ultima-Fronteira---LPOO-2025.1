@@ -15,8 +15,31 @@ public class InputOutput {
         System.out.println(mensagem);
     }
 
+    public String getInput() {
+        return scanner.nextLine();
+    }
+
     public String getInput(String entrada) {
         print(entrada);
-        return scanner.nextLine();
+        return getInput();
+    }
+
+    public int decisaoEmIntervalo(String mensagem, Object[] opcoes, int tamanho) {
+        print(mensagem);
+        
+        int indice;
+
+        do {
+            for(int i = 0; i < opcoes.length; i++)
+                print(i+1 + ". " + opcoes[i].toString());
+    
+            indice = Integer.parseInt(getInput()) - 1;
+            
+            if(indice < -1 || indice >= tamanho) 
+                print("Escolha inválida!");
+
+        } while(indice < -1 || indice >= tamanho);
+    
+        return indice;
     }
 }
