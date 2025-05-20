@@ -21,16 +21,17 @@ public abstract class EventoDescoberta extends Evento {
 
     public void executar(Ambiente ambiente, Personagem personagem) {
         InputOutput io = new InputOutput();
-        io.print("Encontrou " + super.getNome());
         
         Inventario inventario = personagem.getInventario();
 
         int indice = inventario.encontrarItem(itemNecessario);
 
         if(indice == -1) {
-            io.print("Voce não tem " + this.itemNecessario);
+            io.print(personagem.getNome() + " não tem " + this.itemNecessario);
             // TODO mensagem para item nao encontrado
             return;
+        }else {
+            io.print(personagem.getNome() + " utilizou " + this.itemNecessario);
         }
 
         for(Item item: this.itensDescobertos) {

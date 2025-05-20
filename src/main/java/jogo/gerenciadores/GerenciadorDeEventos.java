@@ -60,6 +60,12 @@ public class GerenciadorDeEventos {
     public void executarEventos(Ambiente ambiente, Personagem personagem) {
         ArrayList<Evento> eventosParaRemocao = new ArrayList<>();
         
+        InputOutput io = new InputOutput();
+
+        if(quantidadeDeEventos <= 0) {
+            io.print(personagem.getNome() + " não ecnontrou nada");
+        }
+
         for(int i = 0; i < quantidadeDeEventos; i++) {
             Evento evento = eventosAtivos[i];
 
@@ -68,8 +74,7 @@ public class GerenciadorDeEventos {
                 continue;
             }
 
-            InputOutput io = new InputOutput();
-            io.print("Executando " + evento.getNome());
+            io.print(evento.getDescricao());
             
             evento.executar(ambiente, personagem);
 

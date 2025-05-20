@@ -37,13 +37,6 @@ public class Inventario {
     private ArrayList<Item>[] itens;
 
     public Inventario(int capacidadeMaxima) {
-        // itens = new ArrayList<>(5);
-
-        // itens.set(0, new ArrayList<Item>());
-        // itens.set(1, new ArrayList<Arma>());
-        // itens.set(1, new ArrayList<Item>());
-        // itens.set(1, new ArrayList<Item>());
-        // itens.set(1, new ArrayList<Item>());
 
         itens = new ArrayList[]{
             new ArrayList<Item>(), 
@@ -60,7 +53,7 @@ public class Inventario {
         this.quantidadeItens = 0;
     }
 
-    public boolean combinarMateriais(Material[] materiaisCombinados) {
+    public Item combinarMateriais(Material[] materiaisCombinados) {
         int combinacaoID = 0;
         Item itemCombinado;
 
@@ -70,14 +63,14 @@ public class Inventario {
         itemCombinado = Material.combinacoesPossiveis.get(combinacaoID);
         
         if((itemCombinado == null)) 
-            return false;
+            return null;
 
         for(Material material: materiaisCombinados) 
             removerItem(material, material.getQuantidade());
         
         adicionarItem(itemCombinado);
 
-        return true;
+        return itemCombinado;
     }
 
     public void adicionarItem(Item item) {

@@ -68,7 +68,7 @@ public abstract class EventoCriatura extends Evento {
 
     @Override
     public String toString() {
-        return  super.toString() +
+        return  "Nome: " + super.getNome() + "\n" +
                 "Vida: " + this.vida + "\n" +
                 "Dano: " + this.dano + "\n" +
                 "Distancia: " + this.distancia + "\n";

@@ -2,7 +2,7 @@ package jogo.eventos.climatico;
 
 public class EventoClimaticoTempestade extends EventoClimatico{
     private static final String NOME                = "Tempestade";
-    private static final String DESCRICAO           = "";
+    private static final String DESCRICAO           = "Uma tempestade está ocorrendo";
     private static final String[] STATUS_AFETADOS   = {"Energia"};
     private static final int[] EFEITOS              = {-10};
 

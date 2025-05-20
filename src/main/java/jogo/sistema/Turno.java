@@ -66,17 +66,18 @@ public class Turno {
     private void faseDeAcao() {
         EventoCriatura criatura = gerenciadorDeEventos.getEventoCriaturaAtivo();
         boolean isEventoCriaturaAtivo = criatura != null;
-        
-        io.print("O que você deseja fazer?");
-        io.print("1. Mudar de ambiente");
-        io.print("2. Gerenciar inventário");
-        if(!isEventoCriaturaAtivo) {
-            io.print("3. Explorar " + ambienteAtual.getNome());
-        } else {
-            io.print("3. Batalhar " + criatura.getNome());
-        }
 
         while(true){
+            io.print("O que você deseja fazer?");
+            io.print("1. Mudar de ambiente");
+            io.print("2. Gerenciar inventário");
+            if(!isEventoCriaturaAtivo) {
+                io.print("3. Explorar " + ambienteAtual.getNome());
+                io.print("4. Descansar");
+            } else {
+                io.print("3. Batalhar " + criatura.getNome());
+            }
+
             int escolha = Integer.parseInt(io.getInput("Escolha uma opção: "));
 
             switch (escolha) {
@@ -102,11 +103,8 @@ public class Turno {
 
                 break;
             case 2:
-                dEnergia = +15;
-
                 gerenciarInventario();
-
-                break;
+                continue;
             case 3:
                 if(isEventoCriaturaAtivo) {
                     faseDeAtaque(criatura);
@@ -121,6 +119,10 @@ public class Turno {
 
                 gerenciadorDeEventos.adicionarEventoAleatorio();
 
+                break;
+            case 4:
+                io.print(personagem.getNome() + " está descansando");
+                dEnergia = +15;
                 break;
             default:
                 io.print("Escolha inválida.");
@@ -163,10 +165,14 @@ public class Turno {
     }
 
     private void faseDeAtaque(EventoCriatura criatura) {
+        io.print(criatura.toString());
+
         ArrayList<Item> armas = personagem.getInventario().getItens(Inventario.InventarioEnum.ARMA.getIndice());
 
         int escolha = io.decisaoEmIntervalo("Escolha sua arma", armas.toArray(Arma[]::new), armas.size());
             
+        io.print(personagem.getNome() + " atacou " + criatura.getNome() + " com " + armas.get(escolha).getNome());
+
         personagem.getInventario().usarItemArma(escolha, criatura);
     }
 
@@ -181,7 +187,7 @@ public class Turno {
             io.print("\n1. Usar consumivel");
             io.print("2. Combinar materiais");
             io.print("3. Descartar itens");
-            io.print("4. Acabar o turno");
+            io.print("4. Fechar o inventario");
 
             int escolha = Integer.parseInt(io.getInput("Escolha uma opção: "));
 
@@ -214,7 +220,11 @@ public class Turno {
 
         int indice = io.decisaoEmIntervalo("Escolha o consumível", consumiveis.toArray(Consumivel[]::new), consumiveis.size());
 
+        Consumivel itemConsumido = (Consumivel) consumiveis.get(indice);
+
         inventario.usarItemConsumivel(indice, personagem);
+
+        io.print(personagem.getNome() + " consumiu " + itemConsumido.getNome());
     }
 
     private void combinarMateriaisDoInventario(Inventario inventario) {
@@ -250,11 +260,12 @@ public class Turno {
         
         Material[] materiaisEscolhidosArr = materiaisEscolhidos.toArray(new Material[materiaisEscolhidos.size()]);
 
-        boolean res = inventario.combinarMateriais(materiaisEscolhidosArr);
+        Item itemCombinado = inventario.combinarMateriais(materiaisEscolhidosArr);
 
-        if(!res) {
+        if(itemCombinado == null)
             io.print("Item não existe");
-        }
+        else
+            io.print(personagem.getNome() + " construiu " + itemCombinado.getNome());
     }
 
     private void descartarItemDoInventario(Inventario inventario) {
@@ -271,6 +282,8 @@ public class Turno {
             if(indice == -1) break;
 
             int quantidade = Integer.parseInt(io.getInput("Digite a quantidade: "));
+
+            io.print(personagem.getNome() + " descartou " + quantidade + " " + itens.get(indice).getNome() + "(s)");
 
             inventario.removerItem(indice, quantidade);
         }
