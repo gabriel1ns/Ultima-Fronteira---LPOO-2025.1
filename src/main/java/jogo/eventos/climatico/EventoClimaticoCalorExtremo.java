@@ -1,20 +1,13 @@
 package jogo.eventos.climatico;
 
-import jogo.ambiente.Ambiente;
-import jogo.personagem.Personagem;
-
 public class EventoClimaticoCalorExtremo extends EventoClimatico{
 
-    private final int aumentoSede = 10;
-    private final int reducaoEnergia = 7;
+    private static final String NOME                = "Calor extremo";
+    private static final String DESCRICAO           = "Uma onda de calor está ocorrendo";
+    private static final String[] STATUS_AFETADOS   = {"Energia"};
+    private static final int[] EFEITOS              = {-10};
 
-    public EventoCalorExtremo(int duracao) {
-        super("Calor Extremo", "", duracao);
-    }
-
-    @Override
-    public void executar(Ambiente ambiente, Personagem personagem) {
-        personagem.setSede(personagem.getSede() + aumentoSede);
-        personagem.setEnergia(personagem.getEnergia() - reducaoEnergia);
+    public EventoClimaticoCalorExtremo(int duracao) {
+        super(NOME, DESCRICAO, duracao, STATUS_AFETADOS, EFEITOS);
     }
 }
