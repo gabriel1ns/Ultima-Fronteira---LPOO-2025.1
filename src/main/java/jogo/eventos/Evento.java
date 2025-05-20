@@ -1,15 +1,16 @@
 package jogo.eventos;
 
 public abstract class Evento implements EventoInterface {
-    private String nome;
-    private String descricao;
+    private final String nome;
+    private final String descricao;
 
-    protected String toString = "Evento: " + nome + "\n" +
-                                "Descricao: " + descricao + "\n";
+    private int duracao;
 
-    public Evento(String nome, String descricao) {
+    public Evento(String nome, String descricao, int duracao) {
         this.nome = nome;
         this.descricao = descricao;
+
+        setDuracao(duracao);
     }
 
     public String getNome() {
@@ -19,5 +20,12 @@ public abstract class Evento implements EventoInterface {
     public String getDescricao() {
         return descricao;
     }
-} // criar as subclasses dps (dificuldade falar com monitora)
-    // lol
+
+    public int getDuracao() {
+        return duracao;
+    }
+
+    public void setDuracao(int duracao) {
+        this.duracao = duracao;
+    }
+}

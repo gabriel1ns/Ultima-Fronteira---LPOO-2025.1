@@ -1,34 +1,55 @@
 package jogo.eventos.descoberta;
 
+import jogo.ambiente.Ambiente;
 import jogo.eventos.Evento;
 import jogo.itens.Item;
+import jogo.personagem.Personagem;
+import jogo.sistema.Inventario;
+import jogo.utils.InputOutput;
 
 public abstract class EventoDescoberta extends Evento {
-    private String tipo;
-    private Item[] recursosEncontrados;
 
-    public EventoDescoberta(String tipo, String descricao, Item[] recursosEncontrados) {
-        super(tipo, descricao);
+    private final Item[] itensDescobertos;
+    private final Item itemNecessario;
 
-        setRecursosEncontrados(recursosEncontrados);
+    public EventoDescoberta(String nome, String descricao, Item[] itensDescobertos, Item itemNecessario) {
+        super(nome, descricao, 1);
+
+        this.itensDescobertos = itensDescobertos;
+        this.itemNecessario = itemNecessario;
     }
 
-    final public void setRecursosEncontrados(Item[] recursosEncontrados) {
-        this.recursosEncontrados = recursosEncontrados;
-    }
+    @Override
+    public void executar(Ambiente ambiente, Personagem personagem) {
+        InputOutput io = new InputOutput();
+        
+        Inventario inventario = personagem.getInventario();
 
-    public Item[] getRecursosEncontrados() {
-        return recursosEncontrados;
+        int indice = inventario.encontrarItem(itemNecessario);
+
+        if(indice == -1) {
+            io.print(personagem.getNome() + " não tem " + this.itemNecessario);
+            // TODO mensagem para item nao encontrado
+            return;
+        }else {
+            io.print(personagem.getNome() + " utilizou " + this.itemNecessario);
+        }
+
+        for(Item item: this.itensDescobertos) {
+            inventario.adicionarItem(item);
+        }
+
+        inventario.getItens().get(indice).decrementarDurabilidade();
     }
 
     @Override
     public String toString() {
         String itens = "";
-        for(Item item : recursosEncontrados) {
+        for(Item item : this.itensDescobertos) {
             itens += item.getNome();
         }
 
-        return  super.toString + 
+        return  super.toString() +
                 "Recursos encontrados: " + itens + "\n";
     }
 }

@@ -1,26 +1,16 @@
 package jogo.ambiente;
 
 import jogo.eventos.Evento;
-import jogo.itens.Item;
+import jogo.eventos.descoberta.EventoDescobertaPedra;
 
 public class AmbienteMontanha extends Ambiente {
 
-    private final String nome = "Montanha";
-    private final String descricao = "Uma região de difícil acesso, mas rica em minérios e pedras preciosa";
-    private final Evento[] eventosPossiveis = {};
-    private final int[] probabilidadeDeEventos = {};
+    private static final String NOME = "Montanha";
+    private static final String DESCRICAO = "Uma região de difícil acesso, mas rica em minérios e pedras preciosa";
+    private static final Evento[] EVENTOS_POSSIVEIS = {new EventoDescobertaPedra()};
+    private static final int[] PROBABILIDADE_DE_EVENTOS = {2};
 
-    public AmbienteMontanha(Item[] recursosDisponiveis) {
-        super(recursosDisponiveis);
-        
-        super.setNome(this.nome);
-        super.setDescricao(this.descricao);
-        super.setEventosPossiveis(this.eventosPossiveis);
-        super.setProbabilidadeDeEventos(this.probabilidadeDeEventos);
-        assert(eventosPossiveis.length == probabilidadeDeEventos.length);
-
-        // Atributos adicionais
-       // super.dificuldadeDeExploracao *= 4;
-
+    public AmbienteMontanha() {
+        super(NOME, DESCRICAO, EVENTOS_POSSIVEIS, PROBABILIDADE_DE_EVENTOS, 5);
     }
 }

@@ -1,44 +1,49 @@
 package jogo;
-import jogo.itens.consumiveis.Agua;
-import jogo.itens.consumiveis.Alimento;
-import jogo.personagem.Personagem;
-import jogo.gerenciadores.GerenciadorDeAmbientes;
-import jogo.sistema.Turno;
 import jogo.ambiente.Ambiente;
-
-import java.util.Scanner;
+import jogo.gerenciadores.GerenciadorDeAmbientes;
+import jogo.itens.consumiveis.agua.Agua;
+import jogo.itens.consumiveis.alimentos.AlimentoFruta;
+import jogo.itens.ferramentas.FerramentaPicareta;
+import jogo.itens.materiais.MaterialMadeira;
+import jogo.itens.materiais.MaterialPedra;
+import jogo.personagem.Personagem;
+import jogo.sistema.Turno;
+import jogo.utils.InputOutput;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        InputOutput io = new InputOutput();
 
-        System.out.print("Digite o nome do seu personagem: ");
-        String nomePersonagem = scanner.nextLine();
+        io.print("Bem-vindo ao ÚLTIMA FRONTEIRA!");
 
-        System.out.println("Bem-vindo ao ÚLTIMA FRONTEIRA, " + nomePersonagem + "!");
+        String nomePersonagem = io.getInput("Diga o seu nome");
+        int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", Personagem.CLASSES, Personagem.CLASSES.length);
+
+        Personagem personagem = Personagem.novoPersonagem(nomePersonagem, escolhaClassePersonagem);
+        
+        // DBG - REMOVER OU ALTERAR DEPOIS
+        personagem.getInventario().adicionarItem(new AlimentoFruta());
+        personagem.getInventario().adicionarItem(new Agua(true, 20));
+        personagem.getInventario().adicionarItem(new FerramentaPicareta());
+        personagem.getInventario().adicionarItem(new MaterialPedra(2));
+        personagem.getInventario().adicionarItem(new MaterialMadeira(2));
+        System.out.println("Tome uma colher de chá, receba itens básicos pra começar a sua jornada:");
+        System.out.println(personagem.getInventario());
 
         GerenciadorDeAmbientes gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
-        Ambiente localizacaoInicial = gerenciadorDeAmbientes.getAmbientes().get(0);
+        Ambiente ambienteInicial = gerenciadorDeAmbientes.sortearAmbiente();
+        //Ambiente ambienteInicial = new AmbienteCaverna();
 
-        // mudar isso aqui, ele sempre começa na floresta, o correto é randomizar
+        Turno turno = new Turno(personagem, ambienteInicial, gerenciadorDeAmbientes, io);
 
-
-        Personagem jogador = new Personagem(nomePersonagem, localizacaoInicial);
-
-        jogador.getInventario().adicionarItem(new Alimento("Banana", 2, 15, 0));
-        jogador.getInventario().adicionarItem(new Agua(true, 20));
-        System.out.println("Tome uma colher de chá, receba itens básicos pra começar a sua jornada:");
-        System.out.println(jogador.getInventario());
-
-        Turno turno = new Turno(jogador, gerenciadorDeAmbientes);
-
-        for (int i = 1; i <= 10; i++) {
-            System.out.println("Turno " + i);
+        for (int i = 1;;i++) {
+            io.print("Turno" + i);
             turno.iniciarTurno();
-            System.out.println();
+
+            if(personagem.getVida() == 0) break;
+            io.print("");
         } // resolver saida do turno quando implementar as outras classes que faltam
 
-        System.out.println("Fim do jogo!");
-        scanner.close();
+        io.print("Fim do jogo!");
     }
 }

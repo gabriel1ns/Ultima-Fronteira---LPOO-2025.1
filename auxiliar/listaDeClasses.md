@@ -10,7 +10,7 @@
 
 - # Personagem - SUPERCLASSE
     - ## Atributos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _nome_ | String | Identificação do personagem |
         | _vida_ | int | Representa a resistência do personagem. Se chegar a zero, o jogo termina |
@@ -24,20 +24,20 @@
     
 - # Item - SUPERCLASSE
     - ## Atributos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _nome_ | String | Identificação do item |
         | _peso_ | int | Influencia a quantidade de itens que o personagem pode carregar |
         | _durabilidade_ | int | Alguns itens se desgastam com o uso e podem quebrar |
 
     - ## Métodos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _usar()_ | void | **/** |
         | _consumir()_ | void | **/** |
 
     - ## Subclasses
-        | Nome | Atributos adicionais | Tipo | Descrição | Métodos sobreescritos | Tipo | Descrição |
+        | Nome | Atributos adicionais | Nome | Descrição | Métodos sobreescritos | Nome | Descrição |
         |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
         | **Alimento** | _Valor nutricional_ | int | Pontos de fome restaurados | _consumir()_ | void | Restaura fome e pode ter efeitos colaterais (como intoxicação alimentar) |
         | | _tipo_ | String | Fruta, carne, enlatado, etc. |
@@ -56,14 +56,14 @@
 
 - # Inventário - CLASSE
     - ## Atributos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _listaDeItens_ | Item[] | Contém todos os objetos que o personagem possui |
         | _pesoTotal_ | int | Soma do peso dos itens carregados |
         | _espacoDisponivel_ | int | Capacidade máxima do inventário |
 
     - ## Métodos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _adicionarItem(Item item)_ | void | Insere um novo item no inventário, se houver espaço |
         | _removerItem(String nomeItem)_ | void | Retira um item do inventário |
@@ -71,7 +71,7 @@
 
 - # Evento - SUPERCLASSE
     - ## Atributos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _nome_ | String | Identificação do evento |
         | _descricao_ | String | Texto explicativo sobre o evento |
@@ -80,12 +80,12 @@
         | _condicaoDeAtivacao_ | **/** | Determina se o evento pode ocorrer (ex.: apenas em determinados ambientes) |
 
     - ## Métodos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _executar(Personagem jogador, Ambiente local)_ | void | Define a lógica do evento e aplica seus efeitos ao personagem e ao ambiente |
 
     - ## Subclasses
-        | Nome | Atributos adicionais | Tipo | Descrição | Exemplos |
+        | Nome | Atributos adicionais | Nome | Descrição | Exemplos |
         |:-:|:-:|:-:|:-:|:-:|
         | **EventoClimatico** | _tipo_ | String | Nevasca, tempestade, calor extremo, etc. | **Nevasca**: Reduz a visibilidade e exige mais energia para se movimentar |
         | | _duracao_ | int | Quantidade de turnos que o evento permanece ativo | **Chuva Forte**: Pode encharcar roupas e reduzir temperatura corporal |
@@ -102,14 +102,14 @@
 
 - # GerenciadorDeEventos - CLASSE
     - ## Atributos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _listaDeEventosPossiveis_ | Evento[] | Contém todos os eventos disponíveis |
         | _probabilidadeDeOcorrencia_ | **/** | Define a frequência dos eventos |
         | _historicoDeEventos_ | String[] | Evita repetições excessivas |
 
     - ## Métodos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _sortearEvento(Ambiente local)_ | void | Escolhe aleatoriamente um evento compatível com o ambiente atual |
         | _aplicarEvento(Personagem jogador)_ | void | Executa os efeitos do evento no personagem |
@@ -117,24 +117,24 @@
 
 - # Ambiente - SUPERCLASSE
     - ## Atributos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _nome_ | String | Identificação do ambiente |
         | _descricao_ | String | Texto explicativo sobre as características do local |
         | _dificuldadeDeExploracao_ | **/** | Define se o ambiente consome mais energia ao ser percorrido |
         | _recursosDisponiveis_ | **/** | Lista de itens que podem ser coletados na área |
-        | _probabilidadeDeEventos_ | **/** | Define a frequência e o tipo de eventos que ocorrem no ambiente |
+        | _probabilidadeDeEventos_ | **/** | Define a frequência e o nome de eventos que ocorrem no ambiente |
         | _condicoesClimaticasPredominantes_ | **/** | Influencia a jogabilidade (exemplo: florestas são úmidas, montanhas podem ser frias, desertos podem ter tempestades de areia) |
 
     - ## Métodos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _explorar(Personagem jogador)_ | void | O personagem pode tentar encontrar recursos ou enfrentar desafios no ambiente |
         | _gerarEvento()_ | void | Sorteia um evento compatível com o bioma |
         | _modificarClima()_ | void | Simula mudanças climáticas no ambiente, impactando a jogabilidade |
 
     - ## Subclasses
-        | Nome | Atributos adicionais | Tipo | Descrição | Recursos disponíveis | Eventos comuns |
+        | Nome | Atributos adicionais | Nome | Descrição | Recursos disponíveis | Eventos comuns |
         |:-:|:-:|:-:|:-:|:-:|:-:|
         | **AmbienteFloresta** | _vegetacaoDensa_ | **/** | Reduz visibilidade e dificulta a movimentação | Frutas, raízes e cogumelos (alguns venenosos) | Ataque de lobo ou urso |
         | | _faunaAbundante_ | **/** | Possibilidade de caça, mas também de ataques de criaturas | Madeira para fogueiras e ferramentas | Encontro com um explorador perdido |
@@ -154,14 +154,14 @@
 
 - # GerenciadorDeAmbientes - CLASSE
     - ## Atributos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _listaDeAmbientesDisponiveis_ | Ambiente[] | Define as áreas do jogo |
         | _climaGlobal_ | **/** | Pode influenciar vários ambientes ao mesmo tempo |
         | _historicoDeMovimentacao_ | String[] | Registra onde o jogador já esteve |
 
     - ## Métodos
-        | Nome | Tipo | Descrição |
+        | Nome | Nome | Descrição |
         |:-:|:-:|:-:|
         | _mudarAmbiente(Personagem jogador, Ambiente novoAmbiente)_ | void | Move o personagem para uma nova área |
         | _gerarEvento(Ambiente local)_ | void | Ativa um evento aleatório com base no ambiente atual |

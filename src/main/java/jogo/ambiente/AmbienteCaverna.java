@@ -1,27 +1,16 @@
 package jogo.ambiente;
 
 import jogo.eventos.Evento;
-import jogo.itens.Item;
+import jogo.eventos.criatura.EventoCriaturaUrso;
 
 public class AmbienteCaverna extends Ambiente {
 
-    private final String nome = "Caverna";
-    private final String descricao = "Um ambiente subterrâneo que pode oferecer abrigo contra o clima, mas esconde perigos desconhecidos.";
-    private final Evento[] eventosPossiveis = {};
-    private final int[] probabilidadeDeEventos = {};
+    private static final String NOME = "Caverna";
+    private static final String DESCRICAO = "Um ambiente subterrâneo que pode oferecer abrigo contra o clima, mas esconde perigos desconhecidos.";
+    private static final Evento[] EVENTOS_POSSIVEIS = {new EventoCriaturaUrso()};
+    private static final int[] PROBABILIDADE_DE_EVENTOS = {1};
 
-    public AmbienteCaverna(Item[] recursosDisponiveis) {
-        super(recursosDisponiveis);
-        
-        super.setNome(this.nome);
-        super.setDescricao(descricao);
-        super.setEventosPossiveis(eventosPossiveis);
-        super.setProbabilidadeDeEventos(probabilidadeDeEventos);
-        
-        assert(eventosPossiveis.length == probabilidadeDeEventos.length);
-
-        // Atributos adicionais
-        
-
+    public AmbienteCaverna() {
+        super(NOME, DESCRICAO, EVENTOS_POSSIVEIS, PROBABILIDADE_DE_EVENTOS, 5);
     }
 }

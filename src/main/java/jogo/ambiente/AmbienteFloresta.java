@@ -1,27 +1,19 @@
 package jogo.ambiente;
 
 import jogo.eventos.Evento;
-import jogo.itens.Item;
+import jogo.eventos.climatico.EventoClimaticoTempestade;
+import jogo.eventos.criatura.EventoCriaturaLobo;
+import jogo.eventos.criatura.EventoCriaturaUrso;
 
 public class AmbienteFloresta extends Ambiente {
 
-    private final String nome = "Floresta";
-    private final String descricao = "Uma área rica em recursos naturais, mas também habitada por predadores.";
-    private final Evento[] eventosPossiveis = {};
-    private final int[] probabilidadeDeEventos = {};
+    private static final String NOME = "Floresta";
+    private static final String DESCRICAO = "Uma área rica em recursos naturais, mas também habitada por predadores.";
+    private static final Evento[] EVENTOS_POSSIVEIS = {new EventoCriaturaLobo(),
+        new EventoCriaturaUrso(), new EventoClimaticoTempestade(2)};
+    private static final int[] PROBABILIDADE_DE_EVENTOS = {5,5,6};
 
-    public AmbienteFloresta(Item[] recursosDisponiveis) {
-        super(recursosDisponiveis);
-        
-        super.setNome(this.nome);
-        super.setDescricao(descricao);
-        super.setEventosPossiveis(eventosPossiveis);
-        super.setProbabilidadeDeEventos(probabilidadeDeEventos);
-        
-        assert(eventosPossiveis.length == probabilidadeDeEventos.length);
-
-        // Atributos adicionais
-        
-
+    public AmbienteFloresta() {
+        super(NOME, DESCRICAO, EVENTOS_POSSIVEIS, PROBABILIDADE_DE_EVENTOS, 5);
     }
 }

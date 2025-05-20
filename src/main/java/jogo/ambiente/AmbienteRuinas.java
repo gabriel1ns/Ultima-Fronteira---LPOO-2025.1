@@ -1,30 +1,16 @@
 package jogo.ambiente;
 
 import jogo.eventos.Evento;
-import jogo.itens.Item;
+import jogo.eventos.descoberta.EventoDescobertaPedra;
 
 public class AmbienteRuinas extends Ambiente {
 
-    private final String nome = "Ruínas Abandonadas";
-    private final String descricao = "Restos de antigas construções que podem conter suprimentos valiosos ou armadilhas.";
-    private final Evento[] eventosPossiveis = {};
-    private final int[] probabilidadeDeEventos = {};
+    private static final String NOME                    = "Ruínas Abandonadas";
+    private static final String DESCRICAO               = "Restos de antigas construções que podem conter suprimentos valiosos ou armadilhas.";
+    private static final Evento[] EVENTOS_POSSIVEIS     = {new EventoDescobertaPedra()};
+    private static final int[] PROBABILIDADE_DE_EVENTOS = {1};
 
-    public AmbienteRuinas(Item[] recursosDisponiveis) {
-        super(recursosDisponiveis);
-
-
-        super.setNome(this.nome);
-        super.setDescricao(this.descricao);
-        super.setEventosPossiveis(this.eventosPossiveis);
-        super.setProbabilidadeDeEventos(this.probabilidadeDeEventos);
-
-        
-        
-        assert(eventosPossiveis.length == probabilidadeDeEventos.length);
-
-        // Atributos adicionais - adicionar dps
-        
-
+    public AmbienteRuinas() {
+        super(NOME, DESCRICAO, EVENTOS_POSSIVEIS, PROBABILIDADE_DE_EVENTOS, 5);
     }
 }

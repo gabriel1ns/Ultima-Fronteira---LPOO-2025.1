@@ -1,36 +1,38 @@
 package jogo.itens;
 
 public abstract class Item {
-    private String nome;
-    private int peso;
+    public final static int QUANTIDADE_MAXIMA = 4;
+
+    final private String nome;
+    final private String tipo;
+    final private int peso;
+
     private int durabilidade;
-    private boolean consumivel;
     private int quantidade;
 
-    protected String toString = "Nome: " + this.nome + "\n" +
-                                "Peso: " + this.peso + "\n" +
-                                "Durabilidade: " + this.durabilidade + "\n";
-
-    public Item(String nome, int peso, int durabilidade) {
-        setNome(nome);
-        setPeso(peso);
-        setDurabilidade(durabilidade);
-    }
-
-    final public void setNome(String nome) {
+    public Item(String nome, String tipo, int peso, int durabilidade, int quantidade) {
         this.nome = nome;
-    }
-
-    final public void setPeso(int peso) {
+        this.tipo = tipo;
         this.peso = peso;
+        setDurabilidade(durabilidade);
+        setQuantidade(quantidade);
     }
 
-    final public void setDurabilidade(int durabilidade) {
-        this.durabilidade = durabilidade;
+    public void mudarQuantidade(int dQuantidade) {
+        setQuantidade(getQuantidade() + dQuantidade);
+    }
+
+    public void decrementarDurabilidade() {
+        setDurabilidade(getDurabilidade() - 1);
     }
 
     public String getNome() {
         return nome;
+    }
+
+
+    public String getTipo() {
+        return tipo;
     }
 
     public int getPeso() { //caso tenha alguma interação futura, como uma espada mt pesada etc
@@ -41,16 +43,26 @@ public abstract class Item {
         return durabilidade;
     }
 
-    public boolean isConsumivel() {
-        return consumivel;
+    final public void setDurabilidade(int durabilidade) {
+        this.durabilidade = durabilidade;
     }
 
     public int getQuantidade() {
         return quantidade;
     }
 
-    public boolean usar() {
-        return true;
+    final public void setQuantidade(int quantidade) {
+        if(quantidade > QUANTIDADE_MAXIMA) this.quantidade = QUANTIDADE_MAXIMA;
+        else if(quantidade < 0) this.quantidade = 0;
+        else this.quantidade = quantidade;
+    }    
+
+    @Override
+    public String toString() {
+        return  "Nome: " + this.nome + "\n" + 
+                "Peso: " + this.peso + "\n" + 
+                "Durabilidade: " + this.durabilidade + "\n" + 
+                "Quantidade: " + this.quantidade + "\n";
     }
 }
 

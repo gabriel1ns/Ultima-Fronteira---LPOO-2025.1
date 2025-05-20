@@ -1,19 +1,45 @@
 package jogo.eventos.criatura;
 
+import jogo.ambiente.Ambiente;
 import jogo.eventos.Evento;
+import jogo.itens.consumiveis.alimentos.AlimentoProteina;
+import jogo.personagem.Personagem;
 
 public abstract class EventoCriatura extends Evento {
-    private String tipo;
+
     private int vida;
     private int dano;
     private int distancia;
 
-    public EventoCriatura(String tipo, String descricao, int vida, int dano, int distancia) {
-        super(tipo, descricao);
+    public EventoCriatura(String nome, String descricao, int vida, int dano, int distancia) {
+        super(nome, descricao, 1);
 
         setVida(vida);
         setDano(dano);
         setDistancia(distancia);
+    }
+
+    @Override
+    public void executar(Ambiente ambiente, Personagem personagem) {
+        personagem.mudarAtributo("Vida", -dano);
+    }
+
+    public void adicionarProteina(Personagem personagem) {
+        if (this.getVida() <= 0) {
+
+            AlimentoProteina proteina = new AlimentoProteina();
+            personagem.getInventario().adicionarItem(proteina);
+        }
+    }
+
+    public void diminuirVida(int dVida) {
+        assert(dVida >= 0);
+
+        setVida(getVida() - dVida);
+
+        if(getVida() <= 0) {
+            super.setDuracao(0);
+        }
     }
 
     final public void setVida(int vida) {
@@ -42,8 +68,8 @@ public abstract class EventoCriatura extends Evento {
 
     @Override
     public String toString() {
-        return  super.toString +
-                "Vida: " + this.vida + "\n" + 
+        return  "Nome: " + super.getNome() + "\n" +
+                "Vida: " + this.vida + "\n" +
                 "Dano: " + this.dano + "\n" +
                 "Distancia: " + this.distancia + "\n";
     }

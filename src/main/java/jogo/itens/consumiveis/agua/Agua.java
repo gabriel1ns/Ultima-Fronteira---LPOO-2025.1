@@ -1,14 +1,14 @@
-package jogo.itens.consumiveis;
+package jogo.itens.consumiveis.agua;
 
-import jogo.itens.Item;
+import jogo.itens.consumiveis.Consumivel;
 import jogo.personagem.Personagem;
 
-public class Agua extends Item implements Consumivel {
+public class Agua extends Consumivel {
     private boolean pureza;
     private int volume;
 
     public Agua(boolean pureza, int volume) {
-        super("Agua", volume, 0);
+        super("Agua", 1, 2, volume);
 
         setPureza(pureza);
         setVolume(volume);
@@ -16,13 +16,10 @@ public class Agua extends Item implements Consumivel {
 
     @Override
     public void consumir(Personagem personagem) {
-        int sedeAtual = personagem.getSede();
-        personagem.setSede(sedeAtual + this.volume);
+        personagem.setSede(personagem.getSede() + this.volume);
 
-        if(!pureza) {
-            int vidaAtual = personagem.getVida();
-            personagem.setVida(vidaAtual - volume);
-        }
+        if(!this.pureza) 
+            personagem.setVida(personagem.getVida() - volume);
     }
 
     final public void setPureza(boolean pureza) {
@@ -39,8 +36,7 @@ public class Agua extends Item implements Consumivel {
 
     @Override
     public String toString() {
-        return  super.toString +
-                "Tipo: Agua\n" + 
+        return  super.toString() +
                 "Volume: " + this.volume + "\n" +
                 "Pureza: " + this.pureza + "\n";
     }

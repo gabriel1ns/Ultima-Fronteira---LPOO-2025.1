@@ -1,28 +1,25 @@
 package jogo.itens.consumiveis.remedios;
 
-import jogo.itens.Item;
+import jogo.itens.consumiveis.Consumivel;
+import jogo.personagem.Personagem;
 
-public class Remedio extends Item {
-    private String tipo;
+public abstract class Remedio extends Consumivel {
     private int efeito;
 
-    public Remedio(String tipo, int peso, int durabilidade, int efeito) {
-        super(tipo, peso, durabilidade);
+    public Remedio(String nome, int peso, int durabilidade, int efeito) {
+        super(nome, peso, durabilidade, 1);
 
-        setTipo(tipo);
         setEfeito(efeito);
     }
 
-    final public void setTipo(String tipo) {
-        this.tipo = tipo;
+    @Override
+    public void consumir(Personagem personagem) {
+        if(super.getDurabilidade() > 0)
+            personagem.setVida(personagem.getVida() + efeito);
     }
 
     final public void setEfeito(int efeito) {
         this.efeito = efeito;
-    }
-
-    public String getTipo() {
-        return tipo;
     }
 
     public int getEfeito() {
@@ -31,8 +28,7 @@ public class Remedio extends Item {
 
     @Override
     public String toString() {
-        return  super.toString + 
-                "Tipo: Remedio\n" + 
+        return  super.toString() + 
                 "Efeito: " + efeito + "\n";
     }
 

@@ -1,62 +1,23 @@
 package jogo.ambiente;
 
 import jogo.eventos.Evento;
-import jogo.gerenciadores.GerenciadorDeEventos;
-import jogo.itens.Item;
-import jogo.personagem.Personagem;
 
 public abstract class Ambiente {
-    private String nome;
-    private String descricao;
-    private int dificuldadeDeExploracao = 5;
+    private final String nome;
+    private final String descricao;
+    private final Evento[] eventosPossiveis;
+    private final int[] probabilidadeDeEventos;
+    private final int dificuldadeDeExploracao;
 
-    private Item[] recursosDisponiveis;
-    private Evento[] eventosPossiveis;
-    private int[] probabilidadeDeEventos;
-
-    protected String toString = "Nome: " + this.nome + "\n" +
-                                "Descricao: " + this.descricao;
-
-    public Ambiente(Item[] recursosDisponiveis) {
-        setRecursosDisponiveis(recursosDisponiveis);
-    }
-
-    public void explorar(Personagem personagem) {
-        int energiaAtual = personagem.getEnergia();
-        personagem.setEnergia(energiaAtual - dificuldadeDeExploracao);
-
-        gerarEvento(personagem);
-    }
-
-    public void gerarEvento(Personagem personagem) {
-        GerenciadorDeEventos gerenciador = new GerenciadorDeEventos(eventosPossiveis, probabilidadeDeEventos);
-        Evento evento = gerenciador.sortearEvento();
-        
-        evento.executar(this, personagem);
-    }
-
-    final public void setNome(String nome) {
+    public Ambiente(String nome, String descricao, Evento[] eventosPossiveis, int[] probabilidadeDeEventos, 
+                    int dificuldadeDeExploracao) {
         this.nome = nome;
-    }
-
-    final public void setDescricao(String descricao) {
         this.descricao = descricao;
-    }
-
-    final public void setDificuldadeDeExploracao(int dificuldadeDeExploracao) {
-        this.dificuldadeDeExploracao = dificuldadeDeExploracao;
-    }
-
-    final public void setRecursosDisponiveis(Item[] recursosDisponiveis) {
-        this.recursosDisponiveis = recursosDisponiveis;
-    }
-
-    final public void setEventosPossiveis(Evento[] eventosPossiveis) {
         this.eventosPossiveis = eventosPossiveis;
-    }
-
-    final public void setProbabilidadeDeEventos(int[] probabilidadeDeEventos) {
         this.probabilidadeDeEventos = probabilidadeDeEventos;
+        this.dificuldadeDeExploracao = dificuldadeDeExploracao;
+
+        assert(eventosPossiveis.length == probabilidadeDeEventos.length);
     }
 
     public String getNome() {
@@ -71,10 +32,6 @@ public abstract class Ambiente {
         return dificuldadeDeExploracao;
     }
 
-    public Item[] getRecursosDisponiveis() {
-        return recursosDisponiveis;
-    }
-
     public Evento[] getEventosPossiveis() {
         return eventosPossiveis;
     }
@@ -85,7 +42,7 @@ public abstract class Ambiente {
 
     @Override
     public String toString() {
-        return nome + ": " + descricao;
+        return this.nome + "n";
     }
 
 }
