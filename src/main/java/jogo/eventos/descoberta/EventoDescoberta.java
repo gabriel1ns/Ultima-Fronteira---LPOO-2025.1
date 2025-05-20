@@ -19,6 +19,7 @@ public abstract class EventoDescoberta extends Evento {
         this.itemNecessario = itemNecessario;
     }
 
+    @Override
     public void executar(Ambiente ambiente, Personagem personagem) {
         InputOutput io = new InputOutput();
         

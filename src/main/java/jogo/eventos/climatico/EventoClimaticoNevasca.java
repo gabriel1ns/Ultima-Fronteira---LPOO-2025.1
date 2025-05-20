@@ -1,8 +1,5 @@
 package jogo.eventos.climatico;
 
-import jogo.ambiente.Ambiente;
-import jogo.personagem.Personagem;
-
 public class EventoClimaticoNevasca extends EventoClimatico{
     private static final String NOME                = "Nevasca";
     private static final String DESCRICAO           = "Uma nevasca está ocorrendo";
