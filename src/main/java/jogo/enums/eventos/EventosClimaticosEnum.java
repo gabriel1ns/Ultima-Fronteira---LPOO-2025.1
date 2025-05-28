@@ -1,0 +1,55 @@
+package jogo.enums.eventos;
+
+import jogo.enums.personagem.AtributosEnum;
+
+public enum EventosClimaticosEnum {
+    CALOR_EXTREMO("Calor extremo", "Uma onda de calor está ocorrendo",
+        2,
+        new AtributosEnum[]{AtributosEnum.ENERGIA},
+        new int[]{-10}),
+    NEVASCA("Nevasca", "Uma nevasca está ocorrendo", 
+        2,
+        new AtributosEnum[]{AtributosEnum.ENERGIA},
+        new int[]{-10}),
+    TEMPESTADE("Tempestade", "Uma tempestade está ocorrendo",
+        2,
+        new AtributosEnum[]{AtributosEnum.ENERGIA},
+        new int[]{-10});
+    
+    private final String nome;
+    private final String descricao;
+    private final int duracao; 
+    private final AtributosEnum[] atributosAfetados;
+    private final int[] efeitos;
+    
+    private EventosClimaticosEnum(String nome, String descricao, int duracao, AtributosEnum[] atributosAfetados,
+            int[] efeitos) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.duracao = duracao;
+        this.atributosAfetados = atributosAfetados;
+        this.efeitos = efeitos;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public int getDuracao() {
+        return duracao;
+    }
+
+    public AtributosEnum[] getAtributosAfetados() {
+        return atributosAfetados;
+    }
+
+    public int[] getEfeitos() {
+        return efeitos;
+    }
+
+    
+}

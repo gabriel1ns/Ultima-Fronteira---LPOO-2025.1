@@ -1,13 +1,13 @@
 package jogo.sistema;
 import java.util.ArrayList;
 
-import jogo.eventos.criatura.EventoCriatura;
+import jogo.itens.ItemArma;
+import jogo.itens.ItemArma;
+import jogo.itens.ItemFerramenta;
+import jogo.itens.ItemMaterial;
+import jogo.eventos.EventoCriatura;
 import jogo.itens.Item;
-import jogo.itens.armas.Arma;
-import jogo.itens.armas.ArmaPunhos;
 import jogo.itens.consumiveis.Consumivel;
-import jogo.itens.ferramentas.Ferramenta;
-import jogo.itens.materiais.Material;
 import jogo.personagem.Personagem;
 import jogo.utils.IntMath;
 
@@ -40,10 +40,10 @@ public class Inventario {
 
         itens = new ArrayList[]{
             new ArrayList<Item>(), 
-            new ArrayList<Arma>(),
+            new ArrayList<ItemArma>(),
             new ArrayList<Consumivel>(),
-            new ArrayList<Ferramenta>(),
-            new ArrayList<Material>()
+            new ArrayList<ItemFerramenta>(),
+            new ArrayList<ItemMaterial>()
         };
 
         itens[InventarioEnum.ARMA.getIndice()].add(new ArmaPunhos());
@@ -53,19 +53,19 @@ public class Inventario {
         this.quantidadeItens = 0;
     }
 
-    public Item combinarMateriais(Material[] materiaisCombinados) {
+    public Item combinarMateriais(ItemMaterial[] materiaisCombinados) {
         int combinacaoID = 0;
         Item itemCombinado;
 
-        for(Material material: materiaisCombinados) 
+        for(ItemMaterial material: materiaisCombinados) 
             combinacaoID += material.getQuantidade() * IntMath.pow(Item.QUANTIDADE_MAXIMA, material.getID());
 
-        itemCombinado = Material.combinacoesPossiveis.get(combinacaoID);
+        itemCombinado = ItemMaterial.combinacoesPossiveis.get(combinacaoID);
         
         if((itemCombinado == null)) 
             return null;
 
-        for(Material material: materiaisCombinados) 
+        for(ItemMaterial material: materiaisCombinados) 
             removerItem(material, material.getQuantidade());
         
         adicionarItem(itemCombinado);
@@ -151,7 +151,7 @@ public class Inventario {
     }
 
     public void usarItemArma(int indice, EventoCriatura criatura) {
-        Arma arma = (Arma) itens[InventarioEnum.ARMA.getIndice()].get(indice);
+        ItemArma arma = (ItemArma) itens[InventarioEnum.ARMA.getIndice()].get(indice);
 
         arma.usar(criatura);
 

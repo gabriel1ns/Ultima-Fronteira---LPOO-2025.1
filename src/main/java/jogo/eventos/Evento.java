@@ -1,6 +1,9 @@
 package jogo.eventos;
 
-public abstract class Evento implements EventoInterface {
+import jogo.ambientes.Ambiente;
+import jogo.personagem.Personagem;
+
+public abstract class Evento {
     private final String nome;
     private final String descricao;
 
@@ -9,9 +12,10 @@ public abstract class Evento implements EventoInterface {
     public Evento(String nome, String descricao, int duracao) {
         this.nome = nome;
         this.descricao = descricao;
-
-        setDuracao(duracao);
+        this.duracao = duracao;
     }
+
+    public abstract void executar(Ambiente ambiente, Personagem personagem);
 
     public String getNome() {
         return nome;
@@ -28,4 +32,13 @@ public abstract class Evento implements EventoInterface {
     public void setDuracao(int duracao) {
         this.duracao = duracao;
     }
+
+    @Override
+    public String toString() {
+        return  "Nome: " + nome + "\n" + 
+                "Descrição: " + descricao + "\n" + 
+                "Duração: " + duracao + " turnos";
+    }
+
+    
 }

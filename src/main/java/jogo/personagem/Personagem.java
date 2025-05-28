@@ -1,120 +1,53 @@
 package jogo.personagem;
+import jogo.enums.personagem.AtributosEnum;
+import jogo.itens.Item;
 import jogo.sistema.Inventario;
 
 public class Personagem {
-    private int MIN_VIDA = 0;
-    private int MIN_FOME = 0;
-    private int MIN_SEDE = 0;
-    private int MIN_ENERGIA = 0;
-    private int MIN_SANIDADE = 0;
+    
+    private static final int    MIN_ATRIBUTO = 0;
+    private final int[]         MAX_ATRIBUTOS;
 
-    private int MAX_VIDA = 100;
-    private int MAX_FOME = 100;
-    private int MAX_SEDE = 100;
-    private int MAX_ENERGIA = 100;
-    private int MAX_SANIDADE = 100;
+    final private String        nome;
+    private int[]               atributos = new int[AtributosEnum.values().length];
+    private Inventario          inventario;
 
-    final private String nome;
-    private int vida;
-    private int fome;
-    private int sede;
-    private int energia;
-    private int sanidade;
-    private Inventario inventario;
-
-    public static final String[] CLASSES = {"Lenhador", "Sobrevivente"};
-
-    public static Personagem novoPersonagem(String nome, int escolha) {
-        // TODO adicionar mais classes de personagem
-        switch(escolha){
-        case 1:
-            return new PersonagemLenhador(nome); 
-        default:
-            return new PersonagemSobrevivente(nome);
-        }
-    }
-
-    public Personagem(String nome, int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade, int capacidadeDoInventario) {
+    public Personagem(String nome, int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade, 
+    int capacidadeDoInventario, Item[] itensIniciais) {
+        
         this.nome = nome;
-        this.MAX_VIDA = maxVida;
-        this.MAX_FOME = maxFome;
-        this.MAX_SEDE = maxSede;
-        this.MAX_ENERGIA = maxEnergia;
-        this.MAX_SANIDADE = maxSanidade;
-
-        setVida(MAX_VIDA);
-        setFome(MAX_FOME);
-        setSede(MAX_SEDE);
-        setEnergia(MAX_ENERGIA);
-        setSanidade(MAX_SANIDADE);
-        this.inventario = new Inventario(capacidadeDoInventario);
+        
+        MAX_ATRIBUTOS = new int[]{maxVida, maxFome, maxSede, maxEnergia, maxSanidade};
+        
+        atributos[AtributosEnum.VIDA.getIndice()] = maxVida;
+        atributos[AtributosEnum.FOME.getIndice()] = maxFome;
+        atributos[AtributosEnum.SEDE.getIndice()] = maxSede;
+        atributos[AtributosEnum.ENERGIA.getIndice()] = maxEnergia;
+        atributos[AtributosEnum.SANIDADE.getIndice()] = maxSanidade;
+        
+        this.inventario = new Inventario(capacidadeDoInventario, itensIniciais);
     }
 
     public Inventario getInventario() {
         return inventario;
     }
 
-    public void mudarAtributo(String statusAfetado, int efeito) {
-        // TODO implementacao temporaria
-        if(statusAfetado.equals("Energia")) setEnergia(getEnergia() + efeito);
-        if(statusAfetado.equals("Vida")) setVida(getVida() + efeito);
+    public void mudarAtributo(AtributosEnum atributo, int valor) {
+        valor = normalizarValorAtributo(atributo, valor);
+
+        atributos[atributo.getIndice()] = valor;
     }
 
-    private int checarLimites(int valor, int limInferior, int limSuperior) {
-        if(valor < limInferior) return limInferior;
-        if(valor > limSuperior) return limSuperior;
+    public int getAtributo(AtributosEnum atributo) {
+        return atributos[atributo.getIndice()];
+    }
+
+    private int normalizarValorAtributo(AtributosEnum atributo, int valor) {
+        int indice = atributo.getIndice();
+        
+        if(valor < MIN_ATRIBUTO) return MIN_ATRIBUTO;
+        if(valor > MAX_ATRIBUTOS[indice]) return MAX_ATRIBUTOS[indice];
         return valor;
-    }
-
-    // Getters e Setters
-    public int getFome() {
-        return fome;
-    }
-
-    public void setFome(int fome) {
-        fome = checarLimites(fome, MIN_FOME, MAX_FOME);
-
-        this.fome = fome;
-    }
-
-    public int getSede() {
-        return sede;
-    }
-
-    public void setSede(int sede) {
-        sede = checarLimites(sede, MIN_SEDE, MAX_SEDE);
-
-        this.sede = sede;
-    }
-
-    public int getEnergia() {
-        return energia;
-    }
-
-    public void setEnergia(int energia) {
-        energia = checarLimites(energia, MIN_ENERGIA, MAX_ENERGIA);
-
-        this.energia = energia;
-    }
-
-    public int getVida() {
-        return vida;
-    }
-
-    public void setVida(int vida) {
-        vida = checarLimites(vida, MIN_VIDA, MAX_VIDA);
-
-        this.vida = vida;
-    }
-
-    public int getSanidade() {
-        return sanidade;
-    }
-
-    public void setSanidade(int sanidade) {
-        sanidade = checarLimites(sanidade, MIN_SANIDADE, MAX_SANIDADE);
-
-        this.sanidade = sanidade;
     }
 
     public String getNome() {
@@ -123,13 +56,14 @@ public class Personagem {
 
     @Override
     public String toString() {
-        return  "Nome: " + this.nome + "\n" +
-                "Vida: " + this.vida + "\n" +
-                "Fome: " + this.fome + "\n" +
-                "Sede: " + this.sede + "\n" +
-                "Energia: " + this.energia + "\n" +
-                "Sanidade: " + this.sanidade + "\n" +
-                "Inventario: " + this.inventario.toString() + "\n";
+
+        String ret = "";
+
+        for(AtributosEnum atributo: AtributosEnum.values())
+            ret += atributo.name() + ": " + atributos[atributo.getIndice()] + "\n";
+        ret += "Inventário: " + getInventario().toString();
+
+        return ret;
     }
 }
 

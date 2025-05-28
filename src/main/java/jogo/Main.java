@@ -1,8 +1,8 @@
 package jogo;
-import jogo.ambiente.Ambiente;
+import jogo.ambientes.Ambiente;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
-import jogo.itens.consumiveis.agua.Agua;
-import jogo.itens.consumiveis.alimentos.AlimentoFruta;
+import jogo.itens.consumiveis.ConsumivelAgua;
+import jogo.itens.consumiveis.ConsumivelAlimento;
 import jogo.itens.ferramentas.FerramentaPicareta;
 import jogo.itens.materiais.MaterialMadeira;
 import jogo.itens.materiais.MaterialPedra;
@@ -20,15 +20,6 @@ public class Main {
         int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", Personagem.CLASSES, Personagem.CLASSES.length);
 
         Personagem personagem = Personagem.novoPersonagem(nomePersonagem, escolhaClassePersonagem);
-        
-        // DBG - REMOVER OU ALTERAR DEPOIS
-        personagem.getInventario().adicionarItem(new AlimentoFruta());
-        personagem.getInventario().adicionarItem(new Agua(true, 20));
-        personagem.getInventario().adicionarItem(new FerramentaPicareta());
-        personagem.getInventario().adicionarItem(new MaterialPedra(2));
-        personagem.getInventario().adicionarItem(new MaterialMadeira(2));
-        System.out.println("Tome uma colher de chá, receba itens básicos pra começar a sua jornada:");
-        System.out.println(personagem.getInventario());
 
         GerenciadorDeAmbientes gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
         Ambiente ambienteInicial = gerenciadorDeAmbientes.sortearAmbiente();

@@ -3,14 +3,14 @@ package jogo.sistema;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import jogo.ambiente.Ambiente;
-import jogo.eventos.criatura.EventoCriatura;
+import jogo.ambientes.Ambiente;
+import jogo.eventos.EventoCriatura;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;
+import jogo.itens.ItemArma;
+import jogo.itens.ItemMaterial;
 import jogo.itens.Item;
-import jogo.itens.armas.Arma;
 import jogo.itens.consumiveis.Consumivel;
-import jogo.itens.materiais.Material;
 import jogo.personagem.Personagem;
 import jogo.utils.InputOutput;
 
@@ -169,7 +169,7 @@ public class Turno {
 
         ArrayList<Item> armas = personagem.getInventario().getItens(Inventario.InventarioEnum.ARMA.getIndice());
 
-        int escolha = io.decisaoEmIntervalo("Escolha sua arma", armas.toArray(Arma[]::new), armas.size());
+        int escolha = io.decisaoEmIntervalo("Escolha sua arma", armas.toArray(ItemArma[]::new), armas.size());
             
         io.print(personagem.getNome() + " atacou " + criatura.getNome() + " com " + armas.get(escolha).getNome());
 
@@ -235,11 +235,11 @@ public class Turno {
             return;
         }
 
-        ArrayList<Material> materiaisEscolhidos = new ArrayList<>();
+        ArrayList<ItemMaterial> materiaisEscolhidos = new ArrayList<>();
         HashSet<Integer> indicesMarcados = new HashSet<>();
 
         while(true) {
-            int indice = io.decisaoEmIntervalo("Escolha os materiais, ou digite 0 para parar", materiais.toArray(Material[]::new), materiais.size());
+            int indice = io.decisaoEmIntervalo("Escolha os materiais, ou digite 0 para parar", materiais.toArray(ItemMaterial[]::new), materiais.size());
 
             if(indice == -1) break;
 
@@ -252,13 +252,13 @@ public class Turno {
 
             int quantidade = Integer.parseInt(io.getInput("Digite a quantidade: "));
 
-            Material material = (Material) materiais.get(indice);
+            ItemMaterial material = (ItemMaterial) materiais.get(indice);
             material.setQuantidade(quantidade);
 
             materiaisEscolhidos.add(material);
         }
         
-        Material[] materiaisEscolhidosArr = materiaisEscolhidos.toArray(new Material[materiaisEscolhidos.size()]);
+        ItemMaterial[] materiaisEscolhidosArr = materiaisEscolhidos.toArray(new ItemMaterial[materiaisEscolhidos.size()]);
 
         Item itemCombinado = inventario.combinarMateriais(materiaisEscolhidosArr);
 

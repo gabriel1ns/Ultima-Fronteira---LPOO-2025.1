@@ -3,9 +3,9 @@ package jogo.gerenciadores;
 import java.util.ArrayList;
 import java.util.Random;
 
-import jogo.ambiente.Ambiente;
+import jogo.ambientes.Ambiente;
 import jogo.eventos.Evento;
-import jogo.eventos.criatura.EventoCriatura;
+import jogo.eventos.EventoCriatura;
 import jogo.personagem.Personagem;
 import jogo.utils.InputOutput;
 

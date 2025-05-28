@@ -7,23 +7,17 @@ public abstract class Item {
     final private String tipo;
     final private int peso;
 
-    private int durabilidade;
     private int quantidade;
 
-    public Item(String nome, String tipo, int peso, int durabilidade, int quantidade) {
+    public Item(String nome, String tipo, int peso, int quantidade) {
         this.nome = nome;
         this.tipo = tipo;
         this.peso = peso;
-        setDurabilidade(durabilidade);
         setQuantidade(quantidade);
     }
 
     public void mudarQuantidade(int dQuantidade) {
         setQuantidade(getQuantidade() + dQuantidade);
-    }
-
-    public void decrementarDurabilidade() {
-        setDurabilidade(getDurabilidade() - 1);
     }
 
     public String getNome() {
@@ -37,14 +31,6 @@ public abstract class Item {
 
     public int getPeso() { //caso tenha alguma interação futura, como uma espada mt pesada etc
         return peso;
-    }
-
-    public int getDurabilidade() {
-        return durabilidade;
-    }
-
-    final public void setDurabilidade(int durabilidade) {
-        this.durabilidade = durabilidade;
     }
 
     public int getQuantidade() {
@@ -61,7 +47,6 @@ public abstract class Item {
     public String toString() {
         return  "Nome: " + this.nome + "\n" + 
                 "Peso: " + this.peso + "\n" + 
-                "Durabilidade: " + this.durabilidade + "\n" + 
                 "Quantidade: " + this.quantidade + "\n";
     }
 }
