@@ -1,15 +1,13 @@
-package jogo.ambientes;
-
-import jogo.eventos.Evento;
+package jogo;
 
 public class Ambiente {
     private final String nome;
     private final String descricao;
-    private final Evento[] eventosPossiveis;
+    private final Enum[] eventosPossiveis;
     private final int[] probabilidadeDeEventos;
     private final int dificuldadeDeExploracao;
 
-    public Ambiente(String nome, String descricao, Evento[] eventosPossiveis, int[] probabilidadeDeEventos, 
+    public Ambiente(String nome, String descricao, Enum[] eventosPossiveis, int[] probabilidadeDeEventos, 
                     int dificuldadeDeExploracao) {
         this.nome = nome;
         this.descricao = descricao;
@@ -32,7 +30,7 @@ public class Ambiente {
         return dificuldadeDeExploracao;
     }
 
-    public Evento[] getEventosPossiveis() {
+    public Enum[] getEventosPossiveis() {
         return eventosPossiveis;
     }
     

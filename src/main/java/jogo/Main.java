@@ -1,5 +1,4 @@
 package jogo;
-import jogo.ambientes.Ambiente;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.itens.consumiveis.ConsumivelAgua;
 import jogo.itens.consumiveis.ConsumivelAlimento;

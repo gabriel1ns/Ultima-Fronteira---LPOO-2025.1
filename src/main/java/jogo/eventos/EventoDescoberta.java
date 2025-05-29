@@ -1,6 +1,6 @@
 package jogo.eventos;
 
-import jogo.ambientes.Ambiente;
+import jogo.Ambiente;
 import jogo.itens.Item;
 import jogo.personagem.Personagem;
 import jogo.sistema.Inventario;

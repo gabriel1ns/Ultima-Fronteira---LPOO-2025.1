@@ -3,18 +3,43 @@ package jogo.enums.eventos;
 import jogo.enums.personagem.AtributosEnum;
 
 public enum EventosClimaticosEnum {
-    CALOR_EXTREMO("Calor extremo", "Uma onda de calor está ocorrendo",
-        2,
-        new AtributosEnum[]{AtributosEnum.ENERGIA},
-        new int[]{-10}),
-    NEVASCA("Nevasca", "Uma nevasca está ocorrendo", 
-        2,
-        new AtributosEnum[]{AtributosEnum.ENERGIA},
-        new int[]{-10}),
-    TEMPESTADE("Tempestade", "Uma tempestade está ocorrendo",
-        2,
-        new AtributosEnum[]{AtributosEnum.ENERGIA},
-        new int[]{-10});
+    CALOR_EXTREMO
+    ("Calor extremo", "Uma onda de calor assola o ambiente, deixando todos com mais sede",
+    2,
+    new AtributosEnum[]{
+        AtributosEnum.SEDE,
+        AtributosEnum.ENERGIA
+    },
+    new int[]{
+        -10,
+        -5
+    }),
+
+    NEVASCA
+    ("Nevasca", "Uma nevasca cai incessantemente, causando hipotermia, mas retendo a sede e a fome", 
+    2,
+    new AtributosEnum[]{
+        AtributosEnum.VIDA,
+        AtributosEnum.SEDE,
+        AtributosEnum.FOME
+    },
+    new int[]{
+        -5,
+        +2,
+        +1
+    }),
+
+    TEMPESTADE
+    ("Tempestade", "Chuvas e trovões recaem sobre o ambiente, causando medo e maior dificuldade de locomoção",
+    2,
+    new AtributosEnum[]{
+        AtributosEnum.ENERGIA,
+        AtributosEnum.SANIDADE
+    },
+    new int[]{
+        -10,
+        -5
+    });
     
     private final String nome;
     private final String descricao;

@@ -1,7 +1,9 @@
 package jogo.enums.itens.consumiveis;
 
 public enum RemediosEnum {
-    CURA_UNIVERSAL("Cura universal", 10, 100);
+    CURA_UNIVERSAL("Cura universal", 10, 100),
+    REMENDOS("Remendos de tecido", 2, 5),
+    CHA_DE_FOLHAS("Chá de folhas", 5, 10);
 
     private final String NOME;
     private final int PESO;

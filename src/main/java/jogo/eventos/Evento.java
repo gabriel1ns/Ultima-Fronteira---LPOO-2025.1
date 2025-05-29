@@ -1,6 +1,6 @@
 package jogo.eventos;
 
-import jogo.ambientes.Ambiente;
+import jogo.Ambiente;
 import jogo.personagem.Personagem;
 
 public abstract class Evento {

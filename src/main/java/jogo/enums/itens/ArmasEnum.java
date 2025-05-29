@@ -1,10 +1,17 @@
 package jogo.enums.itens;
 
 public enum ArmasEnum {
-    PUNHOS("Punhos", 0, 10000, 5, 1),
-    ESPADA("Espada", 5, 10, 10, 2),
-    ARCOFLECHA("Arco e Flecha", 10, 20, 5, 20),
-    LANCA("Lança", 3, 5, 5, 10);
+    PUNHOS
+    ("Punhos", 0, 10000, 5, 1),
+
+    ESPADA
+    ("Espada", 5, 10, 10, 2),
+
+    ARCOFLECHA
+    ("Arco e Flecha", 10, 20, 5, 4),
+
+    LANCA
+    ("Lança", 3, 5, 5, 4);
 
     private final String NOME;
     private final int PESO;

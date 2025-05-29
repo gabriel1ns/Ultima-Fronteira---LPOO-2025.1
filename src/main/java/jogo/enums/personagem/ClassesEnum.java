@@ -18,7 +18,8 @@ public enum ClassesEnum {
     SOBREVIVENTE
     (100, 100, 100, 100, 100, 6, new Item[]{
         ConstrutorAlimento.construirAlimento(AlimentosEnum.CARNE),
-        ConstrutorAlimento.construirAlimento(AlimentosEnum.BANANA),
+        ConstrutorAlimento.construirAlimento(AlimentosEnum.FRUTAS_SILVESTRES),
+        ConstrutorFerramenta.construirFerramenta(FerramentasEnum.RECIPIENTE),
         ConstrutorAgua.construirAgua(AguaEnum.PURA, 4),
         ConstrutorArma.construirArma(ArmasEnum.LANCA)
     }),

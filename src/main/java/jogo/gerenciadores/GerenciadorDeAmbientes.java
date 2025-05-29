@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import jogo.ambientes.Ambiente;
-import jogo.ambientes.AmbienteCaverna;
-import jogo.ambientes.AmbienteFloresta;
-import jogo.ambientes.AmbienteLagoRio;
-import jogo.ambientes.AmbienteRuinas;
+import jogo.Ambiente;
+import jogo.AmbienteCaverna;
+import jogo.AmbienteFloresta;
+import jogo.AmbienteLagoRio;
+import jogo.AmbienteRuinas;
 
 public class GerenciadorDeAmbientes {
     private final List<Ambiente> ambientes;

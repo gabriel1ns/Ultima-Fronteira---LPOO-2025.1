@@ -1,6 +1,6 @@
 package jogo.eventos;
 
-import jogo.ambientes.Ambiente;
+import jogo.Ambiente;
 import jogo.enums.personagem.AtributosEnum;
 import jogo.personagem.Personagem;
 

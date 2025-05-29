@@ -3,7 +3,7 @@ package jogo.gerenciadores;
 import java.util.ArrayList;
 import java.util.Random;
 
-import jogo.ambientes.Ambiente;
+import jogo.Ambiente;
 import jogo.eventos.Evento;
 import jogo.eventos.EventoCriatura;
 import jogo.personagem.Personagem;

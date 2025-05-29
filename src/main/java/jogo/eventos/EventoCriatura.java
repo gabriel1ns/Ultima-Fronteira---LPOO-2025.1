@@ -1,6 +1,6 @@
 package jogo.eventos;
 
-import jogo.ambientes.Ambiente;
+import jogo.Ambiente;
 import jogo.construtores.itens.consumiveis.ConstrutorAlimento;
 import jogo.enums.itens.consumiveis.AlimentosEnum;
 import jogo.enums.personagem.AtributosEnum;

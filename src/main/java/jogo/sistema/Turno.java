@@ -3,7 +3,7 @@ package jogo.sistema;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import jogo.ambientes.Ambiente;
+import jogo.Ambiente;
 import jogo.eventos.EventoCriatura;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;

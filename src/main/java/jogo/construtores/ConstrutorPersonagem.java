@@ -4,7 +4,7 @@ import jogo.enums.personagem.ClassesEnum;
 import jogo.personagem.Personagem;
 
 public class ConstrutorPersonagem {
-    public static Personagem construiPersonagem(String nome, ClassesEnum classe) {
+    public static Personagem construirPersonagem(String nome, ClassesEnum classe) {
         return new Personagem(
             nome, 
             classe.getMaxVida(), 

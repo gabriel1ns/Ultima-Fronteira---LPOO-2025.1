@@ -1,8 +1,14 @@
 package jogo.enums.itens;
 
 public enum FerramentasEnum {
-    PICARETA("Picareta", 5, 5, 10),
-    MACHADO("Machado", 5, 5, 10);
+    PICARETA
+    ("Picareta", 5, 5, 10),
+
+    MACHADO
+    ("Machado", 5, 5, 10),
+    
+    RECIPIENTE
+    ("Recipiente", 5, 5, 20);
 
     private final String NOME;
     private final int EFICIENCIA;

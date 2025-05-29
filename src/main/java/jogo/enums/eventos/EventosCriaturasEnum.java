@@ -1,10 +1,21 @@
 package jogo.enums.eventos;
 
 public enum EventosCriaturasEnum {
-    LOBO("Lobo", "Um lobo está atacando",
-        10, 5, 1),
-    URSO("Urso", "Um urso está atacando",
-        10, 10, 1);
+    LOBO
+    ("Lobo", "Um lobo hostil se aproxima",
+    20, 5, 1),
+    
+    URSO
+    ("Urso", "Um urso feroz está prestes a te perseguir",
+    30, 10, 1),
+    
+    CORVO
+    ("Corvo", "Um corvo te sobrevoa para atacar",
+    10, 2, 4),
+    
+    COBRA
+    ("Cobra", "Uma cobra venenosa se aproxima rapidamente",
+    15, 2, 2);
     
     private final String nome;
     private final String descricao;
