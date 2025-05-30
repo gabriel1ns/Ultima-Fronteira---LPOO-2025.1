@@ -16,7 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-// import javafx.scene.control.ScrollPane; // ListView já é rolável
+// import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -57,7 +57,7 @@ import jogo.sistema.Inventario;
 
 public class TelaDeEscolha extends Application {
 
-    // ... (constantes existentes como antes)
+
     private static final String FAMILIA_FONTE_MEDIEVAL = "Georgia";
     private static final String COR_TEXTO_MARROM_ESCURO = "#4A3B31";
     private static final String FUNDO_PERGAMINHO = "#F5EACE;";
@@ -100,6 +100,13 @@ public class TelaDeEscolha extends Application {
     private static final double LARGURA_MIN_BOTAO_ACAO_JOGO = 160;
     private static final double ALTURA_PREF_BOTAO_ACAO_JOGO = 45;
     private static final double TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO = 200;
+
+    private ProgressBar barraVida;
+    private ProgressBar barraFome;
+    private ProgressBar barraSede;
+    private ProgressBar barraEnergia;
+    private Label rotuloValorSanidade;
+    private Label rotuloStatusPersonagem;
 
 
     private static class InfoClasseDisplay {
@@ -180,7 +187,7 @@ public class TelaDeEscolha extends Application {
         painelDireito.setStyle(obterEstiloPainelPrincipal());
         painelRaizEscolha.setCenter(painelDireito);
 
-        if (!classesParaExibicao.isEmpty()) {
+        if (classesParaExibicao != null && !classesParaExibicao.isEmpty()) {
             if (classeToggleGrupo != null && !classeToggleGrupo.getToggles().isEmpty()) {
                 ToggleButton primeiroBotao = (ToggleButton) classeToggleGrupo.getToggles().get(0);
                 primeiroBotao.setSelected(true);
@@ -195,7 +202,7 @@ public class TelaDeEscolha extends Application {
     }
 
     private void inicializarClassesParaExibicao() {
-        classesParaExibicao = new ArrayList<>();
+        classesParaExibicao = new ArrayList<InfoClasseDisplay>();
         String basePathImagens = "/img/personagens/";
 
         classesParaExibicao.add(new InfoClasseDisplay(
@@ -519,6 +526,7 @@ public class TelaDeEscolha extends Application {
 
         logEvento("Bem-vindo(a) à Ultima Fronteira, " + this.nomePersonagemParaAcoes + "!");
         atualizarRotuloAmbiente();
+        atualizarAtributosGUI(); // Chamada inicial para definir os atributos na GUI
         atualizarInterfaceAcoes();
     }
 
@@ -530,6 +538,37 @@ public class TelaDeEscolha extends Application {
     }
 
 
+    private void atualizarAtributosGUI() {
+        if (personagem == null) {
+            System.err.println("atualizarAtributosGUI: Personagem é nulo.");
+            return;
+        }
+
+        if (barraVida == null || barraFome == null || barraSede == null || barraEnergia == null ||
+                rotuloValorSanidade == null || rotuloStatusPersonagem == null) {
+            System.err.println("atualizarAtributosGUI: Um ou mais elementos da GUI de atributos são nulos.");
+            return;
+        }
+
+        // Os valores máximos são 100 para PersonagemSobrevivente e PersonagemLenhador
+        // A classe Personagem também define MAX_VIDA etc., que são inicializados no construtor
+        // Para obter os max corretos, precisaríamos de getters para MAX_VIDA, etc., na classe Personagem.
+        // Por simplicidade e consistência com a inicialização, usaremos 100.0 como divisor.
+        double maxVida = 100.0; // Idealmente personagem.getMAX_VIDA()
+        double maxFome = 100.0; // Idealmente personagem.getMAX_FOME()
+        double maxSede = 100.0; // Idealmente personagem.getMAX_SEDE()
+        double maxEnergia = 100.0; // Idealmente personagem.getMAX_ENERGIA()
+
+        barraVida.setProgress(personagem.getVida() / maxVida);
+        barraFome.setProgress(personagem.getFome() / maxFome);
+        barraSede.setProgress(personagem.getSede() / maxSede);
+        barraEnergia.setProgress(personagem.getEnergia() / maxEnergia);
+
+        rotuloValorSanidade.setText(String.valueOf(personagem.getSanidade()));
+        rotuloStatusPersonagem.setText(obterStatusPersonagem(personagem));
+    }
+
+
     private VBox criarSecaoAtributosJogo() {
         VBox caixaAtributos = new VBox(10);
         caixaAtributos.setAlignment(Pos.TOP_LEFT);
@@ -538,28 +577,29 @@ public class TelaDeEscolha extends Application {
         Label rotuloTituloAtributos = new Label("Atributos de " + this.nomePersonagemParaAcoes);
         estilizarRotulo(rotuloTituloAtributos, TAMANHO_FONTE_CABECALHO_JOGO, true, Pos.CENTER_LEFT, true);
 
-        ProgressBar barraVida = new ProgressBar(this.personagem != null ? (double)this.personagem.getVida() / 100.0 : 0.85);
-        ProgressBar barraFome = new ProgressBar(this.personagem != null ? (double)this.personagem.getFome() / 100.0 : 0.65);
-        ProgressBar barraSede = new ProgressBar(this.personagem != null ? (double)this.personagem.getSede() / 100.0 : 0.70);
-        ProgressBar barraEnergia = new ProgressBar(this.personagem != null ? (double)this.personagem.getEnergia() / 100.0 : 0.90);
-        Label rotuloSanidade = new Label(this.personagem != null ? String.valueOf(this.personagem.getSanidade()) : "100");
-        estilizarRotulo(rotuloSanidade, TAMANHO_FONTE_ROTULO_JOGO, true, Pos.CENTER_LEFT, true);
-        Label valorStatus = new Label(this.personagem != null ? obterStatusPersonagem(this.personagem) : "<status>");
-        estilizarRotulo(valorStatus, TAMANHO_FONTE_ROTULO_JOGO, true, Pos.CENTER_LEFT, true);
 
-        configurarBarraProgressoJogo(barraVida, COR_VIDA);
-        configurarBarraProgressoJogo(barraFome, COR_FOME);
-        configurarBarraProgressoJogo(barraSede, COR_SEDE);
-        configurarBarraProgressoJogo(barraEnergia, COR_ENERGIA);
+        this.barraVida = new ProgressBar(this.personagem != null ? (double)this.personagem.getVida() / 100.0 : 0.85);
+        this.barraFome = new ProgressBar(this.personagem != null ? (double)this.personagem.getFome() / 100.0 : 0.65);
+        this.barraSede = new ProgressBar(this.personagem != null ? (double)this.personagem.getSede() / 100.0 : 0.70);
+        this.barraEnergia = new ProgressBar(this.personagem != null ? (double)this.personagem.getEnergia() / 100.0 : 0.90);
+        this.rotuloValorSanidade = new Label(this.personagem != null ? String.valueOf(this.personagem.getSanidade()) : "100");
+        estilizarRotulo(this.rotuloValorSanidade, TAMANHO_FONTE_ROTULO_JOGO, true, Pos.CENTER_LEFT, true);
+        this.rotuloStatusPersonagem = new Label(this.personagem != null ? obterStatusPersonagem(this.personagem) : "<status>");
+        estilizarRotulo(this.rotuloStatusPersonagem, TAMANHO_FONTE_ROTULO_JOGO, true, Pos.CENTER_LEFT, true);
+
+        configurarBarraProgressoJogo(this.barraVida, COR_VIDA);
+        configurarBarraProgressoJogo(this.barraFome, COR_FOME);
+        configurarBarraProgressoJogo(this.barraSede, COR_SEDE);
+        configurarBarraProgressoJogo(this.barraEnergia, COR_ENERGIA);
 
         caixaAtributos.getChildren().addAll(
                 rotuloTituloAtributos,
-                criarLinhaAtributoJogo("Vida:", barraVida),
-                criarLinhaAtributoJogo("Fome:", barraFome),
-                criarLinhaAtributoJogo("Sede:", barraSede),
-                criarLinhaAtributoJogo("Energia:", barraEnergia),
-                criarLinhaAtributoJogo("Sanidade:", rotuloSanidade),
-                criarLinhaAtributoJogo("Status:", valorStatus)
+                criarLinhaAtributoJogo("Vida:", this.barraVida),
+                criarLinhaAtributoJogo("Fome:", this.barraFome),
+                criarLinhaAtributoJogo("Sede:", this.barraSede),
+                criarLinhaAtributoJogo("Energia:", this.barraEnergia),
+                criarLinhaAtributoJogo("Sanidade:", this.rotuloValorSanidade),
+                criarLinhaAtributoJogo("Status:", this.rotuloStatusPersonagem)
         );
         return caixaAtributos;
     }
@@ -704,52 +744,50 @@ public class TelaDeEscolha extends Application {
         gradeAcoes.setHgap(10);
         gradeAcoes.setVgap(10);
 
-        // Inicializa os botões de ação para que possam ser referenciados em atualizarInterfaceAcoes
         this.botaoMudarAmbiente = criarBotaoMedievalJogo("Mudar Ambiente");
         this.botaoDescansar = criarBotaoMedievalJogo("Descansar");
         Button botaoGerenciarInventario = criarBotaoMedievalJogo("Inventário");
-        this.botaoAcaoPrincipal = criarBotaoMedievalJogo("Explorar"); // Texto inicial
+        this.botaoAcaoPrincipal = criarBotaoMedievalJogo("Explorar");
 
-        // Ações fixas são definidas aqui, ações dinâmicas (Explorar/Batalhar) em atualizarInterfaceAcoes
         this.botaoMudarAmbiente.setOnAction(e -> {
             if (this.gerenciadorDeAmbientes != null && this.gerenciadorDeEventos != null && this.personagem != null) {
-                // Verifica se uma criatura está ativa antes de permitir mudar de ambiente, como em Turno.java
                 if (this.gerenciadorDeEventos.getEventoCriaturaAtivo() != null) {
                     logEvento(this.personagem.getNome() + " está em combate e não pode mudar de ambiente!");
                     return;
                 }
-                // Verifica energia para mudar de ambiente, como em Turno.java
                 if (this.personagem.getEnergia() < 15) {
                     logEvento(this.personagem.getNome() + " está cansado demais para viajar!");
                     return;
                 }
-                // TODO: Aplicar custos de energia, fome, sede para viagem e atualizar GUI.
-                // Exemplo: personagem.setEnergia(personagem.getEnergia() - 15);
+
+                personagem.setEnergia(personagem.getEnergia() - 15);
+                personagem.setSede(Math.max(0, personagem.getSede() - (2*5) ));
+                personagem.setFome(Math.max(0, personagem.getFome() - (5*5) ));
+                atualizarAtributosGUI();
 
                 logEvento(this.nomePersonagemParaAcoes + " viaja para um novo local...");
                 this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente();
-                // Recria o gerenciador de eventos para o novo ambiente, efetivamente limpando eventos antigos.
                 this.gerenciadorDeEventos = new GerenciadorDeEventos(
                         this.ambienteAtual.getEventosPossiveis(),
                         this.ambienteAtual.getProbabilidadeDeEventos()
                 );
                 logEvento("Chegou em: " + this.ambienteAtual.getNome());
                 atualizarRotuloAmbiente();
-                atualizarInterfaceAcoes(); // Atualiza botões para o novo estado (sem criatura inicialmente)
+                atualizarInterfaceAcoes();
             }
         });
 
         this.botaoDescansar.setOnAction(e -> {
-            // Verifica se uma criatura está ativa, como em Turno.java
             if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.getEventoCriaturaAtivo() != null) {
                 logEvento(this.personagem.getNome() + " não pode descansar durante um combate!");
                 return;
             }
             logEvento(this.nomePersonagemParaAcoes + " decide descansar.");
             if (this.personagem != null) {
-                // TODO: Simular ganho de energia e atualizar GUI
-                // this.personagem.setEnergia(Math.min(100, this.personagem.getEnergia() + 15));
-                // logEvento(this.personagem.getNome() + " recuperou energia.");
+
+                this.personagem.setEnergia(Math.min(100, this.personagem.getEnergia() + 15)); // dEnergia = +15
+                logEvento(this.personagem.getNome() + " recuperou energia.");
+                atualizarAtributosGUI();
             }
         });
 
@@ -758,6 +796,7 @@ public class TelaDeEscolha extends Application {
             if (this.personagem != null && this.personagem.getInventario() != null) {
                 logEvento(this.personagem.getInventario().toString());
             }
+            // TODO: Abrir uma nova janela/diálogo para gerenciamento interativo do inventário
         });
 
         definirRestricoesGradeBotoesJogo(this.botaoMudarAmbiente, this.botaoDescansar, botaoGerenciarInventario, this.botaoAcaoPrincipal);
@@ -776,10 +815,6 @@ public class TelaDeEscolha extends Application {
         return caixaAcoes;
     }
 
-    /**
-     * Atualiza a interface de ações (botões principais) com base no estado atual do jogo,
-     * especialmente a presença de um EventoCriatura ativo.
-     */
     private void atualizarInterfaceAcoes() {
         if (this.botaoAcaoPrincipal == null || this.gerenciadorDeEventos == null || this.personagem == null) {
             System.err.println("Tentativa de atualizar interface de ações com componentes nulos.");
@@ -791,40 +826,36 @@ public class TelaDeEscolha extends Application {
         if (criaturaAtiva != null) {
             String nomeCriatura = criaturaAtiva.getNome();
             this.botaoAcaoPrincipal.setText("Batalhar " + nomeCriatura);
-            // Ação de Batalhar agora abre o diálogo de seleção de arma
             this.botaoAcaoPrincipal.setOnAction(e -> abrirDialogoSelecaoArma(criaturaAtiva));
 
             if (this.botaoMudarAmbiente != null) this.botaoMudarAmbiente.setDisable(true);
             if (this.botaoDescansar != null) this.botaoDescansar.setDisable(true);
 
-        } else { // Nenhum EventoCriatura ativo
+        } else {
             this.botaoAcaoPrincipal.setText("Explorar");
-            this.botaoAcaoPrincipal.setOnAction(e -> { // Ação de Explorar
+            this.botaoAcaoPrincipal.setOnAction(e -> {
                 if (this.gerenciadorDeEventos != null && this.personagem != null && this.ambienteAtual != null) {
 
-                    // Verifica energia para explorar, como em Turno.java
                     if(personagem.getEnergia() == 0) {
                         logEvento(personagem.getNome() + " está cansado demais para explorar!");
-                        // personagem.setEnergia(personagem.getEnergia() + 2); // Ganho de consolação em Turno.java
-                        // TODO: Atualizar barra de energia
+                        personagem.setEnergia(personagem.getEnergia() + 2);
+                        atualizarAtributosGUI();
                         return;
                     }
-                    // TODO: Simular custo de energia para explorar e atualizar GUI
-                    // int custoEnergia = ambienteAtual.getDificuldadeDeExploracao(); //
-                    // personagem.setEnergia(personagem.getEnergia() - custoEnergia);
-                    // logEvento(personagem.getNome() + " gasta " + custoEnergia + " de energia.");
+
+                    int custoEnergia = ambienteAtual.getDificuldadeDeExploracao();
+                    personagem.setEnergia(personagem.getEnergia() - custoEnergia);
+                    logEvento(personagem.getNome() + " gasta " + custoEnergia + " de energia para explorar.");
+                    atualizarAtributosGUI();
+
 
                     logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "...");
 
-                    this.gerenciadorDeEventos.adicionarEventoAleatorio(); // Adiciona um evento aleatório
+                    this.gerenciadorDeEventos.adicionarEventoAleatorio();
 
-                    // Processa e loga todos os eventos ativos.
-                    // Se um evento de criatura foi adicionado, executarEventos aplicará seu efeito (ex: ataque inicial).
-                    // Se for outro tipo de evento, seu efeito será aplicado.
-                    // Descrições são logadas no console pelo InputOutput dentro de executarEventos.
                     this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem);
 
-                    // Reavalia o estado da interface (pode ter encontrado uma criatura).
+                    atualizarAtributosGUI();
                     atualizarInterfaceAcoes();
                 }
             });
@@ -833,18 +864,13 @@ public class TelaDeEscolha extends Application {
         }
     }
 
-    /**
-     * Abre um diálogo para o jogador selecionar uma arma do inventário.
-     * @param criaturaAlvo A criatura que será atacada.
-     */
     private void abrirDialogoSelecaoArma(EventoCriatura criaturaAlvo) {
         if (personagem == null || personagem.getInventario() == null) {
-            logEvento("Erro: Personagem ou inventário não disponível para seleção de arma.");
+            logEvento("Erro: Personagem ou inventário não disponível.");
             atualizarInterfaceAcoes();
             return;
         }
 
-        // Obtém a lista de armas do inventário. Inventario.getItens(InventarioEnum.ARMA.getIndice()) retorna ArrayList<Item>
         ArrayList<Item> itensArmaDoInventario = personagem.getInventario().getItens(Inventario.InventarioEnum.ARMA.getIndice());
         ObservableList<Arma> armasObservaveis = FXCollections.observableArrayList();
         for (Item item : itensArmaDoInventario) {
@@ -853,17 +879,28 @@ public class TelaDeEscolha extends Application {
             }
         }
 
-        // Teoricamente, ArmaPunhos sempre existe, então a lista não deveria ser vazia.
         if (armasObservaveis.isEmpty()) {
-            logEvento(personagem.getNome() + " não possui armas disponíveis (nem mesmo Punhos!) para atacar " + criaturaAlvo.getNome() + ". Verifique o inventário.");
-            // Forçar um ataque com punhos se algo deu muito errado
+            logEvento(personagem.getNome() + " não possui armas para atacar " + criaturaAlvo.getNome() + "! Atacando com os Punhos.");
             ArmaPunhos punhos = new ArmaPunhos();
-            punhos.usar(criaturaAlvo); //
-            logEvento(personagem.getNome() + " atacou " + criaturaAlvo.getNome() + " com os Punhos (fallback).");
-            if (criaturaAlvo.getVida() <= 0) { //
+
+            int indicePunhos = -1;
+            for(int i=0; i < itensArmaDoInventario.size(); i++){
+                if(itensArmaDoInventario.get(i) instanceof ArmaPunhos){
+                    indicePunhos = i;
+                    break;
+                }
+            }
+            if(indicePunhos != -1) {
+                personagem.getInventario().usarItemArma(indicePunhos, criaturaAlvo);
+            } else {
+                punhos.usar(criaturaAlvo);
+            }
+
+            if (criaturaAlvo.getVida() <= 0) {
                 logEvento(criaturaAlvo.getNome() + " foi derrotado(a)!");
             }
-            this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem); //
+            this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem);
+            atualizarAtributosGUI();
             atualizarInterfaceAcoes();
             return;
         }
@@ -871,13 +908,11 @@ public class TelaDeEscolha extends Application {
         Dialog<Arma> dialog = new Dialog<>();
         dialog.setTitle("Escolha sua Arma");
         dialog.setHeaderText("Atacar " + criaturaAlvo.getNome() + ". Qual arma usar?");
-        // TODO: Considerar adicionar um arquivo CSS para estilizar diálogos consistentemente
-        // dialog.getDialogPane().getStylesheets().add(getClass().getResource("/styles/dialogStyles.css").toExternalForm());
 
         DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.setMinWidth(380); // Ajuste conforme necessário
-        dialogPane.setMinHeight(250); // Ajuste conforme necessário
-        dialogPane.setStyle(obterEstiloPainelInterno() + " -fx-font-family: '" + FAMILIA_FONTE_MEDIEVAL + "';"); // Estilo base
+        dialogPane.setMinWidth(380);
+        dialogPane.setMinHeight(250);
+        dialogPane.setStyle(obterEstiloPainelInterno() + " -fx-font-family: '" + FAMILIA_FONTE_MEDIEVAL + "';");
 
         ListView<Arma> listViewArmas = new ListView<>(armasObservaveis);
         listViewArmas.setCellFactory(lv -> new ListCell<Arma>() {
@@ -887,7 +922,6 @@ public class TelaDeEscolha extends Application {
                 if (empty || arma == null) {
                     setText(null);
                 } else {
-                    // Exibe nome, dano e durabilidade da arma
                     setText(arma.getNome() + " (Dano: " + arma.getDano() + ", Dur: " + arma.getDurabilidade() + ")");
                     setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_CORPO_ESCOLHA));
                 }
@@ -900,12 +934,10 @@ public class TelaDeEscolha extends Application {
         dialogPane.setContent(contentVBox);
 
         ButtonType atacarButtonType = new ButtonType("Atacar", ButtonBar.ButtonData.OK_DONE);
-        // O botão "Voltar" é implicitamente o ButtonType.CANCEL
         dialogPane.getButtonTypes().addAll(atacarButtonType, ButtonType.CANCEL);
 
         Node atacarButtonNode = dialogPane.lookupButton(atacarButtonType);
-        atacarButtonNode.setDisable(true); // Desabilitar até uma arma ser selecionada
-        // Estilizar botões do diálogo
+        atacarButtonNode.setDisable(true);
         ((Button)atacarButtonNode).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
         ((Button)dialogPane.lookupButton(ButtonType.CANCEL)).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_CORPO_ESCOLHA));
 
@@ -917,19 +949,16 @@ public class TelaDeEscolha extends Application {
             if (dialogButton == atacarButtonType) {
                 return listViewArmas.getSelectionModel().getSelectedItem();
             }
-            return null; // Cancelado ou fechado
+            return null;
         });
 
         Optional<Arma> resultado = dialog.showAndWait();
 
         if (resultado.isPresent()) {
             Arma armaEscolhida = resultado.get();
-            // Encontrar o índice da arma na lista original de armas do inventário
             int indiceArmaNoInventario = -1;
-            // A lista `armasObservaveis` mantém a ordem da `itensArmaDoInventario` se populada sequencialmente
-            // Mas para garantir, podemos buscar o índice na lista original que o Inventario.usarItemArma espera
             for(int i=0; i < itensArmaDoInventario.size(); i++){
-                if(itensArmaDoInventario.get(i) == armaEscolhida){ // Comparação de referência de objeto
+                if(itensArmaDoInventario.get(i) == armaEscolhida){
                     indiceArmaNoInventario = i;
                     break;
                 }
@@ -937,7 +966,6 @@ public class TelaDeEscolha extends Application {
 
             if(indiceArmaNoInventario != -1) {
                 logEvento(personagem.getNome() + " ataca " + criaturaAlvo.getNome() + " com " + armaEscolhida.getNome() + "!");
-                // Usa o método do inventário que lida com durabilidade e remoção
                 personagem.getInventario().usarItemArma(indiceArmaNoInventario, criaturaAlvo);
 
                 if (criaturaAlvo.getVida() <= 0) {
@@ -946,21 +974,17 @@ public class TelaDeEscolha extends Application {
                     logEvento(criaturaAlvo.getNome() + " agora tem " + criaturaAlvo.getVida() + " de vida.");
                 }
             } else {
-                logEvento("ERRO: Arma selecionada ("+ armaEscolhida.getNome() +") não encontrada no array de armas do inventário para obter índice.");
-                // Fallback para punhos se algo der muito errado (não deveria acontecer se a lista foi bem populada)
+                logEvento("ERRO: Arma selecionada ("+ armaEscolhida.getNome() +") não encontrada no inventário para ataque.");
                 new ArmaPunhos().usar(criaturaAlvo);
                 if (criaturaAlvo.getVida() <= 0) {
                     logEvento(criaturaAlvo.getNome() + " foi derrotado(a) (com punhos-fallback)!");
                 }
             }
-
-            // Processar eventos após o ataque (incluindo remoção da criatura se derrotada)
             this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem);
+            atualizarAtributosGUI(); // Atualiza atributos após o combate e execução de eventos
         } else {
-            logEvento("Seleção de arma cancelada. " + criaturaAlvo.getNome() + " ainda está à espreita.");
+            logEvento("Seleção de arma cancelada.");
         }
-        // Atualizar a interface principal independentemente do resultado do diálogo,
-        // pois o estado do EventoCriaturaAtivo pode ter mudado (se derrotado) ou não (se cancelado).
         atualizarInterfaceAcoes();
     }
 
