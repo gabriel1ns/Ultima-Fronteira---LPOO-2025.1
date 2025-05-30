@@ -1,13 +1,22 @@
 package jogo.gui;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
+// import javafx.scene.control.ScrollPane; // ListView já é rolável
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -32,19 +41,23 @@ import javafx.stage.Stage;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import jogo.personagem.Personagem;
-import jogo.ambiente.Ambiente; //
-import jogo.gerenciadores.GerenciadorDeAmbientes; //
-import jogo.gerenciadores.GerenciadorDeEventos; //
-import jogo.eventos.Evento; //
-import jogo.eventos.criatura.EventoCriatura; //
-// EventoCriaturaLobo and EventoCriaturaUrso are not directly instantiated here anymore for simulation
-// as the GerenciadorDeEventos will pick them based on Ambiente.
+import jogo.ambiente.Ambiente;
+import jogo.gerenciadores.GerenciadorDeAmbientes;
+import jogo.gerenciadores.GerenciadorDeEventos;
+import jogo.eventos.Evento;
+import jogo.eventos.criatura.EventoCriatura;
+import jogo.itens.Item;
+import jogo.itens.armas.Arma;
+import jogo.itens.armas.ArmaPunhos;
+import jogo.sistema.Inventario;
+
 
 public class TelaDeEscolha extends Application {
 
-    // ... (all existing constants remain the same)
+    // ... (constantes existentes como antes)
     private static final String FAMILIA_FONTE_MEDIEVAL = "Georgia";
     private static final String COR_TEXTO_MARROM_ESCURO = "#4A3B31";
     private static final String FUNDO_PERGAMINHO = "#F5EACE;";
@@ -128,24 +141,24 @@ public class TelaDeEscolha extends Application {
 
     private Stage palcoPrincipal;
 
-    // Game logic instances
     private Personagem personagem;
     private GerenciadorDeAmbientes gerenciadorDeAmbientes;
     private Ambiente ambienteAtual;
     private GerenciadorDeEventos gerenciadorDeEventos;
 
-    // GUI Elements for the main game screen that need to be updated
     private Button botaoAcaoPrincipal;
+    private Button botaoMudarAmbiente;
+    private Button botaoDescansar;
+
     private String nomePersonagemParaAcoes;
     private TextArea areaEventosJogo;
-    private Label rotuloNomeAmbienteAtual; // To display current environment name
-    private ImageView visualizadorImagemAmbiente; // To display environment image
+    private Label rotuloNomeAmbienteAtual;
+    private ImageView visualizadorImagemAmbiente;
 
     @Override
     public void start(Stage palcoPrincipalArgumento) {
         this.palcoPrincipal = palcoPrincipalArgumento;
         this.palcoPrincipal.setTitle("Seleção de Personagem - Ultima Fronteira");
-
         inicializarClassesParaExibicao();
 
         BorderPane painelRaizEscolha = new BorderPane();
@@ -185,25 +198,23 @@ public class TelaDeEscolha extends Application {
         classesParaExibicao = new ArrayList<>();
         String basePathImagens = "/img/personagens/";
 
-
         classesParaExibicao.add(new InfoClasseDisplay(
                 "Lenhador",
-                "Lenhador", //
+                Personagem.CLASSES[0],
                 "\uD83E\uDE93",
                 basePathImagens + "Lenhador.png",
-                "100", "100", "100", "100", // Assuming default values from PersonagemLenhador
-                "Machado", // Placeholder, actual items depend on game start logic
+                "100", "100", "100", "100",
+                "Machado",
                 "Habilidade: Cortes Precisos (Maior chance de obter madeira extra)."
         ));
 
-
         classesParaExibicao.add(new InfoClasseDisplay(
                 "Sobrevivente",
-                "Sobrevivente", //
+                Personagem.CLASSES[1],
                 "\uD83D\uDEB6",
                 basePathImagens + "Sobrevivente.png",
-                "100", "100", "100", "100", // Assuming default values from PersonagemSobrevivente
-                "Faca de Sobrevivência", // Placeholder
+                "100", "100", "100", "100",
+                "Faca de Sobrevivência",
                 "Habilidade: Resistente (Menor consumo de fome e sede)."
         ));
     }
@@ -292,44 +303,13 @@ public class TelaDeEscolha extends Application {
                 return;
             }
 
-            int indiceClasseReal = -1;
-
-            if (Personagem.CLASSES != null) {
-                for (int i = 0; i < Personagem.CLASSES.length; i++) {
-                    if (Personagem.CLASSES[i].equals(classeExibicaoSelecionada.nomeReal)) {
-                        indiceClasseReal = i; // Personagem.novoPersonagem uses index+1 for 1-based input, so adjust if needed or ensure consistency
-                        // The Personagem.novoPersonagem switch uses 1-based, so Personagem.CLASSES[0] (Lenhador) is choice 1.
-                        // So if indiceClasseReal is 0, it maps to choice 1.
-                        break;
-                    }
-                }
-            }
-            // Adjust for 1-based indexing if Personagem.novoPersonagem expects it.
-            // Current Personagem.novoPersonagem: case 1 -> Lenhador. If CLASSES = {"Lenhador", "Sobrevivente"}, Lenhador is at index 0.
-            // The original code passes 'escolhaClassePersonagem' which is index based.
-            // InputOutput.decisaoEmIntervalo returns 0 for first option.
-            // So, if Personagem.novoPersonagem uses the direct index +1, or if it takes 0 for Lenhador...
-            // Let's assume Personagem.novoPersonagem maps index 0 from Personagem.CLASSES to its internal case 0 or 1.
-            // The Main.java calls: Personagem.novoPersonagem(nomePersonagem, escolhaClassePersonagem);
-            // escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", Personagem.CLASSES, Personagem.CLASSES.length);
-            // decisaoEmIntervalo returns 0 for the first option.
-            // Personagem.novoPersonagem: case 1: new PersonagemLenhador(nome); default: new PersonagemSobrevivente(nome);
-            // This means if indiceClasseReal is 0 (Lenhador), we should pass 1. If 1 (Sobrevivente), pass 0 or other for default.
-            // This is a bit inconsistent. Let's align with Main.java's use of decisaoEmIntervalo (0-indexed for Personagem.CLASSES array)
-            // and Personagem.novoPersonagem's expectation.
-            // If classeExibicaoSelecionada.nomeReal is Personagem.CLASSES[0] ("Lenhador"), then indiceClasseReal = 0. We should pass 1.
-            // If classeExibicaoSelecionada.nomeReal is Personagem.CLASSES[1] ("Sobrevivente"), then indiceClasseReal = 1. We should pass anything else (e.g. 0 or 2 for default)
-
             int escolhaParaNovoPersonagem;
-            if (classeExibicaoSelecionada.nomeReal.equals(Personagem.CLASSES[0])) { // Lenhador
+            if (classeExibicaoSelecionada.nomeReal.equals(Personagem.CLASSES[0])) {
                 escolhaParaNovoPersonagem = 1;
-            } else { // Default to Sobrevivente or other classes
-                escolhaParaNovoPersonagem = 0; // Or any value that hits the default in novoPersonagem
-            }
-
-
-            if (indiceClasseReal == -1 && !classeExibicaoSelecionada.nomeReal.equals(Personagem.CLASSES[1])) { // Allow Sobrevivente to be default
-                System.err.println("Erro: Classe selecionada na UI ('" + classeExibicaoSelecionada.nomeReal + "') não corresponde a uma classe de jogo válida em Personagem.CLASSES.");
+            } else if (classeExibicaoSelecionada.nomeReal.equals(Personagem.CLASSES[1])) {
+                escolhaParaNovoPersonagem = 0;
+            } else {
+                System.err.println("Erro: Classe '" + classeExibicaoSelecionada.nomeReal + "' não mapeada para criação.");
                 return;
             }
 
@@ -348,11 +328,8 @@ public class TelaDeEscolha extends Application {
     }
 
     private void logEventoTelaEscolha(String mensagem) {
-        // Placeholder for showing alerts on the character selection screen if needed
-        System.out.println("GUI Info: " + mensagem);
-        // Example: new Alert(AlertType.WARNING, mensagem).showAndWait();
+        System.out.println("GUI Info (Tela Escolha): " + mensagem);
     }
-
 
     private VBox criarPainelDireitoSelecao() {
         VBox painel = new VBox(VALOR_PADDING_ESCOLHA);
@@ -419,35 +396,24 @@ public class TelaDeEscolha extends Application {
 
                 if (streamImagem != null) {
                     imagem = new Image(streamImagem);
+                    if (imagem.isError()) {
+                        throw new RuntimeException("Erro ao carregar imagem: " + classeExibicaoSelecionada.caminhoImagem + (imagem.getException() != null ? " - " + imagem.getException().getMessage() : ""));
+                    }
+                    ImageView visualizadorImagem = new ImageView(imagem);
+                    visualizadorImagem.setFitWidth(LARGURA_ARTE_CLASSE - 10);
+                    visualizadorImagem.setFitHeight(ALTURA_ARTE_CLASSE - 10);
+                    visualizadorImagem.setPreserveRatio(true);
+                    visualizadorImagem.setSmooth(true);
+                    arteClassePainel.getChildren().add(visualizadorImagem);
                 } else {
-                    System.err.println("Recurso de imagem não encontrado: " + classeExibicaoSelecionada.caminhoImagem);
-                    throw new RuntimeException("Recurso de imagem não encontrado: " + classeExibicaoSelecionada.caminhoImagem);
+                    System.err.println("Recurso de imagem não encontrado (stream nulo): " + classeExibicaoSelecionada.caminhoImagem);
+                    throw new RuntimeException("Stream nulo para imagem: " + classeExibicaoSelecionada.caminhoImagem);
                 }
-
-                if (imagem.isError()) {
-                    throw new RuntimeException("Erro ao carregar imagem: " + classeExibicaoSelecionada.caminhoImagem + (imagem.getException() != null ? " - " + imagem.getException().getMessage() : ""));
-                }
-
-
-                ImageView visualizadorImagem = new ImageView(imagem);
-                visualizadorImagem.setFitWidth(LARGURA_ARTE_CLASSE - 10);
-                visualizadorImagem.setFitHeight(ALTURA_ARTE_CLASSE - 10);
-                visualizadorImagem.setPreserveRatio(true);
-                visualizadorImagem.setSmooth(true);
-                arteClassePainel.getChildren().add(visualizadorImagem);
-
             } else {
-                Label arteTextoAlternativo = new Label("Arte para\n" + classeExibicaoSelecionada.nomeDisplay + "\nindisponível");
-                arteTextoAlternativo.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, 18));
-                arteTextoAlternativo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
-                arteTextoAlternativo.setTextAlignment(TextAlignment.CENTER);
-                arteTextoAlternativo.setWrapText(true);
-                StackPane.setAlignment(arteTextoAlternativo, Pos.CENTER);
-                arteClassePainel.getChildren().add(arteTextoAlternativo);
+                throw new RuntimeException("Caminho da imagem nulo ou vazio para: " + classeExibicaoSelecionada.nomeDisplay);
             }
         } catch (Exception e) {
-            System.err.println("Falha ao carregar arte da classe '" + classeExibicaoSelecionada.nomeDisplay + "': " + e.getMessage());
-            e.printStackTrace(); // Print stack trace for debugging image loading issues
+            System.err.println("Falha EXCEPCIONAL ao carregar arte da classe '" + classeExibicaoSelecionada.nomeDisplay + "': " + e.getMessage());
             Label arteTextoAlternativo = new Label("Arte Indisponível\n" + classeExibicaoSelecionada.nomeDisplay);
             arteTextoAlternativo.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, 18));
             arteTextoAlternativo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
@@ -456,7 +422,6 @@ public class TelaDeEscolha extends Application {
             StackPane.setAlignment(arteTextoAlternativo, Pos.CENTER);
             arteClassePainel.getChildren().add(arteTextoAlternativo);
         }
-
 
         classeVidaLabel.setText("Vida: " + classeExibicaoSelecionada.vida);
         classeFomeLabel.setText("Fome: " + classeExibicaoSelecionada.fome);
@@ -494,18 +459,15 @@ public class TelaDeEscolha extends Application {
         botao.setPrefSize(70, 60);
     }
 
-
     private void configurarTelaPrincipalJogo() {
         this.palcoPrincipal.setTitle("Ultima Fronteira - O Jogo");
 
-        // Initialize game logic managers
-        this.gerenciadorDeAmbientes = new GerenciadorDeAmbientes(); //
-        this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente(); //
+        this.gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
+        this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente();
         this.gerenciadorDeEventos = new GerenciadorDeEventos(
-                this.ambienteAtual.getEventosPossiveis(), //
-                this.ambienteAtual.getProbabilidadeDeEventos() //
-        ); //
-
+                this.ambienteAtual.getEventosPossiveis(),
+                this.ambienteAtual.getProbabilidadeDeEventos()
+        );
 
         BorderPane painelRaizJogo = new BorderPane();
         painelRaizJogo.setPadding(new Insets(VALOR_PADDING_JOGO));
@@ -556,32 +518,15 @@ public class TelaDeEscolha extends Application {
         this.palcoPrincipal.centerOnScreen();
 
         logEvento("Bem-vindo(a) à Ultima Fronteira, " + this.nomePersonagemParaAcoes + "!");
-        logEvento("Ambiente inicial: " + this.ambienteAtual.getNome()); //
         atualizarRotuloAmbiente();
-        atualizarBotaoAcaoPrincipal(this.gerenciadorDeEventos.getEventoCriaturaAtivo()); //
+        atualizarInterfaceAcoes();
     }
 
     private void atualizarRotuloAmbiente() {
         if (this.rotuloNomeAmbienteAtual != null && this.ambienteAtual != null) {
-            this.rotuloNomeAmbienteAtual.setText(" Ambiente Atual: " + this.ambienteAtual.getNome()); //
+            this.rotuloNomeAmbienteAtual.setText(" Ambiente Atual: " + this.ambienteAtual.getNome());
         }
-        // TODO: Update environment image in visualizadorImagemAmbiente
-        // Example:
-        // String imagePath = getImagePathForEnvironment(this.ambienteAtual.getNome());
-        // if (imagePath != null) {
-        // try (InputStream stream = getClass().getResourceAsStream(imagePath)) {
-        // if (stream != null) {
-        // visualizadorImagemAmbiente.setImage(new Image(stream));
-        // } else {
-        // visualizadorImagemAmbiente.setImage(null); // Or a default placeholder
-        // }
-        // } catch (Exception e) {
-        // visualizadorImagemAmbiente.setImage(null);
-        // e.printStackTrace();
-        // }
-        // } else {
-        // visualizadorImagemAmbiente.setImage(null);
-        // }
+        // TODO: Adicionar lógica para carregar imagem do ambiente
     }
 
 
@@ -602,12 +547,10 @@ public class TelaDeEscolha extends Application {
         Label valorStatus = new Label(this.personagem != null ? obterStatusPersonagem(this.personagem) : "<status>");
         estilizarRotulo(valorStatus, TAMANHO_FONTE_ROTULO_JOGO, true, Pos.CENTER_LEFT, true);
 
-
         configurarBarraProgressoJogo(barraVida, COR_VIDA);
         configurarBarraProgressoJogo(barraFome, COR_FOME);
         configurarBarraProgressoJogo(barraSede, COR_SEDE);
         configurarBarraProgressoJogo(barraEnergia, COR_ENERGIA);
-
 
         caixaAtributos.getChildren().addAll(
                 rotuloTituloAtributos,
@@ -621,7 +564,7 @@ public class TelaDeEscolha extends Application {
         return caixaAtributos;
     }
 
-    private String obterStatusPersonagem(Personagem p) { //
+    private String obterStatusPersonagem(Personagem p) {
         if (p == null) return "<status>";
         if (p.getVida() <= 0) return "Morto";
         if (p.getVida() < 25) return "Em Perigo";
@@ -671,16 +614,15 @@ public class TelaDeEscolha extends Application {
         painelExibicaoAmbiente.setMinSize(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO, TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO);
 
         this.visualizadorImagemAmbiente = new ImageView();
-        this.visualizadorImagemAmbiente.setFitHeight(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO - 10); // Example size
-        this.visualizadorImagemAmbiente.setFitWidth(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO * 1.5); // Example size
+        this.visualizadorImagemAmbiente.setFitHeight(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO - 10);
+        this.visualizadorImagemAmbiente.setFitWidth(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO * 1.5);
         this.visualizadorImagemAmbiente.setPreserveRatio(true);
         this.visualizadorImagemAmbiente.setSmooth(true);
 
-        Label textoAlternativo = new Label("\"Visão do Ambiente\""); // Fallback if image is null
+        Label textoAlternativo = new Label("\"Visão do Ambiente\"");
         textoAlternativo.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.NORMAL, 18));
         textoAlternativo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
 
-        // Show text if image is not loaded
         this.visualizadorImagemAmbiente.imageProperty().addListener((obs, oldImg, newImg) -> {
             if (newImg == null) {
                 if (!painelExibicaoAmbiente.getChildren().contains(textoAlternativo)) {
@@ -691,7 +633,6 @@ public class TelaDeEscolha extends Application {
             }
         });
         painelExibicaoAmbiente.getChildren().addAll(this.visualizadorImagemAmbiente, textoAlternativo);
-
 
         containerAmbiente.getChildren().addAll(this.rotuloNomeAmbienteAtual, painelExibicaoAmbiente);
         return containerAmbiente;
@@ -727,7 +668,6 @@ public class TelaDeEscolha extends Application {
             gradeInventario.getRowConstraints().add(restricaoLinha);
         }
 
-
         for (int linhaIdx = 0; linhaIdx < numLinhas; linhaIdx++) {
             for (int colIdx = 0; colIdx < COLS_INVENTARIO_JOGO; colIdx++) {
                 if ((linhaIdx * COLS_INVENTARIO_JOGO + colIdx) >= capacidadeInventario) break;
@@ -742,7 +682,6 @@ public class TelaDeEscolha extends Application {
 
                 espacoItem.widthProperty().bind(celula.widthProperty().subtract(2));
                 espacoItem.heightProperty().bind(celula.heightProperty().subtract(2));
-
 
                 celula.getChildren().add(espacoItem);
                 gradeInventario.add(celula, colIdx, linhaIdx);
@@ -761,47 +700,70 @@ public class TelaDeEscolha extends Application {
         estilizarRotulo(rotuloPerguntaAcao, TAMANHO_FONTE_CABECALHO_JOGO, true, Pos.CENTER_LEFT, true);
         rotuloPerguntaAcao.setWrapText(true);
 
-
         GridPane gradeAcoes = new GridPane();
         gradeAcoes.setHgap(10);
         gradeAcoes.setVgap(10);
 
+        // Inicializa os botões de ação para que possam ser referenciados em atualizarInterfaceAcoes
+        this.botaoMudarAmbiente = criarBotaoMedievalJogo("Mudar Ambiente");
+        this.botaoDescansar = criarBotaoMedievalJogo("Descansar");
+        Button botaoGerenciarInventario = criarBotaoMedievalJogo("Inventário");
+        this.botaoAcaoPrincipal = criarBotaoMedievalJogo("Explorar"); // Texto inicial
 
-        Button botaoMudarAmbiente = criarBotaoMedievalJogo("Mudar Ambiente");
-        botaoMudarAmbiente.setOnAction(e -> {
-            logEvento(this.nomePersonagemParaAcoes + " decide mudar de ambiente!");
-            if (this.gerenciadorDeAmbientes != null && this.gerenciadorDeEventos != null) {
-                this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente(); //
-                this.gerenciadorDeEventos.setEventosPossiveis(this.ambienteAtual.getEventosPossiveis()); //
-                this.gerenciadorDeEventos.setProbabilidadeDeEventos(this.ambienteAtual.getProbabilidadeDeEventos()); //
-                logEvento("Novo ambiente: " + this.ambienteAtual.getNome()); //
+        // Ações fixas são definidas aqui, ações dinâmicas (Explorar/Batalhar) em atualizarInterfaceAcoes
+        this.botaoMudarAmbiente.setOnAction(e -> {
+            if (this.gerenciadorDeAmbientes != null && this.gerenciadorDeEventos != null && this.personagem != null) {
+                // Verifica se uma criatura está ativa antes de permitir mudar de ambiente, como em Turno.java
+                if (this.gerenciadorDeEventos.getEventoCriaturaAtivo() != null) {
+                    logEvento(this.personagem.getNome() + " está em combate e não pode mudar de ambiente!");
+                    return;
+                }
+                // Verifica energia para mudar de ambiente, como em Turno.java
+                if (this.personagem.getEnergia() < 15) {
+                    logEvento(this.personagem.getNome() + " está cansado demais para viajar!");
+                    return;
+                }
+                // TODO: Aplicar custos de energia, fome, sede para viagem e atualizar GUI.
+                // Exemplo: personagem.setEnergia(personagem.getEnergia() - 15);
+
+                logEvento(this.nomePersonagemParaAcoes + " viaja para um novo local...");
+                this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente();
+                // Recria o gerenciador de eventos para o novo ambiente, efetivamente limpando eventos antigos.
+                this.gerenciadorDeEventos = new GerenciadorDeEventos(
+                        this.ambienteAtual.getEventosPossiveis(),
+                        this.ambienteAtual.getProbabilidadeDeEventos()
+                );
+                logEvento("Chegou em: " + this.ambienteAtual.getNome());
                 atualizarRotuloAmbiente();
-                // Clear any existing creature event from old environment before changing button
-                atualizarBotaoAcaoPrincipal(null); // Reset button as new environment might not have creature immediately
+                atualizarInterfaceAcoes(); // Atualiza botões para o novo estado (sem criatura inicialmente)
             }
         });
 
-        Button botaoDescansar = criarBotaoMedievalJogo("Descansar");
-        botaoDescansar.setOnAction(e -> {
+        this.botaoDescansar.setOnAction(e -> {
+            // Verifica se uma criatura está ativa, como em Turno.java
+            if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.getEventoCriaturaAtivo() != null) {
+                logEvento(this.personagem.getNome() + " não pode descansar durante um combate!");
+                return;
+            }
             logEvento(this.nomePersonagemParaAcoes + " decide descansar.");
-            // TODO: Implement logic for resting - affects Personagem stats
+            if (this.personagem != null) {
+                // TODO: Simular ganho de energia e atualizar GUI
+                // this.personagem.setEnergia(Math.min(100, this.personagem.getEnergia() + 15));
+                // logEvento(this.personagem.getNome() + " recuperou energia.");
+            }
         });
 
-        Button botaoGerenciarInventario = criarBotaoMedievalJogo("Inventário");
         botaoGerenciarInventario.setOnAction(e -> {
             logEvento(this.nomePersonagemParaAcoes + " abre o inventário.");
             if (this.personagem != null && this.personagem.getInventario() != null) {
-                logEvento(this.personagem.getInventario().toString()); //
+                logEvento(this.personagem.getInventario().toString());
             }
         });
 
-        this.botaoAcaoPrincipal = criarBotaoMedievalJogo("Explorar");
-        // The actual action for "Explorar" is set in atualizarBotaoAcaoPrincipal
+        definirRestricoesGradeBotoesJogo(this.botaoMudarAmbiente, this.botaoDescansar, botaoGerenciarInventario, this.botaoAcaoPrincipal);
 
-        definirRestricoesGradeBotoesJogo(botaoMudarAmbiente, botaoDescansar, botaoGerenciarInventario, this.botaoAcaoPrincipal);
-
-        gradeAcoes.add(botaoMudarAmbiente, 0, 0);
-        gradeAcoes.add(botaoDescansar, 1, 0);
+        gradeAcoes.add(this.botaoMudarAmbiente, 0, 0);
+        gradeAcoes.add(this.botaoDescansar, 1, 0);
         gradeAcoes.add(botaoGerenciarInventario, 0, 1);
         gradeAcoes.add(this.botaoAcaoPrincipal, 1, 1);
 
@@ -810,68 +772,198 @@ public class TelaDeEscolha extends Application {
         ccAcao.setHgrow(Priority.ALWAYS);
         gradeAcoes.getColumnConstraints().addAll(ccAcao, ccAcao);
 
-
         caixaAcoes.getChildren().addAll(rotuloPerguntaAcao, gradeAcoes);
         return caixaAcoes;
     }
 
-    private void atualizarBotaoAcaoPrincipal(EventoCriatura criaturaAtiva) { //
-        if (this.botaoAcaoPrincipal == null) return;
+    /**
+     * Atualiza a interface de ações (botões principais) com base no estado atual do jogo,
+     * especialmente a presença de um EventoCriatura ativo.
+     */
+    private void atualizarInterfaceAcoes() {
+        if (this.botaoAcaoPrincipal == null || this.gerenciadorDeEventos == null || this.personagem == null) {
+            System.err.println("Tentativa de atualizar interface de ações com componentes nulos.");
+            return;
+        }
+
+        EventoCriatura criaturaAtiva = this.gerenciadorDeEventos.getEventoCriaturaAtivo();
 
         if (criaturaAtiva != null) {
-            String nomeCriatura = criaturaAtiva.getNome(); //
+            String nomeCriatura = criaturaAtiva.getNome();
             this.botaoAcaoPrincipal.setText("Batalhar " + nomeCriatura);
-            this.botaoAcaoPrincipal.setOnAction(e -> {
-                // Battle Action
-                if (this.gerenciadorDeEventos != null && this.personagem != null && this.ambienteAtual != null) {
-                    EventoCriatura criaturaEmBatalha = this.gerenciadorDeEventos.getEventoCriaturaAtivo(); //
-                    if (criaturaEmBatalha != null) {
-                        logEvento(this.nomePersonagemParaAcoes + " enfrenta " + criaturaEmBatalha.getNome() + "!"); //
+            // Ação de Batalhar agora abre o diálogo de seleção de arma
+            this.botaoAcaoPrincipal.setOnAction(e -> abrirDialogoSelecaoArma(criaturaAtiva));
 
-                        // Simplified battle: creature is defeated
-                        // In a real scenario, this would involve weapon choice, damage calculation etc.
-                        // from Turno.faseDeAtaque
-                        criaturaEmBatalha.diminuirVida(criaturaEmBatalha.getVida() + 1); //
-                        logEvento(criaturaEmBatalha.getNome() + " foi derrotado(a)!");
+            if (this.botaoMudarAmbiente != null) this.botaoMudarAmbiente.setDisable(true);
+            if (this.botaoDescansar != null) this.botaoDescansar.setDisable(true);
 
-                        // Process events: this will execute effects and remove the defeated creature (duration 0)
-                        // This call is critical as it updates the GerenciadorDeEventos internal state
-                        this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem); //
-                    }
-                    // Update button based on the new state of active creature events
-                    atualizarBotaoAcaoPrincipal(this.gerenciadorDeEventos.getEventoCriaturaAtivo()); //
-                }
-            });
-        } else {
-            // Default "Explorar" Action
+        } else { // Nenhum EventoCriatura ativo
             this.botaoAcaoPrincipal.setText("Explorar");
-            this.botaoAcaoPrincipal.setOnAction(e -> {
+            this.botaoAcaoPrincipal.setOnAction(e -> { // Ação de Explorar
                 if (this.gerenciadorDeEventos != null && this.personagem != null && this.ambienteAtual != null) {
-                    logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "..."); //
 
-                    // Simulate energy cost if character has enough energy
-                    // if (personagem.getEnergia() == 0) { logEvento(...); return; } // As in Turno
-
-                    this.gerenciadorDeEventos.adicionarEventoAleatorio(); //
-                    EventoCriatura criaturaEncontrada = this.gerenciadorDeEventos.getEventoCriaturaAtivo(); //
-
-                    if (criaturaEncontrada != null) {
-                        logEvento("Uma criatura selvagem apareceu: " + criaturaEncontrada.getNome() + "!"); //
-                    } else {
-                        // Log other non-creature events if any were triggered
-                        // GerenciadorDeEventos.executarEventos also prints to console.
-                        // We can call it here to process and log them via GUI as well.
-                        // This will also apply their effects.
-                        logEvento("Investigando os arredores...");
-                        this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem); //
-                        // Note: The above call might print "não encontrou nada" to console if no active non-creature events.
-                        // We might need a way to get a summary from executarEventos for GUI logging.
+                    // Verifica energia para explorar, como em Turno.java
+                    if(personagem.getEnergia() == 0) {
+                        logEvento(personagem.getNome() + " está cansado demais para explorar!");
+                        // personagem.setEnergia(personagem.getEnergia() + 2); // Ganho de consolação em Turno.java
+                        // TODO: Atualizar barra de energia
+                        return;
                     }
-                    atualizarBotaoAcaoPrincipal(criaturaEncontrada);
+                    // TODO: Simular custo de energia para explorar e atualizar GUI
+                    // int custoEnergia = ambienteAtual.getDificuldadeDeExploracao(); //
+                    // personagem.setEnergia(personagem.getEnergia() - custoEnergia);
+                    // logEvento(personagem.getNome() + " gasta " + custoEnergia + " de energia.");
+
+                    logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "...");
+
+                    this.gerenciadorDeEventos.adicionarEventoAleatorio(); // Adiciona um evento aleatório
+
+                    // Processa e loga todos os eventos ativos.
+                    // Se um evento de criatura foi adicionado, executarEventos aplicará seu efeito (ex: ataque inicial).
+                    // Se for outro tipo de evento, seu efeito será aplicado.
+                    // Descrições são logadas no console pelo InputOutput dentro de executarEventos.
+                    this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem);
+
+                    // Reavalia o estado da interface (pode ter encontrado uma criatura).
+                    atualizarInterfaceAcoes();
                 }
             });
+            if (this.botaoMudarAmbiente != null) this.botaoMudarAmbiente.setDisable(false);
+            if (this.botaoDescansar != null) this.botaoDescansar.setDisable(false);
         }
     }
+
+    /**
+     * Abre um diálogo para o jogador selecionar uma arma do inventário.
+     * @param criaturaAlvo A criatura que será atacada.
+     */
+    private void abrirDialogoSelecaoArma(EventoCriatura criaturaAlvo) {
+        if (personagem == null || personagem.getInventario() == null) {
+            logEvento("Erro: Personagem ou inventário não disponível para seleção de arma.");
+            atualizarInterfaceAcoes();
+            return;
+        }
+
+        // Obtém a lista de armas do inventário. Inventario.getItens(InventarioEnum.ARMA.getIndice()) retorna ArrayList<Item>
+        ArrayList<Item> itensArmaDoInventario = personagem.getInventario().getItens(Inventario.InventarioEnum.ARMA.getIndice());
+        ObservableList<Arma> armasObservaveis = FXCollections.observableArrayList();
+        for (Item item : itensArmaDoInventario) {
+            if (item instanceof Arma) {
+                armasObservaveis.add((Arma) item);
+            }
+        }
+
+        // Teoricamente, ArmaPunhos sempre existe, então a lista não deveria ser vazia.
+        if (armasObservaveis.isEmpty()) {
+            logEvento(personagem.getNome() + " não possui armas disponíveis (nem mesmo Punhos!) para atacar " + criaturaAlvo.getNome() + ". Verifique o inventário.");
+            // Forçar um ataque com punhos se algo deu muito errado
+            ArmaPunhos punhos = new ArmaPunhos();
+            punhos.usar(criaturaAlvo); //
+            logEvento(personagem.getNome() + " atacou " + criaturaAlvo.getNome() + " com os Punhos (fallback).");
+            if (criaturaAlvo.getVida() <= 0) { //
+                logEvento(criaturaAlvo.getNome() + " foi derrotado(a)!");
+            }
+            this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem); //
+            atualizarInterfaceAcoes();
+            return;
+        }
+
+        Dialog<Arma> dialog = new Dialog<>();
+        dialog.setTitle("Escolha sua Arma");
+        dialog.setHeaderText("Atacar " + criaturaAlvo.getNome() + ". Qual arma usar?");
+        // TODO: Considerar adicionar um arquivo CSS para estilizar diálogos consistentemente
+        // dialog.getDialogPane().getStylesheets().add(getClass().getResource("/styles/dialogStyles.css").toExternalForm());
+
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.setMinWidth(380); // Ajuste conforme necessário
+        dialogPane.setMinHeight(250); // Ajuste conforme necessário
+        dialogPane.setStyle(obterEstiloPainelInterno() + " -fx-font-family: '" + FAMILIA_FONTE_MEDIEVAL + "';"); // Estilo base
+
+        ListView<Arma> listViewArmas = new ListView<>(armasObservaveis);
+        listViewArmas.setCellFactory(lv -> new ListCell<Arma>() {
+            @Override
+            protected void updateItem(Arma arma, boolean empty) {
+                super.updateItem(arma, empty);
+                if (empty || arma == null) {
+                    setText(null);
+                } else {
+                    // Exibe nome, dano e durabilidade da arma
+                    setText(arma.getNome() + " (Dano: " + arma.getDano() + ", Dur: " + arma.getDurabilidade() + ")");
+                    setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_CORPO_ESCOLHA));
+                }
+            }
+        });
+        listViewArmas.setPrefHeight(180);
+
+        VBox contentVBox = new VBox(10, listViewArmas);
+        contentVBox.setPadding(new Insets(10));
+        dialogPane.setContent(contentVBox);
+
+        ButtonType atacarButtonType = new ButtonType("Atacar", ButtonBar.ButtonData.OK_DONE);
+        // O botão "Voltar" é implicitamente o ButtonType.CANCEL
+        dialogPane.getButtonTypes().addAll(atacarButtonType, ButtonType.CANCEL);
+
+        Node atacarButtonNode = dialogPane.lookupButton(atacarButtonType);
+        atacarButtonNode.setDisable(true); // Desabilitar até uma arma ser selecionada
+        // Estilizar botões do diálogo
+        ((Button)atacarButtonNode).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
+        ((Button)dialogPane.lookupButton(ButtonType.CANCEL)).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_CORPO_ESCOLHA));
+
+        listViewArmas.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            atacarButtonNode.setDisable(newSelection == null);
+        });
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == atacarButtonType) {
+                return listViewArmas.getSelectionModel().getSelectedItem();
+            }
+            return null; // Cancelado ou fechado
+        });
+
+        Optional<Arma> resultado = dialog.showAndWait();
+
+        if (resultado.isPresent()) {
+            Arma armaEscolhida = resultado.get();
+            // Encontrar o índice da arma na lista original de armas do inventário
+            int indiceArmaNoInventario = -1;
+            // A lista `armasObservaveis` mantém a ordem da `itensArmaDoInventario` se populada sequencialmente
+            // Mas para garantir, podemos buscar o índice na lista original que o Inventario.usarItemArma espera
+            for(int i=0; i < itensArmaDoInventario.size(); i++){
+                if(itensArmaDoInventario.get(i) == armaEscolhida){ // Comparação de referência de objeto
+                    indiceArmaNoInventario = i;
+                    break;
+                }
+            }
+
+            if(indiceArmaNoInventario != -1) {
+                logEvento(personagem.getNome() + " ataca " + criaturaAlvo.getNome() + " com " + armaEscolhida.getNome() + "!");
+                // Usa o método do inventário que lida com durabilidade e remoção
+                personagem.getInventario().usarItemArma(indiceArmaNoInventario, criaturaAlvo);
+
+                if (criaturaAlvo.getVida() <= 0) {
+                    logEvento(criaturaAlvo.getNome() + " foi derrotado(a)!");
+                } else {
+                    logEvento(criaturaAlvo.getNome() + " agora tem " + criaturaAlvo.getVida() + " de vida.");
+                }
+            } else {
+                logEvento("ERRO: Arma selecionada ("+ armaEscolhida.getNome() +") não encontrada no array de armas do inventário para obter índice.");
+                // Fallback para punhos se algo der muito errado (não deveria acontecer se a lista foi bem populada)
+                new ArmaPunhos().usar(criaturaAlvo);
+                if (criaturaAlvo.getVida() <= 0) {
+                    logEvento(criaturaAlvo.getNome() + " foi derrotado(a) (com punhos-fallback)!");
+                }
+            }
+
+            // Processar eventos após o ataque (incluindo remoção da criatura se derrotada)
+            this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem);
+        } else {
+            logEvento("Seleção de arma cancelada. " + criaturaAlvo.getNome() + " ainda está à espreita.");
+        }
+        // Atualizar a interface principal independentemente do resultado do diálogo,
+        // pois o estado do EventoCriaturaAtivo pode ter mudado (se derrotado) ou não (se cancelado).
+        atualizarInterfaceAcoes();
+    }
+
 
     private void definirRestricoesGradeBotoesJogo(Button... botoes) {
         for (Button botao : botoes) {
@@ -902,8 +994,8 @@ public class TelaDeEscolha extends Application {
                 " -fx-border-radius: 3px;";
 
         botao.setStyle(estiloBase);
-        botao.setOnMouseEntered(e -> botao.setStyle(estiloHover));
-        botao.setOnMouseExited(e -> botao.setStyle(estiloBase));
+        botao.setOnMouseEntered(ev -> botao.setStyle(estiloHover));
+        botao.setOnMouseExited(ev -> botao.setStyle(estiloBase));
         return botao;
     }
 
@@ -941,7 +1033,6 @@ public class TelaDeEscolha extends Application {
             System.out.println("Log GUI (areaEventosJogo is null): " + mensagem);
         }
     }
-//teste
 
     public static void main(String[] args) {
         launch(args);

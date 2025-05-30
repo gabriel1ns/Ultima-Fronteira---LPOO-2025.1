@@ -12,7 +12,7 @@ import jogo.personagem.Personagem;
 import jogo.utils.IntMath;
 
 public class Inventario {
-    static enum InventarioEnum {
+    public static enum InventarioEnum {
         ARMA(1),
         CONSUMIVEL(2),
         FERRAMENTA(3),
