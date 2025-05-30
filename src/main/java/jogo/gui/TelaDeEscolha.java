@@ -34,10 +34,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jogo.personagem.Personagem;
+import jogo.ambiente.Ambiente; //
+import jogo.gerenciadores.GerenciadorDeAmbientes; //
+import jogo.gerenciadores.GerenciadorDeEventos; //
+import jogo.eventos.Evento; //
+import jogo.eventos.criatura.EventoCriatura; //
+// EventoCriaturaLobo and EventoCriaturaUrso are not directly instantiated here anymore for simulation
+// as the GerenciadorDeEventos will pick them based on Ambiente.
 
 public class TelaDeEscolha extends Application {
 
-    // cores - estilo pergaminho/ medieval
+    // ... (all existing constants remain the same)
     private static final String FAMILIA_FONTE_MEDIEVAL = "Georgia";
     private static final String COR_TEXTO_MARROM_ESCURO = "#4A3B31";
     private static final String FUNDO_PERGAMINHO = "#F5EACE;";
@@ -51,7 +58,6 @@ public class TelaDeEscolha extends Application {
     private static final String FUNDO_BOTAO_CONFIRMAR = "#556B2F";
     private static final String FUNDO_BOTAO_CONFIRMAR_HOVER = "#455A25";
 
-    //  tela principal do jogo
     private static final String COR_TRILHA_BARRA_PROGRESSO = "#C6B8A9;";
     private static final String FUNDO_SLOT_INVENTARIO = "#A08C78";
     private static final String FUNDO_PLACEHOLDER_AMBIENTE = "#D7C7B0";
@@ -60,7 +66,6 @@ public class TelaDeEscolha extends Application {
     private static final String COR_SEDE = "#4682B4;";
     private static final String COR_ENERGIA = "#556B2F;";
 
-    // escolha personagem
     private static final double LARGURA_JANELA_ESCOLHA = 900;
     private static final double ALTURA_JANELA_ESCOLHA = 700;
     private static final double VALOR_PADDING_ESCOLHA = 20;
@@ -73,7 +78,6 @@ public class TelaDeEscolha extends Application {
     private static final double LARGURA_BOTAO_CRIAR = 200;
     private static final double ALTURA_BOTAO_CRIAR = 45;
 
-    // tela principal - dimensao
     private static final double VALOR_PADDING_JOGO = 18;
     private static final int TAMANHO_FONTE_CABECALHO_JOGO = 20;
     private static final int TAMANHO_FONTE_ROTULO_JOGO = 13;
@@ -123,7 +127,19 @@ public class TelaDeEscolha extends Application {
     private ToggleGroup classeToggleGrupo;
 
     private Stage palcoPrincipal;
+
+    // Game logic instances
     private Personagem personagem;
+    private GerenciadorDeAmbientes gerenciadorDeAmbientes;
+    private Ambiente ambienteAtual;
+    private GerenciadorDeEventos gerenciadorDeEventos;
+
+    // GUI Elements for the main game screen that need to be updated
+    private Button botaoAcaoPrincipal;
+    private String nomePersonagemParaAcoes;
+    private TextArea areaEventosJogo;
+    private Label rotuloNomeAmbienteAtual; // To display current environment name
+    private ImageView visualizadorImagemAmbiente; // To display environment image
 
     @Override
     public void start(Stage palcoPrincipalArgumento) {
@@ -167,28 +183,28 @@ public class TelaDeEscolha extends Application {
 
     private void inicializarClassesParaExibicao() {
         classesParaExibicao = new ArrayList<>();
-        String basePathImagens = "/img/personagens/"; // mudar quado tiver imgs
+        String basePathImagens = "/img/personagens/";
 
 
         classesParaExibicao.add(new InfoClasseDisplay(
                 "Lenhador",
-                "Lenhador",
+                "Lenhador", //
                 "\uD83E\uDE93",
                 basePathImagens + "Lenhador.png",
-                "100", "100", "100", "100",
-                "Machado",
-                " "
+                "100", "100", "100", "100", // Assuming default values from PersonagemLenhador
+                "Machado", // Placeholder, actual items depend on game start logic
+                "Habilidade: Cortes Precisos (Maior chance de obter madeira extra)."
         ));
 
 
         classesParaExibicao.add(new InfoClasseDisplay(
                 "Sobrevivente",
-                "Sobrevivente",
+                "Sobrevivente", //
                 "\uD83D\uDEB6",
                 basePathImagens + "Sobrevivente.png",
-                "100", "100", "100", "100",
-                "Espada",
-                "" // descricao de habilidade placeholder
+                "100", "100", "100", "100", // Assuming default values from PersonagemSobrevivente
+                "Faca de Sobrevivência", // Placeholder
+                "Habilidade: Resistente (Menor consumo de fome e sede)."
         ));
     }
 
@@ -268,11 +284,11 @@ public class TelaDeEscolha extends Application {
         botaoCriarPersonagem.setOnAction(event -> {
             String nome = nomePersonagemCampo.getText();
             if (nome == null || nome.trim().isEmpty()) {
-                System.out.println("Por favor, digite um nome para o aventureiro.");
+                logEventoTelaEscolha("Por favor, digite um nome para o aventureiro.");
                 return;
             }
             if (classeExibicaoSelecionada == null) {
-                System.out.println("Por favor, selecione uma vocação.");
+                logEventoTelaEscolha("Por favor, selecione uma vocação.");
                 return;
             }
 
@@ -281,18 +297,44 @@ public class TelaDeEscolha extends Application {
             if (Personagem.CLASSES != null) {
                 for (int i = 0; i < Personagem.CLASSES.length; i++) {
                     if (Personagem.CLASSES[i].equals(classeExibicaoSelecionada.nomeReal)) {
-                        indiceClasseReal = i;
+                        indiceClasseReal = i; // Personagem.novoPersonagem uses index+1 for 1-based input, so adjust if needed or ensure consistency
+                        // The Personagem.novoPersonagem switch uses 1-based, so Personagem.CLASSES[0] (Lenhador) is choice 1.
+                        // So if indiceClasseReal is 0, it maps to choice 1.
                         break;
                     }
                 }
             }
+            // Adjust for 1-based indexing if Personagem.novoPersonagem expects it.
+            // Current Personagem.novoPersonagem: case 1 -> Lenhador. If CLASSES = {"Lenhador", "Sobrevivente"}, Lenhador is at index 0.
+            // The original code passes 'escolhaClassePersonagem' which is index based.
+            // InputOutput.decisaoEmIntervalo returns 0 for first option.
+            // So, if Personagem.novoPersonagem uses the direct index +1, or if it takes 0 for Lenhador...
+            // Let's assume Personagem.novoPersonagem maps index 0 from Personagem.CLASSES to its internal case 0 or 1.
+            // The Main.java calls: Personagem.novoPersonagem(nomePersonagem, escolhaClassePersonagem);
+            // escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", Personagem.CLASSES, Personagem.CLASSES.length);
+            // decisaoEmIntervalo returns 0 for the first option.
+            // Personagem.novoPersonagem: case 1: new PersonagemLenhador(nome); default: new PersonagemSobrevivente(nome);
+            // This means if indiceClasseReal is 0 (Lenhador), we should pass 1. If 1 (Sobrevivente), pass 0 or other for default.
+            // This is a bit inconsistent. Let's align with Main.java's use of decisaoEmIntervalo (0-indexed for Personagem.CLASSES array)
+            // and Personagem.novoPersonagem's expectation.
+            // If classeExibicaoSelecionada.nomeReal is Personagem.CLASSES[0] ("Lenhador"), then indiceClasseReal = 0. We should pass 1.
+            // If classeExibicaoSelecionada.nomeReal is Personagem.CLASSES[1] ("Sobrevivente"), then indiceClasseReal = 1. We should pass anything else (e.g. 0 or 2 for default)
 
-            if (indiceClasseReal == -1) {
+            int escolhaParaNovoPersonagem;
+            if (classeExibicaoSelecionada.nomeReal.equals(Personagem.CLASSES[0])) { // Lenhador
+                escolhaParaNovoPersonagem = 1;
+            } else { // Default to Sobrevivente or other classes
+                escolhaParaNovoPersonagem = 0; // Or any value that hits the default in novoPersonagem
+            }
+
+
+            if (indiceClasseReal == -1 && !classeExibicaoSelecionada.nomeReal.equals(Personagem.CLASSES[1])) { // Allow Sobrevivente to be default
                 System.err.println("Erro: Classe selecionada na UI ('" + classeExibicaoSelecionada.nomeReal + "') não corresponde a uma classe de jogo válida em Personagem.CLASSES.");
                 return;
             }
 
-            this.personagem = Personagem.novoPersonagem(nome, indiceClasseReal);
+            this.nomePersonagemParaAcoes = nome.trim();
+            this.personagem = Personagem.novoPersonagem(this.nomePersonagemParaAcoes, escolhaParaNovoPersonagem);
 
             System.out.println("Aventureiro Criado: " + this.personagem.getNome() + " (" + classeExibicaoSelecionada.nomeDisplay + ")");
             System.out.println("Atributos Iniciais: Vida=" + this.personagem.getVida() + ", Fome=" + this.personagem.getFome() + ", Sede=" + this.personagem.getSede() + ", Energia=" + this.personagem.getEnergia());
@@ -305,6 +347,13 @@ public class TelaDeEscolha extends Application {
         return painel;
     }
 
+    private void logEventoTelaEscolha(String mensagem) {
+        // Placeholder for showing alerts on the character selection screen if needed
+        System.out.println("GUI Info: " + mensagem);
+        // Example: new Alert(AlertType.WARNING, mensagem).showAndWait();
+    }
+
+
     private VBox criarPainelDireitoSelecao() {
         VBox painel = new VBox(VALOR_PADDING_ESCOLHA);
         painel.setAlignment(Pos.TOP_CENTER);
@@ -316,7 +365,7 @@ public class TelaDeEscolha extends Application {
 
         VBox painelAtributos = new VBox(5);
         painelAtributos.setStyle(obterEstiloPainelInterno());
-        Label tituloAtributos = new Label("Atributos Base (Exemplo):");
+        Label tituloAtributos = new Label("Atributos Base:");
         estilizarRotulo(tituloAtributos, TAMANHO_FONTE_CORPO_ESCOLHA, true, Pos.CENTER_LEFT, false);
         classeVidaLabel = criarRotuloAtributoSelecao("Vida: ");
         classeFomeLabel = criarRotuloAtributoSelecao("Fome: ");
@@ -328,7 +377,7 @@ public class TelaDeEscolha extends Application {
 
         VBox painelHabilidade = new VBox(5);
         painelHabilidade.setStyle(obterEstiloPainelInterno());
-        Label tituloHabilidade = new Label("Habilidade Especial (Exemplo):");
+        Label tituloHabilidade = new Label("Habilidade Especial:");
         estilizarRotulo(tituloHabilidade, TAMANHO_FONTE_CORPO_ESCOLHA, true, Pos.CENTER_LEFT, false);
         classeHabilidadeArea = new TextArea();
         classeHabilidadeArea.setWrapText(true);
@@ -379,6 +428,7 @@ public class TelaDeEscolha extends Application {
                     throw new RuntimeException("Erro ao carregar imagem: " + classeExibicaoSelecionada.caminhoImagem + (imagem.getException() != null ? " - " + imagem.getException().getMessage() : ""));
                 }
 
+
                 ImageView visualizadorImagem = new ImageView(imagem);
                 visualizadorImagem.setFitWidth(LARGURA_ARTE_CLASSE - 10);
                 visualizadorImagem.setFitHeight(ALTURA_ARTE_CLASSE - 10);
@@ -397,6 +447,7 @@ public class TelaDeEscolha extends Application {
             }
         } catch (Exception e) {
             System.err.println("Falha ao carregar arte da classe '" + classeExibicaoSelecionada.nomeDisplay + "': " + e.getMessage());
+            e.printStackTrace(); // Print stack trace for debugging image loading issues
             Label arteTextoAlternativo = new Label("Arte Indisponível\n" + classeExibicaoSelecionada.nomeDisplay);
             arteTextoAlternativo.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, 18));
             arteTextoAlternativo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
@@ -405,6 +456,7 @@ public class TelaDeEscolha extends Application {
             StackPane.setAlignment(arteTextoAlternativo, Pos.CENTER);
             arteClassePainel.getChildren().add(arteTextoAlternativo);
         }
+
 
         classeVidaLabel.setText("Vida: " + classeExibicaoSelecionada.vida);
         classeFomeLabel.setText("Fome: " + classeExibicaoSelecionada.fome);
@@ -445,6 +497,15 @@ public class TelaDeEscolha extends Application {
 
     private void configurarTelaPrincipalJogo() {
         this.palcoPrincipal.setTitle("Ultima Fronteira - O Jogo");
+
+        // Initialize game logic managers
+        this.gerenciadorDeAmbientes = new GerenciadorDeAmbientes(); //
+        this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente(); //
+        this.gerenciadorDeEventos = new GerenciadorDeEventos(
+                this.ambienteAtual.getEventosPossiveis(), //
+                this.ambienteAtual.getProbabilidadeDeEventos() //
+        ); //
+
 
         BorderPane painelRaizJogo = new BorderPane();
         painelRaizJogo.setPadding(new Insets(VALOR_PADDING_JOGO));
@@ -493,14 +554,43 @@ public class TelaDeEscolha extends Application {
         this.palcoPrincipal.setMinWidth(800);
         this.palcoPrincipal.setMinHeight(600);
         this.palcoPrincipal.centerOnScreen();
+
+        logEvento("Bem-vindo(a) à Ultima Fronteira, " + this.nomePersonagemParaAcoes + "!");
+        logEvento("Ambiente inicial: " + this.ambienteAtual.getNome()); //
+        atualizarRotuloAmbiente();
+        atualizarBotaoAcaoPrincipal(this.gerenciadorDeEventos.getEventoCriaturaAtivo()); //
     }
+
+    private void atualizarRotuloAmbiente() {
+        if (this.rotuloNomeAmbienteAtual != null && this.ambienteAtual != null) {
+            this.rotuloNomeAmbienteAtual.setText(" Ambiente Atual: " + this.ambienteAtual.getNome()); //
+        }
+        // TODO: Update environment image in visualizadorImagemAmbiente
+        // Example:
+        // String imagePath = getImagePathForEnvironment(this.ambienteAtual.getNome());
+        // if (imagePath != null) {
+        // try (InputStream stream = getClass().getResourceAsStream(imagePath)) {
+        // if (stream != null) {
+        // visualizadorImagemAmbiente.setImage(new Image(stream));
+        // } else {
+        // visualizadorImagemAmbiente.setImage(null); // Or a default placeholder
+        // }
+        // } catch (Exception e) {
+        // visualizadorImagemAmbiente.setImage(null);
+        // e.printStackTrace();
+        // }
+        // } else {
+        // visualizadorImagemAmbiente.setImage(null);
+        // }
+    }
+
 
     private VBox criarSecaoAtributosJogo() {
         VBox caixaAtributos = new VBox(10);
         caixaAtributos.setAlignment(Pos.TOP_LEFT);
         VBox.setVgrow(caixaAtributos, Priority.NEVER);
 
-        Label rotuloTituloAtributos = new Label("Atributos de " + (this.personagem != null ? this.personagem.getNome() : "<nome>"));
+        Label rotuloTituloAtributos = new Label("Atributos de " + this.nomePersonagemParaAcoes);
         estilizarRotulo(rotuloTituloAtributos, TAMANHO_FONTE_CABECALHO_JOGO, true, Pos.CENTER_LEFT, true);
 
         ProgressBar barraVida = new ProgressBar(this.personagem != null ? (double)this.personagem.getVida() / 100.0 : 0.85);
@@ -512,10 +602,12 @@ public class TelaDeEscolha extends Application {
         Label valorStatus = new Label(this.personagem != null ? obterStatusPersonagem(this.personagem) : "<status>");
         estilizarRotulo(valorStatus, TAMANHO_FONTE_ROTULO_JOGO, true, Pos.CENTER_LEFT, true);
 
+
         configurarBarraProgressoJogo(barraVida, COR_VIDA);
         configurarBarraProgressoJogo(barraFome, COR_FOME);
         configurarBarraProgressoJogo(barraSede, COR_SEDE);
         configurarBarraProgressoJogo(barraEnergia, COR_ENERGIA);
+
 
         caixaAtributos.getChildren().addAll(
                 rotuloTituloAtributos,
@@ -529,13 +621,14 @@ public class TelaDeEscolha extends Application {
         return caixaAtributos;
     }
 
-    private String obterStatusPersonagem(Personagem p) {
+    private String obterStatusPersonagem(Personagem p) { //
         if (p == null) return "<status>";
         if (p.getVida() <= 0) return "Morto";
         if (p.getVida() < 25) return "Em Perigo";
         if (p.getFome() < 10 || p.getSede() < 10) return "Esgotado";
         return "Normal";
     }
+
 
     private HBox criarLinhaAtributoJogo(String textoRotulo, Node controle) {
         HBox linha = new HBox(8);
@@ -566,8 +659,8 @@ public class TelaDeEscolha extends Application {
         containerAmbiente.setAlignment(Pos.TOP_CENTER);
         VBox.setVgrow(containerAmbiente, Priority.ALWAYS);
 
-        Label rotuloTituloAmbiente = new Label(" Ambiente Atual ");
-        estilizarRotulo(rotuloTituloAmbiente, TAMANHO_FONTE_CABECALHO_JOGO, true, Pos.CENTER, true);
+        this.rotuloNomeAmbienteAtual = new Label(" Ambiente Atual: <Carregando...>");
+        estilizarRotulo(this.rotuloNomeAmbienteAtual, TAMANHO_FONTE_CABECALHO_JOGO, true, Pos.CENTER, true);
 
         StackPane painelExibicaoAmbiente = new StackPane();
         painelExibicaoAmbiente.setAlignment(Pos.CENTER);
@@ -577,12 +670,30 @@ public class TelaDeEscolha extends Application {
                 " -fx-border-width: 1px; -fx-border-style: dashed;");
         painelExibicaoAmbiente.setMinSize(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO, TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO);
 
-        Label textoAlternativo = new Label("\"Área do Ambiente\"");
+        this.visualizadorImagemAmbiente = new ImageView();
+        this.visualizadorImagemAmbiente.setFitHeight(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO - 10); // Example size
+        this.visualizadorImagemAmbiente.setFitWidth(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO * 1.5); // Example size
+        this.visualizadorImagemAmbiente.setPreserveRatio(true);
+        this.visualizadorImagemAmbiente.setSmooth(true);
+
+        Label textoAlternativo = new Label("\"Visão do Ambiente\""); // Fallback if image is null
         textoAlternativo.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.NORMAL, 18));
         textoAlternativo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
-        painelExibicaoAmbiente.getChildren().add(textoAlternativo);
 
-        containerAmbiente.getChildren().addAll(rotuloTituloAmbiente, painelExibicaoAmbiente);
+        // Show text if image is not loaded
+        this.visualizadorImagemAmbiente.imageProperty().addListener((obs, oldImg, newImg) -> {
+            if (newImg == null) {
+                if (!painelExibicaoAmbiente.getChildren().contains(textoAlternativo)) {
+                    painelExibicaoAmbiente.getChildren().add(textoAlternativo);
+                }
+            } else {
+                painelExibicaoAmbiente.getChildren().remove(textoAlternativo);
+            }
+        });
+        painelExibicaoAmbiente.getChildren().addAll(this.visualizadorImagemAmbiente, textoAlternativo);
+
+
+        containerAmbiente.getChildren().addAll(this.rotuloNomeAmbienteAtual, painelExibicaoAmbiente);
         return containerAmbiente;
     }
 
@@ -616,18 +727,23 @@ public class TelaDeEscolha extends Application {
             gradeInventario.getRowConstraints().add(restricaoLinha);
         }
 
+
         for (int linhaIdx = 0; linhaIdx < numLinhas; linhaIdx++) {
             for (int colIdx = 0; colIdx < COLS_INVENTARIO_JOGO; colIdx++) {
                 if ((linhaIdx * COLS_INVENTARIO_JOGO + colIdx) >= capacidadeInventario) break;
                 StackPane celula = new StackPane();
                 celula.setAlignment(Pos.CENTER);
+
                 Rectangle espacoItem = new Rectangle();
                 espacoItem.setFill(Color.web(FUNDO_SLOT_INVENTARIO));
                 espacoItem.setStroke(Color.web(COR_TEXTO_MARROM_ESCURO));
                 espacoItem.setArcWidth(5);
                 espacoItem.setArcHeight(5);
+
                 espacoItem.widthProperty().bind(celula.widthProperty().subtract(2));
                 espacoItem.heightProperty().bind(celula.heightProperty().subtract(2));
+
+
                 celula.getChildren().add(espacoItem);
                 gradeInventario.add(celula, colIdx, linhaIdx);
             }
@@ -641,43 +757,120 @@ public class TelaDeEscolha extends Application {
         caixaAcoes.setAlignment(Pos.TOP_LEFT);
         VBox.setVgrow(caixaAcoes, Priority.NEVER);
 
-        String nomePers = (this.personagem != null ? this.personagem.getNome() : "<nome>");
-        Label rotuloPerguntaAcao = new Label(" O que " + nomePers + " fará?");
+        Label rotuloPerguntaAcao = new Label(" O que " + this.nomePersonagemParaAcoes + " fará?");
         estilizarRotulo(rotuloPerguntaAcao, TAMANHO_FONTE_CABECALHO_JOGO, true, Pos.CENTER_LEFT, true);
         rotuloPerguntaAcao.setWrapText(true);
+
 
         GridPane gradeAcoes = new GridPane();
         gradeAcoes.setHgap(10);
         gradeAcoes.setVgap(10);
 
-        Button botaoMudarAmbiente = criarBotaoMedievalJogo("Ambiente");
-        botaoMudarAmbiente.setOnAction(e -> System.out.println(nomePers + " decide mudar de ambiente!"));
-        Button botaoDescansar = criarBotaoMedievalJogo("Descansar");
-        botaoDescansar.setOnAction(e -> System.out.println(nomePers + " decide descansar."));
-        Button botaoGerenciarInventario = criarBotaoMedievalJogo("Inventário");
-        botaoGerenciarInventario.setOnAction(e -> {
-            System.out.println(nomePers + " abre o inventário.");
-            if (this.personagem != null && this.personagem.getInventario() != null) {
-                System.out.println(this.personagem.getInventario().toString());
+
+        Button botaoMudarAmbiente = criarBotaoMedievalJogo("Mudar Ambiente");
+        botaoMudarAmbiente.setOnAction(e -> {
+            logEvento(this.nomePersonagemParaAcoes + " decide mudar de ambiente!");
+            if (this.gerenciadorDeAmbientes != null && this.gerenciadorDeEventos != null) {
+                this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente(); //
+                this.gerenciadorDeEventos.setEventosPossiveis(this.ambienteAtual.getEventosPossiveis()); //
+                this.gerenciadorDeEventos.setProbabilidadeDeEventos(this.ambienteAtual.getProbabilidadeDeEventos()); //
+                logEvento("Novo ambiente: " + this.ambienteAtual.getNome()); //
+                atualizarRotuloAmbiente();
+                // Clear any existing creature event from old environment before changing button
+                atualizarBotaoAcaoPrincipal(null); // Reset button as new environment might not have creature immediately
             }
         });
-        Button botaoExplorarAmbiente = criarBotaoMedievalJogo("Explorar");
-        botaoExplorarAmbiente.setOnAction(e -> System.out.println(nomePers + " explora os arredores."));
 
-        definirRestricoesGradeBotoesJogo(botaoMudarAmbiente, botaoDescansar, botaoGerenciarInventario, botaoExplorarAmbiente);
+        Button botaoDescansar = criarBotaoMedievalJogo("Descansar");
+        botaoDescansar.setOnAction(e -> {
+            logEvento(this.nomePersonagemParaAcoes + " decide descansar.");
+            // TODO: Implement logic for resting - affects Personagem stats
+        });
+
+        Button botaoGerenciarInventario = criarBotaoMedievalJogo("Inventário");
+        botaoGerenciarInventario.setOnAction(e -> {
+            logEvento(this.nomePersonagemParaAcoes + " abre o inventário.");
+            if (this.personagem != null && this.personagem.getInventario() != null) {
+                logEvento(this.personagem.getInventario().toString()); //
+            }
+        });
+
+        this.botaoAcaoPrincipal = criarBotaoMedievalJogo("Explorar");
+        // The actual action for "Explorar" is set in atualizarBotaoAcaoPrincipal
+
+        definirRestricoesGradeBotoesJogo(botaoMudarAmbiente, botaoDescansar, botaoGerenciarInventario, this.botaoAcaoPrincipal);
 
         gradeAcoes.add(botaoMudarAmbiente, 0, 0);
         gradeAcoes.add(botaoDescansar, 1, 0);
         gradeAcoes.add(botaoGerenciarInventario, 0, 1);
-        gradeAcoes.add(botaoExplorarAmbiente, 1, 1);
+        gradeAcoes.add(this.botaoAcaoPrincipal, 1, 1);
 
         ColumnConstraints ccAcao = new ColumnConstraints();
         ccAcao.setPercentWidth(50);
         ccAcao.setHgrow(Priority.ALWAYS);
         gradeAcoes.getColumnConstraints().addAll(ccAcao, ccAcao);
 
+
         caixaAcoes.getChildren().addAll(rotuloPerguntaAcao, gradeAcoes);
         return caixaAcoes;
+    }
+
+    private void atualizarBotaoAcaoPrincipal(EventoCriatura criaturaAtiva) { //
+        if (this.botaoAcaoPrincipal == null) return;
+
+        if (criaturaAtiva != null) {
+            String nomeCriatura = criaturaAtiva.getNome(); //
+            this.botaoAcaoPrincipal.setText("Batalhar " + nomeCriatura);
+            this.botaoAcaoPrincipal.setOnAction(e -> {
+                // Battle Action
+                if (this.gerenciadorDeEventos != null && this.personagem != null && this.ambienteAtual != null) {
+                    EventoCriatura criaturaEmBatalha = this.gerenciadorDeEventos.getEventoCriaturaAtivo(); //
+                    if (criaturaEmBatalha != null) {
+                        logEvento(this.nomePersonagemParaAcoes + " enfrenta " + criaturaEmBatalha.getNome() + "!"); //
+
+                        // Simplified battle: creature is defeated
+                        // In a real scenario, this would involve weapon choice, damage calculation etc.
+                        // from Turno.faseDeAtaque
+                        criaturaEmBatalha.diminuirVida(criaturaEmBatalha.getVida() + 1); //
+                        logEvento(criaturaEmBatalha.getNome() + " foi derrotado(a)!");
+
+                        // Process events: this will execute effects and remove the defeated creature (duration 0)
+                        // This call is critical as it updates the GerenciadorDeEventos internal state
+                        this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem); //
+                    }
+                    // Update button based on the new state of active creature events
+                    atualizarBotaoAcaoPrincipal(this.gerenciadorDeEventos.getEventoCriaturaAtivo()); //
+                }
+            });
+        } else {
+            // Default "Explorar" Action
+            this.botaoAcaoPrincipal.setText("Explorar");
+            this.botaoAcaoPrincipal.setOnAction(e -> {
+                if (this.gerenciadorDeEventos != null && this.personagem != null && this.ambienteAtual != null) {
+                    logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "..."); //
+
+                    // Simulate energy cost if character has enough energy
+                    // if (personagem.getEnergia() == 0) { logEvento(...); return; } // As in Turno
+
+                    this.gerenciadorDeEventos.adicionarEventoAleatorio(); //
+                    EventoCriatura criaturaEncontrada = this.gerenciadorDeEventos.getEventoCriaturaAtivo(); //
+
+                    if (criaturaEncontrada != null) {
+                        logEvento("Uma criatura selvagem apareceu: " + criaturaEncontrada.getNome() + "!"); //
+                    } else {
+                        // Log other non-creature events if any were triggered
+                        // GerenciadorDeEventos.executarEventos also prints to console.
+                        // We can call it here to process and log them via GUI as well.
+                        // This will also apply their effects.
+                        logEvento("Investigando os arredores...");
+                        this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem); //
+                        // Note: The above call might print "não encontrou nada" to console if no active non-creature events.
+                        // We might need a way to get a summary from executarEventos for GUI logging.
+                    }
+                    atualizarBotaoAcaoPrincipal(criaturaEncontrada);
+                }
+            });
+        }
     }
 
     private void definirRestricoesGradeBotoesJogo(Button... botoes) {
@@ -687,14 +880,27 @@ public class TelaDeEscolha extends Application {
         }
     }
 
+
     private Button criarBotaoMedievalJogo(String texto) {
         Button botao = new Button(texto);
         botao.setMinWidth(LARGURA_MIN_BOTAO_ACAO_JOGO / 2.5);
         botao.setPrefHeight(ALTURA_PREF_BOTAO_ACAO_JOGO);
         botao.setMaxWidth(Double.MAX_VALUE);
         botao.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_ROTULO_JOGO));
-        String estiloBase = "-fx-background-color: " + FUNDO_BOTAO_MARROM + ";" + " -fx-text-fill: " + TEXTO_BOTAO_CLARO + ";" + " -fx-border-color: " + COR_TEXTO_MARROM_ESCURO + ";" + " -fx-border-width: 1.5px;" + " -fx-background-radius: 3px;" + " -fx-border-radius: 3px;";
-        String estiloHover = "-fx-background-color: " + FUNDO_BOTAO_HOVER_MARROM_ESCURO + ";" + " -fx-text-fill: " + TEXTO_BOTAO_CLARO + ";" + " -fx-border-color: " + COR_TEXTO_MARROM_ESCURO + ";" + " -fx-border-width: 1.5px;" + " -fx-background-radius: 3px;" + " -fx-border-radius: 3px;";
+
+        String estiloBase = "-fx-background-color: " + FUNDO_BOTAO_MARROM + ";" +
+                " -fx-text-fill: " + TEXTO_BOTAO_CLARO + ";" +
+                " -fx-border-color: " + COR_TEXTO_MARROM_ESCURO + ";" +
+                " -fx-border-width: 1.5px;" +
+                " -fx-background-radius: 3px;" +
+                " -fx-border-radius: 3px;";
+        String estiloHover = "-fx-background-color: " + FUNDO_BOTAO_HOVER_MARROM_ESCURO + ";" +
+                " -fx-text-fill: " + TEXTO_BOTAO_CLARO + ";" +
+                " -fx-border-color: " + COR_TEXTO_MARROM_ESCURO + ";" +
+                " -fx-border-width: 1.5px;" +
+                " -fx-background-radius: 3px;" +
+                " -fx-border-radius: 3px;";
+
         botao.setStyle(estiloBase);
         botao.setOnMouseEntered(e -> botao.setStyle(estiloHover));
         botao.setOnMouseExited(e -> botao.setStyle(estiloBase));
@@ -706,26 +912,36 @@ public class TelaDeEscolha extends Application {
         envolveEventos.setAlignment(Pos.TOP_LEFT);
         VBox.setVgrow(envolveEventos, Priority.ALWAYS);
 
-        Label rotuloTituloEventos = new Label("Eventos");
+
+        Label rotuloTituloEventos = new Label("Diário de Bordo");
         estilizarRotulo(rotuloTituloEventos, TAMANHO_FONTE_CABECALHO_JOGO, true, Pos.CENTER, true);
 
-        TextArea areaEventos = new TextArea();
-        areaEventos.setPromptText("Eventos serão mostrados aqui...");
-        areaEventos.setEditable(false);
-        areaEventos.setWrapText(true);
-        areaEventos.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.NORMAL, TAMANHO_FONTE_ROTULO_JOGO - 1));
-        areaEventos.setStyle("-fx-control-inner-background: #EFE5D2;" + " -fx-text-fill: " + COR_TEXTO_MARROM_ESCURO + ";" + " -fx-border-color: " + COR_BORDA_MARROM_SUTIL + ";" + " -fx-border-width: 1px;");
+        this.areaEventosJogo = new TextArea();
+        this.areaEventosJogo.setPromptText("Eventos e ações serão registrados aqui...");
+        this.areaEventosJogo.setEditable(false);
+        this.areaEventosJogo.setWrapText(true);
+        this.areaEventosJogo.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.NORMAL, TAMANHO_FONTE_ROTULO_JOGO -1));
+        this.areaEventosJogo.setStyle("-fx-control-inner-background: #EFE5D2;" +
+                " -fx-text-fill: " + COR_TEXTO_MARROM_ESCURO + ";" +
+                " -fx-border-color: " + COR_BORDA_MARROM_SUTIL + ";" +
+                " -fx-border-width: 1px;");
 
-        VBox.setVgrow(areaEventos, Priority.ALWAYS);
-        areaEventos.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        areaEventos.setPrefHeight(150);
+        VBox.setVgrow(this.areaEventosJogo, Priority.ALWAYS);
+        this.areaEventosJogo.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        this.areaEventosJogo.setPrefHeight(150);
 
-        if (this.personagem != null) {
-            areaEventos.appendText("Bem-vindo(a) à Ultima Fronteira, " + this.personagem.getNome() + "!\nSua jornada começa...\n");
-        }
-        envolveEventos.getChildren().addAll(rotuloTituloEventos, areaEventos);
+        envolveEventos.getChildren().addAll(rotuloTituloEventos, this.areaEventosJogo);
         return envolveEventos;
     }
+
+    private void logEvento(String mensagem) {
+        if (this.areaEventosJogo != null) {
+            this.areaEventosJogo.appendText(mensagem + "\n");
+        } else {
+            System.out.println("Log GUI (areaEventosJogo is null): " + mensagem);
+        }
+    }
+
 
     public static void main(String[] args) {
         launch(args);
