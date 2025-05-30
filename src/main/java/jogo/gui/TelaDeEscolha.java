@@ -941,7 +941,7 @@ public class TelaDeEscolha extends Application {
             System.out.println("Log GUI (areaEventosJogo is null): " + mensagem);
         }
     }
-
+//teste
 
     public static void main(String[] args) {
         launch(args);
