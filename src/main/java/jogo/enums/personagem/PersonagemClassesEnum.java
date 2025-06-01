@@ -34,7 +34,9 @@ public enum PersonagemClassesEnum {
 
     MEDICO
     (150, 80, 90, 80, 120, 5, new Item[]{
-        ConstrutorRemedio.construirRemedio(RemediosEnum.CURA_UNIVERSAL, 1)
+        ConstrutorRemedio.construirRemedio(RemediosEnum.CHA_DE_FOLHAS, 1),
+        ConstrutorRemedio.construirRemedio(RemediosEnum.REMENDOS, 1),
+        ConstrutorRemedio.construirRemedio(RemediosEnum.ANTIDOTO, 1),
     }),
     
     ENGENHEIRO

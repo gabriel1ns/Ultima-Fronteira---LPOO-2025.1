@@ -3,6 +3,7 @@ package jogo.enums;
 import jogo.enums.eventos.EventosClimaticosEnum;
 import jogo.enums.eventos.EventosCriaturasEnum;
 import jogo.enums.eventos.EventosDescobertasEnum;
+import jogo.enums.eventos.EventosDoencaFerimentosEnum;
 
 public enum AmbientesEnum {
     CAVERNA
@@ -13,7 +14,8 @@ public enum AmbientesEnum {
         EventosCriaturasEnum.CORVO,
         EventosDescobertasEnum.PEDRA_PEQUENA,
         EventosDescobertasEnum.ROCHA,
-        EventosDescobertasEnum.AGUA_DE_GOTEIRA
+        EventosDescobertasEnum.AGUA_DE_GOTEIRA,
+        EventosDoencaFerimentosEnum.CORTE
     },
     new int[]{
         1,
@@ -21,7 +23,8 @@ public enum AmbientesEnum {
         3,
         5,
         3,
-        3
+        3,
+        1
     },
     5),
 
@@ -35,6 +38,7 @@ public enum AmbientesEnum {
         EventosDescobertasEnum.ARVORE,
         EventosDescobertasEnum.ARBUSTO,
         EventosDescobertasEnum.GALINHA,
+        EventosDoencaFerimentosEnum.ENVENENAMENTO
     },
     new int[]{
         5,
@@ -43,6 +47,7 @@ public enum AmbientesEnum {
         3,
         5,
         3,
+        1,
         1
     },
     3),
@@ -55,7 +60,8 @@ public enum AmbientesEnum {
         EventosDescobertasEnum.GRAVETO,
         EventosDescobertasEnum.PEDRA_PEQUENA,
         EventosDescobertasEnum.PEIXE,
-        EventosDescobertasEnum.ARBUSTO
+        EventosDescobertasEnum.ARBUSTO,
+        EventosDoencaFerimentosEnum.INFECCAO
     },
     new int[]{
         1,
@@ -63,7 +69,8 @@ public enum AmbientesEnum {
         3,
         3,
         5,
-        3
+        3,
+        1
     },
     1),
 
