@@ -84,7 +84,7 @@ public class GerenciadorDeInventario {
         }
 
         //ArrayList<ItemMaterial> materiaisEscolhidos = new ArrayList<>();
-        HashMap<Item, Item> materiaisEscolhidos = new HashMap<>();
+        HashMap<String, Item> materiaisEscolhidos = new HashMap<>();
         //HashSet<Integer> indicesMarcados = new HashSet<>();
 
         while(true) {
@@ -100,15 +100,18 @@ public class GerenciadorDeInventario {
                 continue;
             }
 
-            if(materiaisEscolhidos.containsKey(material)) {
-                quantidade = Item.QUANTIDADE_MAXIMA - material.getQuantidade();
+            if(materiaisEscolhidos.containsKey(material.getNome())) {
+                quantidade = Math.min(
+                    Item.QUANTIDADE_MAXIMA - materiaisEscolhidos.get(material.getNome()).getQuantidade(),
+                    quantidade
+                );
                 
-                materiaisEscolhidos.get(material).mudarQuantidade(quantidade);
+                materiaisEscolhidos.get(material.getNome()).mudarQuantidade(quantidade);
             } else {
                 ItemMaterial materialAdicionado = new ItemMaterial(material);
                 materialAdicionado.setQuantidade(quantidade);
 
-                materiaisEscolhidos.put(material, materialAdicionado);
+                materiaisEscolhidos.put(material.getNome(), materialAdicionado);
             }
 
             material.mudarQuantidade(-1*quantidade);

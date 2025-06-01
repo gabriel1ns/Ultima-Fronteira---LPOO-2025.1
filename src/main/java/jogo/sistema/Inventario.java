@@ -109,13 +109,24 @@ public class Inventario {
         
         if(indiceEm0 == -1) return false;
 
-        getItens().get(indiceEm0).mudarQuantidade(-quantidade);
+        while(quantidade > 0 && indiceEm0 != -1) {
+            int diff = getItens().get(indiceEm0).getQuantidade() - quantidade;
 
-        if(getItens().get(indiceEm0).getQuantidade() == 0){
-            getItens().remove(indiceEm0);
-            getItens(N).remove(indiceEmN);
+            getItens().get(indiceEm0).mudarQuantidade(-1*quantidade);
 
-            alterarQuantidadeDeItens(-1);
+            if(diff <= 0) {
+                getItens().remove(indiceEm0);
+                getItens(N).remove(indiceEmN);
+
+                alterarQuantidadeDeItens(-1);
+
+                quantidade = Math.abs(diff);
+            } else {
+                quantidade = 0;
+            }
+
+            indiceEm0 = encontrarItem(item, indiceEm0-1, 0, true);
+            indiceEmN = encontrarItem(item, indiceEmN-1, N, true);
         }
 
         return true;
