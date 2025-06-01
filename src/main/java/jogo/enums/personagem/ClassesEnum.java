@@ -41,7 +41,6 @@ public enum ClassesEnum {
     (80, 140, 80, 140, 100, 9, new Item[]{
         ConstrutorFerramenta.construirFerramenta(FerramentasEnum.PICARETA, 1),
         ConstrutorMaterial.construirMaterial(MateriaisEnum.PEDRA, 4),
-        ConstrutorMaterial.construirMaterial(MateriaisEnum.PEDRA, 2),
     });
 
     private final int maxVida;
