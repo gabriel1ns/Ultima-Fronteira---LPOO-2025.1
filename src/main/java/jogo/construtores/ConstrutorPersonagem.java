@@ -7,7 +7,8 @@ public class ConstrutorPersonagem {
     public static Personagem construirPersonagem(String nome, PersonagemClassesEnum classe) {
         return new Personagem(
             nome,
-            classe.name(), 
+            classe.name(),
+            classe.getHabiliadeEspecial(), 
             classe.getMaxVida(), 
             classe.getMaxFome(), 
             classe.getMaxSede(), 

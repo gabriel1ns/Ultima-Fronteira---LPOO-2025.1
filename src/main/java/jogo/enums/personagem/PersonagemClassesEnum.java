@@ -24,34 +24,39 @@ public enum PersonagemClassesEnum {
         ConstrutorFerramenta.construirFerramenta(FerramentasEnum.RECIPIENTE, 1),
         ConstrutorAgua.construirAgua(AguaEnum.PURA, 4),
         ConstrutorArma.construirArma(ArmasEnum.LANCA, 1)
-    }),
+    },
+    "Adiciona um alimento aleatório no inventário"),
 
     LENHADOR
     (90, 110, 90, 120, 80, 6, new Item[]{
         ConstrutorFerramenta.construirFerramenta(FerramentasEnum.MACHADO, 1),
         ConstrutorMaterial.construirMaterial(MateriaisEnum.MADEIRA, 4)
-    }),
+    },
+    "Adiciona um material aleatório no inventário"),
 
     MEDICO
     (150, 80, 90, 80, 120, 5, new Item[]{
         ConstrutorRemedio.construirRemedio(RemediosEnum.CHA_DE_FOLHAS, 1),
         ConstrutorRemedio.construirRemedio(RemediosEnum.REMENDOS, 1),
         ConstrutorRemedio.construirRemedio(RemediosEnum.ANTIDOTO, 1),
-    }),
+    },
+    "Realiza uma autocura"),
     
     ENGENHEIRO
     (80, 140, 80, 140, 100, 9, new Item[]{
         ConstrutorFerramenta.construirFerramenta(FerramentasEnum.PICARETA, 1),
         ConstrutorMaterial.construirMaterial(MateriaisEnum.PEDRA, 4),
-    }),
+    },
+    "Conserta uma ferramenta aleatória do inventário"),
     
-    DBG
-    (10, 10, 10, 10, 10, 10, new Item[]{
-        ConstrutorMaterial.construirMaterial(MateriaisEnum.MADEIRA, 4),
-        ConstrutorMaterial.construirMaterial(MateriaisEnum.FERRO, 4),
-        ConstrutorMaterial.construirMaterial(MateriaisEnum.CORDA, 4),
-        ConstrutorMaterial.construirMaterial(MateriaisEnum.PEDRA, 4)
-    });
+    // DBG
+    // (10, 10, 10, 10, 10, 10, new Item[]{
+    //     ConstrutorMaterial.construirMaterial(MateriaisEnum.MADEIRA, 4),
+    //     ConstrutorMaterial.construirMaterial(MateriaisEnum.FERRO, 4),
+    //     ConstrutorMaterial.construirMaterial(MateriaisEnum.CORDA, 4),
+    //     ConstrutorMaterial.construirMaterial(MateriaisEnum.PEDRA, 4)
+    // })
+    ;
 
     private final int maxVida;
     private final int maxFome;
@@ -60,9 +65,10 @@ public enum PersonagemClassesEnum {
     private final int maxSanidade; 
     private final int capacidadeDoInventario;
     private final Item[] itensIniciais;
+    private final String habilidadeEspecial;
 
     private PersonagemClassesEnum(int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade,
-            int capacidadeDoInventario, Item[] itensIniciais) {
+            int capacidadeDoInventario, Item[] itensIniciais, String habilidadeEspecial) {
         this.maxVida = maxVida;
         this.maxFome = maxFome;
         this.maxSede = maxSede;
@@ -70,6 +76,7 @@ public enum PersonagemClassesEnum {
         this.maxSanidade = maxSanidade;
         this.capacidadeDoInventario = capacidadeDoInventario;
         this.itensIniciais = itensIniciais;
+        this.habilidadeEspecial = habilidadeEspecial;
     }
 
     public int getMaxVida() {
@@ -100,6 +107,10 @@ public enum PersonagemClassesEnum {
         return itensIniciais;
     }
 
+    public String getHabiliadeEspecial() {
+        return habilidadeEspecial;
+    }
+
     @Override
     public String toString() {
         String itensIniciaisStr = "";
@@ -112,6 +123,7 @@ public enum PersonagemClassesEnum {
                 "Sede maxima: " + maxSede + "\n" +
                 "Energia maxima: " + maxEnergia + "\n" +
                 "Sanidade maxima: " + maxSanidade + "\n" +
-                "Itens iniciais: " + itensIniciaisStr + "\n";
+                "Itens iniciais: " + itensIniciaisStr + "\n" + 
+                "Habilidade especial: " + habilidadeEspecial + "\n";
     }
 }

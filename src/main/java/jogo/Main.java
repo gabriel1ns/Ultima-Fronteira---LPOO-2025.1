@@ -16,9 +16,10 @@ public class Main {
         InputOutput io = new InputOutput();
 
         io.print("Bem-vindo a ÚLTIMA FRONTEIRA!");
-        io.print("Você terá " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos para tentar sobreviver. Boa sorte!\n");
+        io.print("Você é um naufragado que agora se encontra numa ilha isolada de tudo e todos");
+        io.print("Você terá " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos para tentar sobreviver, ou construir uma jangada para fugir da ilha. Boa sorte!\n");
 
-        String nomePersonagem = io.getInput("Diga o seu nome");
+        String nomePersonagem = io.getInput("Diga o seu nome (ou deixe em branco para ser 'Aventureiro')");
         int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", PersonagemClassesEnum.values());
 
         PersonagemClassesEnum classePersonagem = PersonagemClassesEnum.SOBREVIVENTE; 

@@ -63,14 +63,19 @@ public class Turno {
         boolean isEventoCriaturaAtivo = criatura != null;
 
         while(true){
-            String[] opcoes = new String[]{
+
+            io.print("Digite <ctrl+C> para fechar o jogo");
+
+            int escolha = io.decisaoEmIntervalo("O que você deseja fazer?", new String[]{
+
                 "Mudar de ambiente" + (isEventoCriaturaAtivo? " (não é possível no momento)" : ""),
                 "Gerenciar inventário (não acaba o turno)",
                 (!isEventoCriaturaAtivo? "Explorar " + ambienteAtual.getNome() : "Batalhar " + criatura.getNome()),
-                (!isEventoCriaturaAtivo? "Descansar" : "Tentar fugir")
-            };
+                (!isEventoCriaturaAtivo? "Descansar" : "Tentar fugir"),
+                "Usar habilidade especial" + (personagem.getHabilidadeEspecialCooldown() > 0 || isEventoCriaturaAtivo? " (não é possível no momento)" : ""),
+                
+            }) + 1;
 
-            int escolha = io.decisaoEmIntervalo("O que você deseja fazer?", opcoes) + 1;
 
             switch (escolha) {
             case 1:
@@ -119,6 +124,14 @@ public class Turno {
 
                 io.print(personagem.getNome() + " está descansando");
                 dEnergia = +15;
+                break;
+            case 5:
+                if(isEventoCriaturaAtivo || personagem.getHabilidadeEspecialCooldown() > 0) {
+                    io.print("Não é possível no momento");
+                    continue;
+                }
+                
+                personagem.usarHabilidadeEspecial();
                 break;
             default:
                 io.print("Escolha inválida.");
