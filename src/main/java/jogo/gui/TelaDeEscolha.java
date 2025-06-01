@@ -1,5 +1,10 @@
 package jogo.gui;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,7 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-// import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -37,22 +41,20 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import jogo.personagem.Personagem;
-import jogo.ambiente.Ambiente;
+import jogo.construtores.ConstrutorPersonagem;
+import jogo.construtores.itens.ConstrutorArma;
+import jogo.enums.ItensEnum;
+import jogo.enums.itens.ArmasEnum;
+import jogo.enums.personagem.PersonagemAtributosEnum;
+import jogo.enums.personagem.PersonagemClassesEnum;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;
-import jogo.eventos.Evento;
-import jogo.eventos.criatura.EventoCriatura;
-import jogo.itens.Item;
-import jogo.itens.armas.Arma;
-import jogo.itens.armas.ArmaPunhos;
+import jogo.sistema.Ambiente;
 import jogo.sistema.Inventario;
+import jogo.sistema.Personagem;
+import jogo.sistema.eventos.EventoCriatura;
+import jogo.sistema.itens.Item;
+import jogo.sistema.itens.ItemArma;
 
 
 public class TelaDeEscolha extends Application {
@@ -205,9 +207,11 @@ public class TelaDeEscolha extends Application {
         classesParaExibicao = new ArrayList<InfoClasseDisplay>();
         String basePathImagens = "/img/personagens/";
 
+        // TODO Adicionar classes restantes
+
         classesParaExibicao.add(new InfoClasseDisplay(
                 "Lenhador",
-                Personagem.CLASSES[0],
+                PersonagemClassesEnum.LENHADOR.name(),
                 "\uD83E\uDE93",
                 basePathImagens + "Lenhador.png",
                 "100", "100", "100", "100",
@@ -217,7 +221,7 @@ public class TelaDeEscolha extends Application {
 
         classesParaExibicao.add(new InfoClasseDisplay(
                 "Sobrevivente",
-                Personagem.CLASSES[1],
+                PersonagemClassesEnum.SOBREVIVENTE.name(),
                 "\uD83D\uDEB6",
                 basePathImagens + "Sobrevivente.png",
                 "100", "100", "100", "100",
@@ -311,9 +315,9 @@ public class TelaDeEscolha extends Application {
             }
 
             int escolhaParaNovoPersonagem;
-            if (classeExibicaoSelecionada.nomeReal.equals(Personagem.CLASSES[0])) {
+            if (classeExibicaoSelecionada.nomeReal.equals(PersonagemClassesEnum.LENHADOR.name())) {
                 escolhaParaNovoPersonagem = 1;
-            } else if (classeExibicaoSelecionada.nomeReal.equals(Personagem.CLASSES[1])) {
+            } else if (classeExibicaoSelecionada.nomeReal.equals(PersonagemClassesEnum.SOBREVIVENTE.name())) {
                 escolhaParaNovoPersonagem = 0;
             } else {
                 System.err.println("Erro: Classe '" + classeExibicaoSelecionada.nomeReal + "' não mapeada para criação.");
@@ -321,10 +325,11 @@ public class TelaDeEscolha extends Application {
             }
 
             this.nomePersonagemParaAcoes = nome.trim();
-            this.personagem = Personagem.novoPersonagem(this.nomePersonagemParaAcoes, escolhaParaNovoPersonagem);
+            // VER SE DÁ ERRO
+            this.personagem = ConstrutorPersonagem.construirPersonagem(nomePersonagemParaAcoes, PersonagemClassesEnum.values()[escolhaParaNovoPersonagem]); 
 
             System.out.println("Aventureiro Criado: " + this.personagem.getNome() + " (" + classeExibicaoSelecionada.nomeDisplay + ")");
-            System.out.println("Atributos Iniciais: Vida=" + this.personagem.getVida() + ", Fome=" + this.personagem.getFome() + ", Sede=" + this.personagem.getSede() + ", Energia=" + this.personagem.getEnergia());
+            System.out.println("Atributos Iniciais: Vida=" + this.personagem.getAtributo(PersonagemAtributosEnum.VIDA) + ", Fome=" + this.personagem.getAtributo(PersonagemAtributosEnum.FOME) + ", Sede=" + this.personagem.getAtributo(PersonagemAtributosEnum.SEDE) + ", Energia=" + this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA));
 
             configurarTelaPrincipalJogo();
         });
@@ -472,8 +477,8 @@ public class TelaDeEscolha extends Application {
         this.gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
         this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente();
         this.gerenciadorDeEventos = new GerenciadorDeEventos(
-                this.ambienteAtual.getEventosPossiveis(),
-                this.ambienteAtual.getProbabilidadeDeEventos()
+                ambienteAtual,
+                personagem
         );
 
         BorderPane painelRaizJogo = new BorderPane();
@@ -559,12 +564,12 @@ public class TelaDeEscolha extends Application {
         double maxSede = 100.0; // Idealmente personagem.getMAX_SEDE()
         double maxEnergia = 100.0; // Idealmente personagem.getMAX_ENERGIA()
 
-        barraVida.setProgress(personagem.getVida() / maxVida);
-        barraFome.setProgress(personagem.getFome() / maxFome);
-        barraSede.setProgress(personagem.getSede() / maxSede);
-        barraEnergia.setProgress(personagem.getEnergia() / maxEnergia);
+        barraVida.setProgress(personagem.getAtributo(PersonagemAtributosEnum.VIDA) / maxVida);
+        barraFome.setProgress(personagem.getAtributo(PersonagemAtributosEnum.FOME) / maxFome);
+        barraSede.setProgress(personagem.getAtributo(PersonagemAtributosEnum.SEDE) / maxSede);
+        barraEnergia.setProgress(personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) / maxEnergia);
 
-        rotuloValorSanidade.setText(String.valueOf(personagem.getSanidade()));
+        rotuloValorSanidade.setText(String.valueOf(personagem.getAtributo(PersonagemAtributosEnum.SANIDADE)));
         rotuloStatusPersonagem.setText(obterStatusPersonagem(personagem));
     }
 
@@ -578,11 +583,11 @@ public class TelaDeEscolha extends Application {
         estilizarRotulo(rotuloTituloAtributos, TAMANHO_FONTE_CABECALHO_JOGO, true, Pos.CENTER_LEFT, true);
 
 
-        this.barraVida = new ProgressBar(this.personagem != null ? (double)this.personagem.getVida() / 100.0 : 0.85);
-        this.barraFome = new ProgressBar(this.personagem != null ? (double)this.personagem.getFome() / 100.0 : 0.65);
-        this.barraSede = new ProgressBar(this.personagem != null ? (double)this.personagem.getSede() / 100.0 : 0.70);
-        this.barraEnergia = new ProgressBar(this.personagem != null ? (double)this.personagem.getEnergia() / 100.0 : 0.90);
-        this.rotuloValorSanidade = new Label(this.personagem != null ? String.valueOf(this.personagem.getSanidade()) : "100");
+        this.barraVida = new ProgressBar(this.personagem != null ? (double)this.personagem.getAtributo(PersonagemAtributosEnum.VIDA) / 100.0 : 0.85);
+        this.barraFome = new ProgressBar(this.personagem != null ? (double)this.personagem.getAtributo(PersonagemAtributosEnum.FOME) / 100.0 : 0.65);
+        this.barraSede = new ProgressBar(this.personagem != null ? (double)this.personagem.getAtributo(PersonagemAtributosEnum.SEDE) / 100.0 : 0.70);
+        this.barraEnergia = new ProgressBar(this.personagem != null ? (double)this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) / 100.0 : 0.90);
+        this.rotuloValorSanidade = new Label(this.personagem != null ? String.valueOf(this.personagem.getAtributo(PersonagemAtributosEnum.SANIDADE)) : "100");
         estilizarRotulo(this.rotuloValorSanidade, TAMANHO_FONTE_ROTULO_JOGO, true, Pos.CENTER_LEFT, true);
         this.rotuloStatusPersonagem = new Label(this.personagem != null ? obterStatusPersonagem(this.personagem) : "<status>");
         estilizarRotulo(this.rotuloStatusPersonagem, TAMANHO_FONTE_ROTULO_JOGO, true, Pos.CENTER_LEFT, true);
@@ -606,9 +611,9 @@ public class TelaDeEscolha extends Application {
 
     private String obterStatusPersonagem(Personagem p) {
         if (p == null) return "<status>";
-        if (p.getVida() <= 0) return "Morto";
-        if (p.getVida() < 25) return "Em Perigo";
-        if (p.getFome() < 10 || p.getSede() < 10) return "Esgotado";
+        if (p.getAtributo(PersonagemAtributosEnum.VIDA) <= 0) return "Morto";
+        if (p.getAtributo(PersonagemAtributosEnum.VIDA) < 25) return "Em Perigo";
+        if (p.getAtributo(PersonagemAtributosEnum.FOME) < 10 || p.getAtributo(PersonagemAtributosEnum.SEDE) < 10) return "Esgotado";
         return "Normal";
     }
 
@@ -751,26 +756,23 @@ public class TelaDeEscolha extends Application {
 
         this.botaoMudarAmbiente.setOnAction(e -> {
             if (this.gerenciadorDeAmbientes != null && this.gerenciadorDeEventos != null && this.personagem != null) {
-                if (this.gerenciadorDeEventos.getEventoCriaturaAtivo() != null) {
+                if (this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
                     logEvento(this.personagem.getNome() + " está em combate e não pode mudar de ambiente!");
                     return;
                 }
-                if (this.personagem.getEnergia() < 15) {
+                if (this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < 15) {
                     logEvento(this.personagem.getNome() + " está cansado demais para viajar!");
                     return;
                 }
 
-                personagem.setEnergia(personagem.getEnergia() - 15);
-                personagem.setSede(Math.max(0, personagem.getSede() - (2*5) ));
-                personagem.setFome(Math.max(0, personagem.getFome() - (5*5) ));
+                personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -15);
+                personagem.mudarAtributo(PersonagemAtributosEnum.SEDE , -(2*5));
+                personagem.mudarAtributo(PersonagemAtributosEnum.FOME, - (5*5));
                 atualizarAtributosGUI();
 
                 logEvento(this.nomePersonagemParaAcoes + " viaja para um novo local...");
                 this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente();
-                this.gerenciadorDeEventos = new GerenciadorDeEventos(
-                        this.ambienteAtual.getEventosPossiveis(),
-                        this.ambienteAtual.getProbabilidadeDeEventos()
-                );
+                this.gerenciadorDeEventos.setAmbiente(ambienteAtual);
                 logEvento("Chegou em: " + this.ambienteAtual.getNome());
                 atualizarRotuloAmbiente();
                 atualizarInterfaceAcoes();
@@ -778,14 +780,15 @@ public class TelaDeEscolha extends Application {
         });
 
         this.botaoDescansar.setOnAction(e -> {
-            if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.getEventoCriaturaAtivo() != null) {
+            if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
                 logEvento(this.personagem.getNome() + " não pode descansar durante um combate!");
                 return;
             }
             logEvento(this.nomePersonagemParaAcoes + " decide descansar.");
             if (this.personagem != null) {
 
-                this.personagem.setEnergia(Math.min(100, this.personagem.getEnergia() + 15)); // dEnergia = +15
+                personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, +15);
+
                 logEvento(this.personagem.getNome() + " recuperou energia.");
                 atualizarAtributosGUI();
             }
@@ -821,7 +824,7 @@ public class TelaDeEscolha extends Application {
             return;
         }
 
-        EventoCriatura criaturaAtiva = this.gerenciadorDeEventos.getEventoCriaturaAtivo();
+        EventoCriatura criaturaAtiva = this.gerenciadorDeEventos.buscarEventoCriaturaAtivo();
 
         if (criaturaAtiva != null) {
             String nomeCriatura = criaturaAtiva.getNome();
@@ -836,15 +839,16 @@ public class TelaDeEscolha extends Application {
             this.botaoAcaoPrincipal.setOnAction(e -> {
                 if (this.gerenciadorDeEventos != null && this.personagem != null && this.ambienteAtual != null) {
 
-                    if(personagem.getEnergia() == 0) {
+                    if(personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) == 0) {
                         logEvento(personagem.getNome() + " está cansado demais para explorar!");
-                        personagem.setEnergia(personagem.getEnergia() + 2);
+                        personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, 2);
+
                         atualizarAtributosGUI();
                         return;
                     }
 
                     int custoEnergia = ambienteAtual.getDificuldadeDeExploracao();
-                    personagem.setEnergia(personagem.getEnergia() - custoEnergia);
+                    personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -custoEnergia);
                     logEvento(personagem.getNome() + " gasta " + custoEnergia + " de energia para explorar.");
                     atualizarAtributosGUI();
 
@@ -853,7 +857,7 @@ public class TelaDeEscolha extends Application {
 
                     this.gerenciadorDeEventos.adicionarEventoAleatorio();
 
-                    this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem);
+                    this.gerenciadorDeEventos.executarEventos();
 
                     atualizarAtributosGUI();
                     atualizarInterfaceAcoes();
@@ -871,42 +875,39 @@ public class TelaDeEscolha extends Application {
             return;
         }
 
-        ArrayList<Item> itensArmaDoInventario = personagem.getInventario().getItens(Inventario.InventarioEnum.ARMA.getIndice());
-        ObservableList<Arma> armasObservaveis = FXCollections.observableArrayList();
+        ArrayList<Item> itensArmaDoInventario = personagem.getInventario().getItens(ItensEnum.ARMA.getIndice());
+        ObservableList<ItemArma> armasObservaveis = FXCollections.observableArrayList();
         for (Item item : itensArmaDoInventario) {
-            if (item instanceof Arma) {
-                armasObservaveis.add((Arma) item);
+            if (item instanceof ItemArma) {
+                armasObservaveis.add((ItemArma) item);
             }
         }
 
         if (armasObservaveis.isEmpty()) {
             logEvento(personagem.getNome() + " não possui armas para atacar " + criaturaAlvo.getNome() + "! Atacando com os Punhos.");
-            ArmaPunhos punhos = new ArmaPunhos();
+            ItemArma punhos = ConstrutorArma.construirArma(ArmasEnum.PUNHOS, 1);
 
             int indicePunhos = -1;
             for(int i=0; i < itensArmaDoInventario.size(); i++){
-                if(itensArmaDoInventario.get(i) instanceof ArmaPunhos){
+                if(itensArmaDoInventario.get(i).equals(punhos)){
                     indicePunhos = i;
                     break;
                 }
             }
-            if(indicePunhos != -1) {
-                personagem.getInventario().usarItemArma(indicePunhos, criaturaAlvo);
-            } else {
-                punhos.usar(criaturaAlvo);
-            }
+
+            personagem.getGerenciadorDeInventario().usarItemArma(indicePunhos, criaturaAlvo);
 
             if (criaturaAlvo.getVida() <= 0) {
                 logEvento(criaturaAlvo.getNome() + " foi derrotado(a)!");
             }
-            this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem);
+            this.gerenciadorDeEventos.executarEventos();
             atualizarAtributosGUI();
             atualizarInterfaceAcoes();
             return;
         }
 
-        Dialog<Arma> dialog = new Dialog<>();
-        dialog.setTitle("Escolha sua Arma");
+        Dialog<ItemArma> dialog = new Dialog<>();
+        dialog.setTitle("Escolha sua ItemArma");
         dialog.setHeaderText("Atacar " + criaturaAlvo.getNome() + ". Qual arma usar?");
 
         DialogPane dialogPane = dialog.getDialogPane();
@@ -914,10 +915,10 @@ public class TelaDeEscolha extends Application {
         dialogPane.setMinHeight(250);
         dialogPane.setStyle(obterEstiloPainelInterno() + " -fx-font-family: '" + FAMILIA_FONTE_MEDIEVAL + "';");
 
-        ListView<Arma> listViewArmas = new ListView<>(armasObservaveis);
-        listViewArmas.setCellFactory(lv -> new ListCell<Arma>() {
+        ListView<ItemArma> listViewArmas = new ListView<>(armasObservaveis);
+        listViewArmas.setCellFactory(lv -> new ListCell<ItemArma>() {
             @Override
-            protected void updateItem(Arma arma, boolean empty) {
+            protected void updateItem(ItemArma arma, boolean empty) {
                 super.updateItem(arma, empty);
                 if (empty || arma == null) {
                     setText(null);
@@ -952,10 +953,10 @@ public class TelaDeEscolha extends Application {
             return null;
         });
 
-        Optional<Arma> resultado = dialog.showAndWait();
+        Optional<ItemArma> resultado = dialog.showAndWait();
 
         if (resultado.isPresent()) {
-            Arma armaEscolhida = resultado.get();
+            ItemArma armaEscolhida = resultado.get();
             int indiceArmaNoInventario = -1;
             for(int i=0; i < itensArmaDoInventario.size(); i++){
                 if(itensArmaDoInventario.get(i) == armaEscolhida){
@@ -966,7 +967,7 @@ public class TelaDeEscolha extends Application {
 
             if(indiceArmaNoInventario != -1) {
                 logEvento(personagem.getNome() + " ataca " + criaturaAlvo.getNome() + " com " + armaEscolhida.getNome() + "!");
-                personagem.getInventario().usarItemArma(indiceArmaNoInventario, criaturaAlvo);
+                personagem.getGerenciadorDeInventario().usarItemArma(indiceArmaNoInventario, criaturaAlvo);
 
                 if (criaturaAlvo.getVida() <= 0) {
                     logEvento(criaturaAlvo.getNome() + " foi derrotado(a)!");
@@ -974,13 +975,13 @@ public class TelaDeEscolha extends Application {
                     logEvento(criaturaAlvo.getNome() + " agora tem " + criaturaAlvo.getVida() + " de vida.");
                 }
             } else {
-                logEvento("ERRO: Arma selecionada ("+ armaEscolhida.getNome() +") não encontrada no inventário para ataque.");
-                new ArmaPunhos().usar(criaturaAlvo);
+                logEvento("ERRO: ItemArma selecionada ("+ armaEscolhida.getNome() +") não encontrada no inventário para ataque.");
+                personagem.getGerenciadorDeInventario().usarItemArma(personagem.getInventario().encontrarItem(ConstrutorArma.construirArma(ArmasEnum.PUNHOS, 1)), criaturaAlvo);
                 if (criaturaAlvo.getVida() <= 0) {
                     logEvento(criaturaAlvo.getNome() + " foi derrotado(a) (com punhos-fallback)!");
                 }
             }
-            this.gerenciadorDeEventos.executarEventos(this.ambienteAtual, this.personagem);
+            this.gerenciadorDeEventos.executarEventos();
             atualizarAtributosGUI(); // Atualiza atributos após o combate e execução de eventos
         } else {
             logEvento("Seleção de arma cancelada.");
