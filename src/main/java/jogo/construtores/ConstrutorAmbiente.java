@@ -1,7 +1,7 @@
 package jogo.construtores;
 
-import jogo.Ambiente;
 import jogo.enums.AmbientesEnum;
+import jogo.sistema.Ambiente;
 
 public class ConstrutorAmbiente {
     public static Ambiente construir(AmbientesEnum ambiente) {

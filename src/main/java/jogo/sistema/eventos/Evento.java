@@ -1,6 +1,6 @@
-package jogo.eventos;
+package jogo.sistema.eventos;
 
-import jogo.personagem.Personagem;
+import jogo.sistema.Personagem;
 
 public abstract class Evento {
     private final String nome;

@@ -1,10 +1,10 @@
-package jogo.eventos;
+package jogo.sistema.eventos;
 
 import jogo.construtores.ConstrutorItem;
-import jogo.itens.IItemPerecivel;
-import jogo.itens.Item;
-import jogo.personagem.Personagem;
 import jogo.sistema.Inventario;
+import jogo.sistema.Personagem;
+import jogo.sistema.itens.IItemPerecivel;
+import jogo.sistema.itens.Item;
 import jogo.utils.InputOutput;
 
 public class EventoDescoberta extends Evento {

@@ -1,7 +1,7 @@
 package jogo.construtores.itens;
 
 import jogo.enums.itens.ArmasEnum;
-import jogo.itens.ItemArma;
+import jogo.sistema.itens.ItemArma;
 
 public class ConstrutorArma {
     public static ItemArma construirArma(ArmasEnum arma, int quantidade) {

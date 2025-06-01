@@ -1,7 +1,7 @@
 package jogo.construtores.itens.consumiveis;
 
 import jogo.enums.itens.consumiveis.RemediosEnum;
-import jogo.itens.consumiveis.ConsumivelRemedio;
+import jogo.sistema.itens.consumiveis.ConsumivelRemedio;
 
 public class ConstrutorRemedio {
     public static ConsumivelRemedio construirRemedio(RemediosEnum remedio, int quantidade) {

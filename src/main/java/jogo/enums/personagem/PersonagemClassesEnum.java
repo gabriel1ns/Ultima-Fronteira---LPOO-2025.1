@@ -14,9 +14,9 @@ import jogo.enums.itens.MateriaisEnum;
 import jogo.enums.itens.consumiveis.AguaEnum;
 import jogo.enums.itens.consumiveis.AlimentosEnum;
 import jogo.enums.itens.consumiveis.RemediosEnum;
-import jogo.itens.Item;
+import jogo.sistema.itens.Item;
 
-public enum ClassesEnum {
+public enum PersonagemClassesEnum {
     SOBREVIVENTE
     (100, 100, 100, 100, 100, 6, new Item[]{
         ConstrutorAlimento.construirAlimento(AlimentosEnum.CARNE, 1),
@@ -51,7 +51,7 @@ public enum ClassesEnum {
     private final int capacidadeDoInventario;
     private final Item[] itensIniciais;
 
-    private ClassesEnum(int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade,
+    private PersonagemClassesEnum(int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade,
             int capacidadeDoInventario, Item[] itensIniciais) {
         this.maxVida = maxVida;
         this.maxFome = maxFome;

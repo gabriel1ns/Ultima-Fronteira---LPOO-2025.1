@@ -1,4 +1,4 @@
-package jogo.itens;
+package jogo.sistema.itens;
 
 public abstract class Item {
     public final static int QUANTIDADE_MAXIMA = 4;

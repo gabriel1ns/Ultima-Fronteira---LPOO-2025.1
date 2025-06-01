@@ -1,15 +1,15 @@
 package jogo.enums.eventos;
 
 import jogo.enums.EventosEnum;
-import jogo.enums.personagem.AtributosEnum;
+import jogo.enums.personagem.PersonagemAtributosEnum;
 
 public enum EventosClimaticosEnum {
     CALOR_EXTREMO
     ("Calor extremo", "Uma onda de calor assola o ambiente, deixando todos com mais sede",
     2,
-    new AtributosEnum[]{
-        AtributosEnum.SEDE,
-        AtributosEnum.ENERGIA
+    new PersonagemAtributosEnum[]{
+        PersonagemAtributosEnum.SEDE,
+        PersonagemAtributosEnum.ENERGIA
     },
     new int[]{
         -10,
@@ -19,10 +19,10 @@ public enum EventosClimaticosEnum {
     NEVASCA
     ("Nevasca", "Uma nevasca cai incessantemente, causando hipotermia, mas retendo a sede e a fome", 
     2,
-    new AtributosEnum[]{
-        AtributosEnum.VIDA,
-        AtributosEnum.SEDE,
-        AtributosEnum.FOME
+    new PersonagemAtributosEnum[]{
+        PersonagemAtributosEnum.VIDA,
+        PersonagemAtributosEnum.SEDE,
+        PersonagemAtributosEnum.FOME
     },
     new int[]{
         -5,
@@ -33,9 +33,9 @@ public enum EventosClimaticosEnum {
     TEMPESTADE
     ("Tempestade", "Chuvas e trovões recaem sobre o ambiente, causando medo e maior dificuldade de locomoção",
     2,
-    new AtributosEnum[]{
-        AtributosEnum.ENERGIA,
-        AtributosEnum.SANIDADE
+    new PersonagemAtributosEnum[]{
+        PersonagemAtributosEnum.ENERGIA,
+        PersonagemAtributosEnum.SANIDADE
     },
     new int[]{
         -10,
@@ -47,10 +47,10 @@ public enum EventosClimaticosEnum {
     private final String nome;
     private final String descricao;
     private final int duracao; 
-    private final AtributosEnum[] atributosAfetados;
+    private final PersonagemAtributosEnum[] atributosAfetados;
     private final int[] efeitos;
     
-    private EventosClimaticosEnum(String nome, String descricao, int duracao, AtributosEnum[] atributosAfetados,
+    private EventosClimaticosEnum(String nome, String descricao, int duracao, PersonagemAtributosEnum[] atributosAfetados,
             int[] efeitos) {
         this.nome = nome;
         this.descricao = descricao;
@@ -71,7 +71,7 @@ public enum EventosClimaticosEnum {
         return duracao;
     }
 
-    public AtributosEnum[] getAtributosAfetados() {
+    public PersonagemAtributosEnum[] getAtributosAfetados() {
         return atributosAfetados;
     }
 

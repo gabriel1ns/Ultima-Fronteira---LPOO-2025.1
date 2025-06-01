@@ -12,7 +12,7 @@ import jogo.enums.itens.MateriaisEnum;
 import jogo.enums.itens.consumiveis.AguaEnum;
 import jogo.enums.itens.consumiveis.AlimentosEnum;
 import jogo.enums.itens.consumiveis.RemediosEnum;
-import jogo.itens.Item;
+import jogo.sistema.itens.Item;
 
 public class ConstrutorItem {
     public static Item construir(Enum<?> itemEnum, int quantidade) throws IllegalArgumentException {

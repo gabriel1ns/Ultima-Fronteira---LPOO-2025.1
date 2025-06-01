@@ -1,7 +1,7 @@
 package jogo.construtores.eventos;
 
 import jogo.enums.eventos.EventosClimaticosEnum;
-import jogo.eventos.EventoClimatico;
+import jogo.sistema.eventos.EventoClimatico;
 
 public class ConstrutorEventoClimatico {
     public static EventoClimatico construir(EventosClimaticosEnum evento) {

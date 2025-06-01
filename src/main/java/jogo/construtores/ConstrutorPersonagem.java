@@ -1,10 +1,10 @@
 package jogo.construtores;
 
-import jogo.enums.personagem.ClassesEnum;
-import jogo.personagem.Personagem;
+import jogo.enums.personagem.PersonagemClassesEnum;
+import jogo.sistema.Personagem;
 
 public class ConstrutorPersonagem {
-    public static Personagem construirPersonagem(String nome, ClassesEnum classe) {
+    public static Personagem construirPersonagem(String nome, PersonagemClassesEnum classe) {
         return new Personagem(
             nome, 
             classe.getMaxVida(), 

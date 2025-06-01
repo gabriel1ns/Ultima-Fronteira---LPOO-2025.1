@@ -1,9 +1,10 @@
 package jogo;
 import jogo.construtores.ConstrutorPersonagem;
-import jogo.enums.personagem.AtributosEnum;
-import jogo.enums.personagem.ClassesEnum;
+import jogo.enums.personagem.PersonagemAtributosEnum;
+import jogo.enums.personagem.PersonagemClassesEnum;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
-import jogo.personagem.Personagem;
+import jogo.sistema.Ambiente;
+import jogo.sistema.Personagem;
 import jogo.sistema.Turno;
 import jogo.utils.InputOutput;
 
@@ -14,11 +15,11 @@ public class Main {
         io.print("Bem-vindo ao ÚLTIMA FRONTEIRA!");
 
         String nomePersonagem = io.getInput("Diga o seu nome");
-        int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", ClassesEnum.values());
+        int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", PersonagemClassesEnum.values());
 
-        ClassesEnum classePersonagem = ClassesEnum.SOBREVIVENTE; 
+        PersonagemClassesEnum classePersonagem = PersonagemClassesEnum.SOBREVIVENTE; 
         
-        for(ClassesEnum classe: ClassesEnum.values()) {
+        for(PersonagemClassesEnum classe: PersonagemClassesEnum.values()) {
             if(escolhaClassePersonagem == classe.ordinal()) {
                 classePersonagem = classe;
                 break;
@@ -37,7 +38,7 @@ public class Main {
             io.print("Turno" + i);
             turno.iniciarTurno();
 
-            if(personagem.getAtributo(AtributosEnum.VIDA) == 0) break;
+            if(personagem.getAtributo(PersonagemAtributosEnum.VIDA) == 0) break;
             io.print("");
         } // resolver saida do turno quando implementar as outras classes que faltam
 

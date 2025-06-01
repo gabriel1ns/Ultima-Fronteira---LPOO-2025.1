@@ -1,24 +1,24 @@
-package jogo.itens.consumiveis;
+package jogo.sistema.itens.consumiveis;
 
-import jogo.enums.personagem.AtributosEnum;
-import jogo.itens.Item;
-import jogo.personagem.Personagem;
+import jogo.enums.personagem.PersonagemAtributosEnum;
+import jogo.sistema.Personagem;
+import jogo.sistema.itens.Item;
 
 public abstract class Consumivel extends Item {
     private static final String TIPO = "Consumivel";
 
-    private final AtributosEnum atributoAfetado;
+    private final PersonagemAtributosEnum atributoAfetado;
     private final int efeito;
 
     public Consumivel(String nome, int peso, int quantidade, 
-    AtributosEnum atributoAfetado, int efeito) {
+    PersonagemAtributosEnum atributoAfetado, int efeito) {
         super(nome, TIPO, peso, quantidade);
 
         this.atributoAfetado = atributoAfetado;
         this.efeito = efeito;
     }
 
-    public AtributosEnum getAtributoAfetado() {
+    public PersonagemAtributosEnum getAtributoAfetado() {
         return atributoAfetado;
     }
 

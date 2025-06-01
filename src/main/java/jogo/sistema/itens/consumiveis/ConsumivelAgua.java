@@ -1,14 +1,14 @@
-package jogo.itens.consumiveis;
+package jogo.sistema.itens.consumiveis;
 
-import jogo.enums.personagem.AtributosEnum;
-import jogo.personagem.Personagem;
+import jogo.enums.personagem.PersonagemAtributosEnum;
+import jogo.sistema.Personagem;
 
 public class ConsumivelAgua extends Consumivel {
     private boolean pureza;
     private int volume;
 
     public ConsumivelAgua(boolean pureza, int volume) {
-        super("Agua", 2, volume, AtributosEnum.SEDE, volume);
+        super("Agua", 2, volume, PersonagemAtributosEnum.SEDE, volume);
 
         setPureza(pureza);
         setVolume(volume);
@@ -19,7 +19,7 @@ public class ConsumivelAgua extends Consumivel {
         super.consumir(personagem);
 
         if(!getPureza()) 
-            personagem.mudarAtributo(AtributosEnum.VIDA, volume);
+            personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, volume);
     }
 
     final public void setPureza(boolean pureza) {

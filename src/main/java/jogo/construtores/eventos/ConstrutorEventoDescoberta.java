@@ -1,7 +1,7 @@
 package jogo.construtores.eventos;
 
 import jogo.enums.eventos.EventosDescobertasEnum;
-import jogo.eventos.EventoDescoberta;
+import jogo.sistema.eventos.EventoDescoberta;
 
 public class ConstrutorEventoDescoberta {
     public static EventoDescoberta construir(EventosDescobertasEnum descoberta) {

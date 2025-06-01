@@ -1,4 +1,4 @@
-package jogo;
+package jogo.sistema;
 
 public class Ambiente {
     private final String nome;

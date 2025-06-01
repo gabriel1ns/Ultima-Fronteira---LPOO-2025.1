@@ -3,12 +3,12 @@ package jogo.gerenciadores;
 import java.util.ArrayList;
 import java.util.Random;
 
-import jogo.Ambiente;
 import jogo.construtores.ConstrutorEvento;
-import jogo.eventos.Evento;
-import jogo.eventos.EventoClimatico;
-import jogo.eventos.EventoCriatura;
-import jogo.personagem.Personagem;
+import jogo.sistema.Ambiente;
+import jogo.sistema.Personagem;
+import jogo.sistema.eventos.Evento;
+import jogo.sistema.eventos.EventoClimatico;
+import jogo.sistema.eventos.EventoCriatura;
 import jogo.utils.InputOutput;
 
 
@@ -86,7 +86,7 @@ public class GerenciadorDeEventos {
         int chanceDeSucesso = 7;
 
         Random random = new Random();
-        boolean resultado = random.nextInt(10) >= chanceDeSucesso;
+        boolean resultado = random.nextInt(10) <= chanceDeSucesso;
         
         if(resultado)
             eventosAtivos.remove(criatura);

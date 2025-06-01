@@ -1,14 +1,14 @@
-package jogo.eventos;
+package jogo.sistema.eventos;
 
-import jogo.enums.personagem.AtributosEnum;
-import jogo.personagem.Personagem;
+import jogo.enums.personagem.PersonagemAtributosEnum;
+import jogo.sistema.Personagem;
 
 public class EventoClimatico extends Evento {
-    private final AtributosEnum[] atributosAfetados;
+    private final PersonagemAtributosEnum[] atributosAfetados;
     private final int[] efeitos;
 
     public EventoClimatico(String nome, String descricao, int duracao, 
-           AtributosEnum[] atributosAfetados, int[] efeitos) {
+           PersonagemAtributosEnum[] atributosAfetados, int[] efeitos) {
 
         super(nome, descricao, duracao);
         this.atributosAfetados = atributosAfetados;

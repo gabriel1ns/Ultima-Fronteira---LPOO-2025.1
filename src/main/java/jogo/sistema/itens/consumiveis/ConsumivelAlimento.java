@@ -1,15 +1,15 @@
-package jogo.itens.consumiveis;
+package jogo.sistema.itens.consumiveis;
 
-import jogo.enums.personagem.AtributosEnum;
-import jogo.itens.IItemPerecivel;
-import jogo.personagem.Personagem;
+import jogo.enums.personagem.PersonagemAtributosEnum;
+import jogo.sistema.Personagem;
+import jogo.sistema.itens.IItemPerecivel;
 
 public class ConsumivelAlimento extends Consumivel implements IItemPerecivel {
     private final int valorNutricional;
     private int prazoDeValidade;
 
     public ConsumivelAlimento(String nome, int peso, int valorNutricional, int prazoDeValidade, int quantidade) {
-        super(nome, peso, quantidade, AtributosEnum.FOME, valorNutricional);
+        super(nome, peso, quantidade, PersonagemAtributosEnum.FOME, valorNutricional);
 
         this.valorNutricional = valorNutricional;
         this.prazoDeValidade = prazoDeValidade;
@@ -20,7 +20,7 @@ public class ConsumivelAlimento extends Consumivel implements IItemPerecivel {
         super.consumir(personagem);
 
         if(estaPerecido())
-            personagem.mudarAtributo(AtributosEnum.VIDA, valorNutricional);
+            personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, valorNutricional);
     }
 
     @Override

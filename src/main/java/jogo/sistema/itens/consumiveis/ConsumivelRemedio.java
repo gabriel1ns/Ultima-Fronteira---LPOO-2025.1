@@ -1,11 +1,11 @@
-package jogo.itens.consumiveis;
+package jogo.sistema.itens.consumiveis;
 
-import jogo.enums.personagem.AtributosEnum;
+import jogo.enums.personagem.PersonagemAtributosEnum;
 
 public class ConsumivelRemedio extends Consumivel {
 
     public ConsumivelRemedio(String nome, int peso, int efeito, int quantidade) {
-        super(nome, peso, quantidade, AtributosEnum.VIDA, efeito);
+        super(nome, peso, quantidade, PersonagemAtributosEnum.VIDA, efeito);
     }
 
     @Override

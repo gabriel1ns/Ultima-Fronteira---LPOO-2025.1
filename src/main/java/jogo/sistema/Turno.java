@@ -1,13 +1,11 @@
 package jogo.sistema;
 
-import jogo.Ambiente;
 import jogo.enums.ItensEnum;
-import jogo.enums.personagem.AtributosEnum;
-import jogo.eventos.EventoCriatura;
+import jogo.enums.personagem.PersonagemAtributosEnum;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;
 import jogo.gerenciadores.GerenciadorDeInventario;
-import jogo.personagem.Personagem;
+import jogo.sistema.eventos.EventoCriatura;
 import jogo.utils.InputOutput;
 
 public class Turno {
@@ -79,7 +77,7 @@ public class Turno {
                     continue;
                 }
 
-                if(personagem.getAtributo(AtributosEnum.ENERGIA) < 15) {
+                if(personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < 15) {
                     io.print(personagem.getNome() + " está cansado demais para explorar!");
                     continue;
                 }
@@ -102,7 +100,7 @@ public class Turno {
                     break;
                 }
 
-                if(personagem.getAtributo(AtributosEnum.ENERGIA) == 0) {
+                if(personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) == 0) {
                     io.print(personagem.getNome() + " está cansado demais para explorar!");
                     dEnergia += 2;
                     continue;
@@ -130,22 +128,22 @@ public class Turno {
     }
 
     private void faseDeManutencao() {
-        if(personagem.getAtributo(AtributosEnum.FOME) == 0) {
+        if(personagem.getAtributo(PersonagemAtributosEnum.FOME) == 0) {
             io.print(personagem.getNome() + " está com fome!");
-            personagem.mudarAtributo(AtributosEnum.VIDA, -5);
+            personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -5);
         }
-        if(personagem.getAtributo(AtributosEnum.SEDE) == 0) {
+        if(personagem.getAtributo(PersonagemAtributosEnum.SEDE) == 0) {
             io.print(personagem.getNome() + " está com sede!");
-            personagem.mudarAtributo(AtributosEnum.VIDA, -2);
+            personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -2);
         }
 
         io.print("E o tempo passa...");
 
-        personagem.mudarAtributo(AtributosEnum.FOME, dFome);
-        personagem.mudarAtributo(AtributosEnum.SEDE, dSede);
-        personagem.mudarAtributo(AtributosEnum.ENERGIA, dEnergia);
+        personagem.mudarAtributo(PersonagemAtributosEnum.FOME, dFome);
+        personagem.mudarAtributo(PersonagemAtributosEnum.SEDE, dSede);
+        personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, dEnergia);
 
-        if (personagem.getAtributo(AtributosEnum.VIDA) == 0) {
+        if (personagem.getAtributo(PersonagemAtributosEnum.VIDA) == 0) {
             io.print("Você morreu!");
             return;
         }

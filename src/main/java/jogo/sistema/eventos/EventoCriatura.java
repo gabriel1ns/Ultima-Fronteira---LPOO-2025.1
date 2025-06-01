@@ -1,8 +1,8 @@
-package jogo.eventos;
+package jogo.sistema.eventos;
 
-import jogo.enums.personagem.AtributosEnum;
-import jogo.itens.ItemArma;
-import jogo.personagem.Personagem;
+import jogo.enums.personagem.PersonagemAtributosEnum;
+import jogo.sistema.Personagem;
+import jogo.sistema.itens.ItemArma;
 import jogo.utils.InputOutput;
 
 public class EventoCriatura extends Evento {
@@ -25,7 +25,7 @@ public class EventoCriatura extends Evento {
     public void executar(Personagem personagem) {
         io.print(super.getNome() + " ataca " + personagem.getNome() + "!");
 
-        personagem.mudarAtributo(AtributosEnum.VIDA, -1*dano);
+        personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -1*dano);
     }
 
     private void adicionarEspolios(Personagem personagem) {

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import jogo.construtores.itens.ConstrutorArma;
 import jogo.enums.ItensEnum;
 import jogo.enums.itens.ArmasEnum;
-import jogo.itens.Item;
-import jogo.itens.ItemArma;
-import jogo.itens.ItemFerramenta;
-import jogo.itens.ItemMaterial;
-import jogo.itens.consumiveis.Consumivel;
+import jogo.sistema.itens.Item;
+import jogo.sistema.itens.ItemArma;
+import jogo.sistema.itens.ItemFerramenta;
+import jogo.sistema.itens.ItemMaterial;
+import jogo.sistema.itens.consumiveis.Consumivel;
 
 public class Inventario {
     private final int capacidadeMaxima;

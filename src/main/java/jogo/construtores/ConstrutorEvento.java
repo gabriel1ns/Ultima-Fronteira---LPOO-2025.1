@@ -7,7 +7,7 @@ import jogo.enums.EventosEnum;
 import jogo.enums.eventos.EventosClimaticosEnum;
 import jogo.enums.eventos.EventosCriaturasEnum;
 import jogo.enums.eventos.EventosDescobertasEnum;
-import jogo.eventos.Evento;
+import jogo.sistema.eventos.Evento;
 
 public class ConstrutorEvento {
     public static Evento construir(Enum<?> eventoEnum) throws IllegalArgumentException {

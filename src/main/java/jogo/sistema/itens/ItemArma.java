@@ -1,4 +1,4 @@
-package jogo.itens;
+package jogo.sistema.itens;
 
 public class ItemArma extends Item implements IItemPerecivel {
     static private final String TIPO = "Arma";

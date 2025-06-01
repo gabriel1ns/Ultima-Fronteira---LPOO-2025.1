@@ -8,7 +8,7 @@ import jogo.enums.itens.FerramentasEnum;
 import jogo.enums.itens.MateriaisEnum;
 import jogo.enums.itens.consumiveis.AguaEnum;
 import jogo.enums.itens.consumiveis.AlimentosEnum;
-import jogo.itens.IItemPerecivel;
+import jogo.sistema.itens.IItemPerecivel;
 
 public enum EventosDescobertasEnum {
     GRAVETO

@@ -1,4 +1,4 @@
-package jogo.itens;
+package jogo.sistema.itens;
 
 public interface IItemPerecivel {
     public void decrementarDurabilidade();

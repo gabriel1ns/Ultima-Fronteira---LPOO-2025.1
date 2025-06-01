@@ -1,6 +1,6 @@
 package jogo.enums.personagem;
 
-public enum AtributosEnum {
+public enum PersonagemAtributosEnum {
     VIDA(0),
     FOME(1),
     SEDE(2),
@@ -9,7 +9,7 @@ public enum AtributosEnum {
 
     private final int indice;
 
-    private AtributosEnum(int indice) {
+    private PersonagemAtributosEnum(int indice) {
         this.indice = indice;
     }
 

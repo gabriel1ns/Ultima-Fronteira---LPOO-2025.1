@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import jogo.Ambiente;
 import jogo.construtores.ConstrutorAmbiente;
 import jogo.enums.AmbientesEnum;
+import jogo.sistema.Ambiente;
 
 public class GerenciadorDeAmbientes {
     private final List<Ambiente> ambientes;

@@ -1,7 +1,7 @@
 package jogo.construtores.eventos;
 
 import jogo.enums.eventos.EventosCriaturasEnum;
-import jogo.eventos.EventoCriatura;
+import jogo.sistema.eventos.EventoCriatura;
 
 public class ConstrutorEventoCriatura {
     public static EventoCriatura construir(EventosCriaturasEnum criatura) {
