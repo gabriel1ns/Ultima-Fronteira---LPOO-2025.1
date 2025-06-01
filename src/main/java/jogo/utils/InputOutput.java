@@ -5,14 +5,14 @@ import java.util.Scanner;
 public class InputOutput {
     // TODO migrar I/O do console pra GUI
 
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public InputOutput() {
         scanner = new Scanner(System.in);
     }
 
     public void print(String mensagem) {
-        System.out.println(mensagem);
+        System.out.println("\n" + mensagem);
     }
 
     public String getInput() {
@@ -24,22 +24,32 @@ public class InputOutput {
         return getInput();
     }
 
-    public int decisaoEmIntervalo(String mensagem, Object[] opcoes, int tamanho) {
+    public int decisaoEmIntervalo(String mensagem, Object[] opcoes) {
         print(mensagem);
         
-        int indice;
+        int indice = -1;
 
         do {
             for(int i = 0; i < opcoes.length; i++)
                 print(i+1 + ". " + opcoes[i].toString());
-    
-            indice = Integer.parseInt(getInput()) - 1;
-            
-            if(indice < -1 || indice >= tamanho) 
-                print("Escolha inválida!");
 
-        } while(indice < -1 || indice >= tamanho);
+            print("Escolha: ");
     
-        return indice;
+            try {
+                // parseInt joga NumberFormatException
+                indice = Integer.parseInt(getInput());
+
+                if(indice < 0 || indice > opcoes.length) 
+                    throw new NumberFormatException();
+                
+            } catch(NumberFormatException e) {
+                print("Escolha inválida!");
+            }
+
+        } while(indice < 0 || indice > opcoes.length);
+    
+        print("");
+
+        return indice-1;
     }
 }

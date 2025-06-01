@@ -1,6 +1,5 @@
 package jogo.eventos;
 
-import jogo.Ambiente;
 import jogo.personagem.Personagem;
 
 public abstract class Evento {
@@ -15,7 +14,11 @@ public abstract class Evento {
         this.duracao = duracao;
     }
 
-    public abstract void executar(Ambiente ambiente, Personagem personagem);
+    public abstract void executar(Personagem personagem);
+
+    public void decrementarDuracao() {
+        setDuracao(getDuracao() - 1);
+    }
 
     public String getNome() {
         return nome;
@@ -35,9 +38,7 @@ public abstract class Evento {
 
     @Override
     public String toString() {
-        return  "Nome: " + nome + "\n" + 
-                "Descrição: " + descricao + "\n" + 
-                "Duração: " + duracao + " turnos";
+        return   "Evento: " + descricao + "\n"; 
     }
 
     

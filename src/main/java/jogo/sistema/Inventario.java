@@ -1,42 +1,25 @@
 package jogo.sistema;
 import java.util.ArrayList;
 
-import jogo.itens.ItemArma;
+import jogo.construtores.itens.ConstrutorArma;
+import jogo.enums.ItensEnum;
+import jogo.enums.itens.ArmasEnum;
+import jogo.itens.Item;
 import jogo.itens.ItemArma;
 import jogo.itens.ItemFerramenta;
 import jogo.itens.ItemMaterial;
-import jogo.eventos.EventoCriatura;
-import jogo.itens.Item;
 import jogo.itens.consumiveis.Consumivel;
-import jogo.personagem.Personagem;
-import jogo.utils.IntMath;
 
 public class Inventario {
-    static enum InventarioEnum {
-        ARMA(1),
-        CONSUMIVEL(2),
-        FERRAMENTA(3),
-        MATERIAL(4);
-
-        private int indice;
-
-        private InventarioEnum(int indice) {
-            this.indice = indice;
-        }
-
-        public int getIndice() {
-            return indice;
-        }
-    }
-
-    //private ArrayList<ArrayList<Item> > itens;
-    private int capacidadeMaxima;
+    private final int capacidadeMaxima;
     private int quantidadeItens;
 
-    // TODO métodos para remoção de armas, ferramentas e consumíveis de seus subconteiners
     private ArrayList<Item>[] itens;
 
-    public Inventario(int capacidadeMaxima) {
+    public Inventario(int capacidadeMaxima, Item[] itensIniciais) {
+
+        this.capacidadeMaxima = capacidadeMaxima;
+        this.quantidadeItens = 0;
 
         itens = new ArrayList[]{
             new ArrayList<Item>(), 
@@ -46,83 +29,15 @@ public class Inventario {
             new ArrayList<ItemMaterial>()
         };
 
-        itens[InventarioEnum.ARMA.getIndice()].add(new ArmaPunhos());
-
-        //his.itens = new Item[capacidadeMaxima + 10];
-        this.capacidadeMaxima = capacidadeMaxima;
-        this.quantidadeItens = 0;
-    }
-
-    public Item combinarMateriais(ItemMaterial[] materiaisCombinados) {
-        int combinacaoID = 0;
-        Item itemCombinado;
-
-        for(ItemMaterial material: materiaisCombinados) 
-            combinacaoID += material.getQuantidade() * IntMath.pow(Item.QUANTIDADE_MAXIMA, material.getID());
-
-        itemCombinado = ItemMaterial.combinacoesPossiveis.get(combinacaoID);
+        // add Punhos na lista de armas
+        itens[ItensEnum.ARMA.getIndice()].add(ConstrutorArma.construirArma(ArmasEnum.PUNHOS, 1));
         
-        if((itemCombinado == null)) 
-            return null;
-
-        for(ItemMaterial material: materiaisCombinados) 
-            removerItem(material, material.getQuantidade());
-        
-        adicionarItem(itemCombinado);
-
-        return itemCombinado;
-    }
-
-    public void adicionarItem(Item item) {
-        int N = InventarioEnum.valueOf(item.getTipo().toUpperCase()).getIndice();
-
-        int indiceEm0 = encontrarItem(item);
-        int indiceEmN = encontrarItem(item, 0, N, false);
-
-        while(indiceEm0 != -1 && item.getQuantidade() > 0) {
-            int diff = Item.QUANTIDADE_MAXIMA - itens[0].get(indiceEm0).getQuantidade();
-
-            itens[0].get(indiceEm0).mudarQuantidade(item.getQuantidade());
-            itens[N].get(indiceEmN).mudarQuantidade(item.getQuantidade());
-            
-            item.mudarQuantidade(-diff);
-
-            indiceEm0 = encontrarItem(item, indiceEm0+1, 0, false);
-            indiceEmN = encontrarItem(item, indiceEmN+1, N, false);
-        }
-
-        if(item.getQuantidade() > 0) {
+        for(Item item: itensIniciais) {
             itens[0].add(item);
-            itens[N].add(item);
+            itens[ItensEnum.valueOf(item.getTipo().toUpperCase()).getIndice()].add(item);
+            quantidadeItens++;
         }
 
-        quantidadeItens++;
-    }
-
-    public boolean removerItem(int indiceEm0, int quantidade) {
-        Item item = itens[0].get(indiceEm0); 
-
-        return removerItem(item, quantidade);
-    }
-
-    public boolean removerItem(Item item, int quantidade) {
-        int N = InventarioEnum.valueOf(item.getTipo().toUpperCase()).getIndice();
-
-        int indiceEm0 = encontrarItem(item, itens[0].size()-1, 0, true);
-        int indiceEmN = encontrarItem(item, itens[N].size()-1, N, true);
-        
-        if(indiceEm0 == -1) return false;
-
-        itens[0].get(indiceEm0).mudarQuantidade(-quantidade);
-
-        if(itens[0].get(indiceEm0).getQuantidade() == 0){
-            itens[0].remove(indiceEm0);
-            itens[N].remove(indiceEmN);
-
-            quantidadeItens--;
-        }
-
-        return true;
     }
 
     public int encontrarItem(Item item) {
@@ -130,18 +45,18 @@ public class Inventario {
     }
 
     public int encontrarItem(Item item, int indiceInicial, int indiceSubArray, boolean reverso) {
+        if(indiceSubArray < 0 || indiceSubArray >= 1 + ItensEnum.values().length)
+            return -1;
         if(indiceInicial < 0 || indiceInicial >= itens[indiceSubArray].size())
             return -1;
-        if(indiceSubArray < 0 || indiceSubArray >= 1 + InventarioEnum.values().length)
-            return -1;
-        
+
         int indice = -1;
         
         int limite = reverso? -1 : itens[indiceSubArray].size();
         int incremento = reverso? -1 : 1;
         
         for (int i = indiceInicial; i != limite; i += incremento) {
-            if ((itens[indiceSubArray].get(i).getNome()).equals(item.getNome()))  {
+            if (( itens[indiceSubArray].get(i).getNome() ).equals( item.getNome() ))  {
                 indice = i;
                 break;
             }
@@ -150,38 +65,72 @@ public class Inventario {
         return indice;
     }
 
-    public void usarItemArma(int indice, EventoCriatura criatura) {
-        ItemArma arma = (ItemArma) itens[InventarioEnum.ARMA.getIndice()].get(indice);
+    public void adicionarItem(Item item) {
+        int N = ItensEnum.valueOf(item.getTipo().toUpperCase()).getIndice();
 
-        arma.usar(criatura);
+        if(item instanceof ItemMaterial) {
+            int indiceEm0 = encontrarItem(item);
+            int indiceEmN = encontrarItem(item, 0, N, false);
 
-        if(arma.getDurabilidade() <= 0)
-            removerItem(arma, 1);
+            while(indiceEm0 != -1 && item.getQuantidade() > 0) {
+                int diff = Item.QUANTIDADE_MAXIMA - getItens().get(indiceEm0).getQuantidade();
+    
+                getItens().get(indiceEm0).mudarQuantidade(item.getQuantidade());
+                getItens(N).get(indiceEmN).mudarQuantidade(item.getQuantidade());
+                
+                item.mudarQuantidade(-diff);
+
+                indiceEm0 = encontrarItem(item, indiceEm0+1, 0, false);
+                indiceEmN = encontrarItem(item, indiceEmN+1, N, false);
+
+            }
+        }
+        
+
+        if(item.getQuantidade() > 0) {
+            getItens().add(item);
+            getItens(N).add(item);
+            alterarQuantidadeDeItens(+1);
+        }
 
     }
 
-    public boolean usarItemConsumivel(int indice, Personagem personagem) {
-        Consumivel consumivel = (Consumivel) itens[InventarioEnum.CONSUMIVEL.getIndice()].get(indice);
+    public boolean removerItem(int indiceEm0, int quantidade) {
+        Item item = getItens().get(indiceEm0); 
 
-        consumivel.consumir(personagem);
-        removerItem(consumivel, 1);
+        return removerItem(item, quantidade);
+    }
+
+    public boolean removerItem(Item item, int quantidade) {
+        int N = ItensEnum.valueOf(item.getTipo().toUpperCase()).getIndice();
+
+        int indiceEm0 = encontrarItem(item, getItens().size()-1, 0, true);
+        int indiceEmN = encontrarItem(item, getItens(N).size()-1, N, true);
+        
+        if(indiceEm0 == -1) return false;
+
+        getItens().get(indiceEm0).mudarQuantidade(-quantidade);
+
+        if(getItens().get(indiceEm0).getQuantidade() == 0){
+            getItens().remove(indiceEm0);
+            getItens(N).remove(indiceEmN);
+
+            alterarQuantidadeDeItens(-1);
+        }
 
         return true;
     }
 
+    public void alterarQuantidadeDeItens(int dQuantidade) {
+        setQuantidadeItens(getQuantidadeItens() + dQuantidade);
+    }
+
     public boolean estaCheio() {
-        return quantidadeItens >= capacidadeMaxima;
+        return quantidadeItens > capacidadeMaxima;
     }
 
     public boolean estaVazio() {
         return quantidadeItens == 0;
-    }
-
-    public void esvaziar() {
-        for (int i = 0; i < quantidadeItens; i++) {
-            itens[i] = null;
-        }
-        quantidadeItens = 0;
     }
 
     public ArrayList<Item> getItens() {
@@ -198,6 +147,10 @@ public class Inventario {
 
     public int getQuantidadeItens() {
         return this.quantidadeItens;
+    }
+
+    public void setQuantidadeItens(int quantidadeItens) {
+        this.quantidadeItens = quantidadeItens;
     }
 
     @Override

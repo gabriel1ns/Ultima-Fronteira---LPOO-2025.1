@@ -99,11 +99,11 @@ public enum AmbientesEnum {
     
     private final String nome;
     private final String descricao;
-    private final Enum[] eventosPossiveis;
+    private final Enum<?>[] eventosPossiveis;
     private final int[] probabilidadeDeEventos; 
     private final int dificuldadeDeExploracao;
     
-    private AmbientesEnum(String nome, String descricao, Enum[] eventosPossiveis, int[] probabilidadeDeEventos,
+    private AmbientesEnum(String nome, String descricao, Enum<?>[] eventosPossiveis, int[] probabilidadeDeEventos,
             int dificuldadeDeExploracao) {
         this.nome = nome;
         this.descricao = descricao;
@@ -120,7 +120,7 @@ public enum AmbientesEnum {
         return descricao;
     }
 
-    public Enum[] getEventosPossiveis() {
+    public Enum<?>[] getEventosPossiveis() {
         return eventosPossiveis;
     }
 

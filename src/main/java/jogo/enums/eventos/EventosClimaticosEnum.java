@@ -1,5 +1,6 @@
 package jogo.enums.eventos;
 
+import jogo.enums.EventosEnum;
 import jogo.enums.personagem.AtributosEnum;
 
 public enum EventosClimaticosEnum {
@@ -41,6 +42,8 @@ public enum EventosClimaticosEnum {
         -5
     });
     
+    public static final EventosEnum TIPO = EventosEnum.CLIMATICO; 
+
     private final String nome;
     private final String descricao;
     private final int duracao; 

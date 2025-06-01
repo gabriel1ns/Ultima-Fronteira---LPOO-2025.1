@@ -4,8 +4,8 @@ import jogo.enums.personagem.AtributosEnum;
 
 public class ConsumivelRemedio extends Consumivel {
 
-    public ConsumivelRemedio(String nome, int peso, int efeito) {
-        super(nome, peso, 1, AtributosEnum.VIDA, efeito);
+    public ConsumivelRemedio(String nome, int peso, int efeito, int quantidade) {
+        super(nome, peso, quantidade, AtributosEnum.VIDA, efeito);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package jogo.personagem;
 import jogo.enums.personagem.AtributosEnum;
+import jogo.gerenciadores.GerenciadorDeInventario;
 import jogo.itens.Item;
 import jogo.sistema.Inventario;
+import jogo.utils.InputOutput;
 
 public class Personagem {
     
@@ -9,11 +11,14 @@ public class Personagem {
     private final int[]         MAX_ATRIBUTOS;
 
     final private String        nome;
-    private int[]               atributos = new int[AtributosEnum.values().length];
-    private Inventario          inventario;
+    private final int[]         atributos = new int[AtributosEnum.values().length];
+    private final Inventario    inventario;
+    private final GerenciadorDeInventario gerenciadorDeInventario;
+
+    private final InputOutput io = new InputOutput();
 
     public Personagem(String nome, int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade, 
-    int capacidadeDoInventario, Item[] itensIniciais) {
+           int capacidadeDoInventario, Item[] itensIniciais) {
         
         this.nome = nome;
         
@@ -26,6 +31,7 @@ public class Personagem {
         atributos[AtributosEnum.SANIDADE.getIndice()] = maxSanidade;
         
         this.inventario = new Inventario(capacidadeDoInventario, itensIniciais);
+        this.gerenciadorDeInventario = new GerenciadorDeInventario(this);
     }
 
     public Inventario getInventario() {
@@ -33,8 +39,13 @@ public class Personagem {
     }
 
     public void mudarAtributo(AtributosEnum atributo, int valor) {
-        valor = normalizarValorAtributo(atributo, valor);
+        setAtributo(atributo, getAtributo(atributo) + valor);
 
+        io.print(nome + (valor > 0? " ganhou " : " perdeu ") + Math.abs(valor) + " de " + atributo.name().toLowerCase());
+    }
+
+    public void setAtributo(AtributosEnum atributo, int valor) {
+        valor = normalizarValorAtributo(atributo, valor);
         atributos[atributo.getIndice()] = valor;
     }
 
@@ -54,6 +65,10 @@ public class Personagem {
         return nome;
     }
 
+    public GerenciadorDeInventario getGerenciadorDeInventario() {
+        return gerenciadorDeInventario;
+    }
+
     @Override
     public String toString() {
 
@@ -61,7 +76,7 @@ public class Personagem {
 
         for(AtributosEnum atributo: AtributosEnum.values())
             ret += atributo.name() + ": " + atributos[atributo.getIndice()] + "\n";
-        ret += "Inventário: " + getInventario().toString();
+        ret += getInventario().toString();
 
         return ret;
     }

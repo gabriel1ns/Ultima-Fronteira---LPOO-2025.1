@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 import jogo.Ambiente;
-import jogo.AmbienteCaverna;
-import jogo.AmbienteFloresta;
-import jogo.AmbienteLagoRio;
-import jogo.AmbienteRuinas;
+import jogo.construtores.ConstrutorAmbiente;
+import jogo.enums.AmbientesEnum;
 
 public class GerenciadorDeAmbientes {
     private final List<Ambiente> ambientes;
@@ -16,11 +14,9 @@ public class GerenciadorDeAmbientes {
 
     public GerenciadorDeAmbientes() {
         this.ambientes = new ArrayList<>();
-        ambientes.add(new AmbienteFloresta());
-        ambientes.add(new AmbienteCaverna());
-        ambientes.add(new AmbienteLagoRio());
-        //ambientes.add(new AmbienteMontanha(new Evento[2])); - resolver esse pq precisa da picareta por exemplo
-        ambientes.add(new AmbienteRuinas());
+
+        for(AmbientesEnum ambiente: AmbientesEnum.values()) 
+            ambientes.add(ConstrutorAmbiente.construir(ambiente));
 
     }
 

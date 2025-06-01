@@ -1,13 +1,13 @@
 package jogo.eventos;
 
-import jogo.Ambiente;
-import jogo.construtores.itens.consumiveis.ConstrutorAlimento;
-import jogo.enums.itens.consumiveis.AlimentosEnum;
 import jogo.enums.personagem.AtributosEnum;
-import jogo.itens.consumiveis.ConsumivelAlimento;
+import jogo.itens.ItemArma;
 import jogo.personagem.Personagem;
+import jogo.utils.InputOutput;
 
 public class EventoCriatura extends Evento {
+
+    private final InputOutput io = new InputOutput();
 
     private int vida;
     private int dano;
@@ -22,26 +22,31 @@ public class EventoCriatura extends Evento {
     }
 
     @Override
-    public void executar(Ambiente ambiente, Personagem personagem) {
+    public void executar(Personagem personagem) {
+        io.print(super.getNome() + " ataca " + personagem.getNome() + "!");
+
         personagem.mudarAtributo(AtributosEnum.VIDA, -1*dano);
     }
 
-    public void adicionarProteina(Personagem personagem) {
-        if (this.getVida() <= 0) {
-
-            ConsumivelAlimento carne = ConstrutorAlimento.construirAlimento(AlimentosEnum.CARNE);
-            personagem.getInventario().adicionarItem(carne);
-        }
+    private void adicionarEspolios(Personagem personagem) {
+        // TODO
     }
 
-    public void diminuirVida(int dVida) {
-        assert(dVida >= 0);
+    public boolean serAtacada(ItemArma arma, Personagem personagem) {
 
-        setVida(getVida() - dVida);
+        if(arma.getAlcance() < getDistancia())
+            return false;
+
+        setVida(getVida() - arma.getDano());
 
         if(getVida() <= 0) {
+            io.print(personagem.getNome() + " derrotou " + super.getNome());
+
             super.setDuracao(0);
+            adicionarEspolios(personagem);
         }
+
+        return true;
     }
 
     final public void setVida(int vida) {
@@ -70,7 +75,7 @@ public class EventoCriatura extends Evento {
 
     @Override
     public String toString() {
-        return  "Nome: " + super.getNome() + "\n" +
+        return  super.toString() +
                 "Vida: " + this.vida + "\n" +
                 "Dano: " + this.dano + "\n" +
                 "Distancia: " + this.distancia + "\n";

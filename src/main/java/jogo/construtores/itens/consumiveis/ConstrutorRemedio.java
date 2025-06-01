@@ -4,7 +4,7 @@ import jogo.enums.itens.consumiveis.RemediosEnum;
 import jogo.itens.consumiveis.ConsumivelRemedio;
 
 public class ConstrutorRemedio {
-    public static ConsumivelRemedio construirRemedio(RemediosEnum remedio) {
-        return new ConsumivelRemedio(remedio.getNOME(), remedio.getPESO(), remedio.getEFEITO());
+    public static ConsumivelRemedio construirRemedio(RemediosEnum remedio, int quantidade) {
+        return new ConsumivelRemedio(remedio.getNOME(), remedio.getPESO(), remedio.getEFEITO(), quantidade);
     }
 }

@@ -8,8 +8,8 @@ public class ConsumivelAlimento extends Consumivel implements IItemPerecivel {
     private final int valorNutricional;
     private int prazoDeValidade;
 
-    public ConsumivelAlimento(String nome, int peso, int valorNutricional, int prazoDeValidade) {
-        super(nome, peso, 1, AtributosEnum.FOME, valorNutricional);
+    public ConsumivelAlimento(String nome, int peso, int valorNutricional, int prazoDeValidade, int quantidade) {
+        super(nome, peso, quantidade, AtributosEnum.FOME, valorNutricional);
 
         this.valorNutricional = valorNutricional;
         this.prazoDeValidade = prazoDeValidade;

@@ -9,6 +9,7 @@ public class ConstrutorEventoDescoberta {
             descoberta.getNome(), 
             descoberta.getDescricao(), 
             descoberta.getItensDescobertos(), 
+            descoberta.getQuantidades(),
             descoberta.getItemNecessario()
         );
     }

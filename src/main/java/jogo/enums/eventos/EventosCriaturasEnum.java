@@ -1,5 +1,7 @@
 package jogo.enums.eventos;
 
+import jogo.enums.EventosEnum;
+
 public enum EventosCriaturasEnum {
     LOBO
     ("Lobo", "Um lobo hostil se aproxima",
@@ -17,6 +19,8 @@ public enum EventosCriaturasEnum {
     ("Cobra", "Uma cobra venenosa se aproxima rapidamente",
     15, 2, 2);
     
+    public static final EventosEnum TIPO = EventosEnum.CRIATURA; 
+
     private final String nome;
     private final String descricao;
     private final int vida;

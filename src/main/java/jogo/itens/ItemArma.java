@@ -1,28 +1,20 @@
 package jogo.itens;
 
-import jogo.eventos.EventoCriatura;
-
 public class ItemArma extends Item implements IItemPerecivel {
-    static private String TIPO = "Arma";
+    static private final String TIPO = "Arma";
 
     private final int dano;
     private final int alcance;
-
     private int durabilidade;
+    
     // TODO adicionar sistema de municao
 
-    public ItemArma(String nome, int peso, int durabilidade, int dano, int alcance) {
-        super(nome, TIPO, peso, 1);
+    public ItemArma(String nome, int peso, int durabilidade, int dano, int alcance, int quantidade) {
+        super(nome, TIPO, peso, quantidade);
 
         this.dano = dano;
         this.alcance = alcance;
-    }
-
-    public void usar(EventoCriatura criatura) {
-        if(this.alcance >= criatura.getDistancia())
-            criatura.diminuirVida(dano);
-
-        decrementarDurabilidade();
+        this.durabilidade = durabilidade;
     }
 
     @Override

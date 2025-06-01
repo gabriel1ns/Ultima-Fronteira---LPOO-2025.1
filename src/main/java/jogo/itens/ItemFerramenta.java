@@ -1,13 +1,13 @@
 package jogo.itens;
 
 public class ItemFerramenta extends Item implements IItemPerecivel {
-    private static String TIPO = "Ferramenta";
+    private static final String TIPO = "Ferramenta";
 
     private final int eficiencia;
     private int durabilidade;
 
-    public ItemFerramenta(String nome, int eficiencia, int peso, int durabilidade) {
-        super(nome, TIPO, peso, 1);
+    public ItemFerramenta(String nome, int eficiencia, int peso, int durabilidade, int quantidade) {
+        super(nome, TIPO, peso, quantidade);
 
         this.eficiencia = eficiencia;
         this.durabilidade = durabilidade;

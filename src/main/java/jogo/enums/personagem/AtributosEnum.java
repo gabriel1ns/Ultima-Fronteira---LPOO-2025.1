@@ -7,7 +7,7 @@ public enum AtributosEnum {
     ENERGIA(3),
     SANIDADE(4);
 
-    private int indice;
+    private final int indice;
 
     private AtributosEnum(int indice) {
         this.indice = indice;

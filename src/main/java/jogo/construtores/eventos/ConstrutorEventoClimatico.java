@@ -4,7 +4,7 @@ import jogo.enums.eventos.EventosClimaticosEnum;
 import jogo.eventos.EventoClimatico;
 
 public class ConstrutorEventoClimatico {
-    private static EventoClimatico construir(EventosClimaticosEnum evento) {
+    public static EventoClimatico construir(EventosClimaticosEnum evento) {
         return new EventoClimatico(
             evento.getNome(), 
             evento.getDescricao(), 

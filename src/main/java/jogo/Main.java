@@ -1,10 +1,8 @@
 package jogo;
+import jogo.construtores.ConstrutorPersonagem;
+import jogo.enums.personagem.AtributosEnum;
+import jogo.enums.personagem.ClassesEnum;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
-import jogo.itens.consumiveis.ConsumivelAgua;
-import jogo.itens.consumiveis.ConsumivelAlimento;
-import jogo.itens.ferramentas.FerramentaPicareta;
-import jogo.itens.materiais.MaterialMadeira;
-import jogo.itens.materiais.MaterialPedra;
 import jogo.personagem.Personagem;
 import jogo.sistema.Turno;
 import jogo.utils.InputOutput;
@@ -16,13 +14,22 @@ public class Main {
         io.print("Bem-vindo ao ÚLTIMA FRONTEIRA!");
 
         String nomePersonagem = io.getInput("Diga o seu nome");
-        int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", Personagem.CLASSES, Personagem.CLASSES.length);
+        int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", ClassesEnum.values());
 
-        Personagem personagem = Personagem.novoPersonagem(nomePersonagem, escolhaClassePersonagem);
+        ClassesEnum classePersonagem = ClassesEnum.SOBREVIVENTE; 
+        
+        for(ClassesEnum classe: ClassesEnum.values()) {
+            if(escolhaClassePersonagem == classe.ordinal()) {
+                classePersonagem = classe;
+                break;
+            }
+        }
+        
+        Personagem personagem = ConstrutorPersonagem.construirPersonagem(nomePersonagem, classePersonagem);
 
         GerenciadorDeAmbientes gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
         Ambiente ambienteInicial = gerenciadorDeAmbientes.sortearAmbiente();
-        //Ambiente ambienteInicial = new AmbienteCaverna();
+        //Ambiente ambienteInicial = ConstrutorAmbiente.construir(AmbientesEnum.MONTANHA);
 
         Turno turno = new Turno(personagem, ambienteInicial, gerenciadorDeAmbientes, io);
 
@@ -30,7 +37,7 @@ public class Main {
             io.print("Turno" + i);
             turno.iniciarTurno();
 
-            if(personagem.getVida() == 0) break;
+            if(personagem.getAtributo(AtributosEnum.VIDA) == 0) break;
             io.print("");
         } // resolver saida do turno quando implementar as outras classes que faltam
 

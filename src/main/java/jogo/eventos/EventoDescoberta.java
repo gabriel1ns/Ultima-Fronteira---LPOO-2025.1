@@ -1,6 +1,7 @@
 package jogo.eventos;
 
-import jogo.Ambiente;
+import jogo.construtores.ConstrutorItem;
+import jogo.itens.IItemPerecivel;
 import jogo.itens.Item;
 import jogo.personagem.Personagem;
 import jogo.sistema.Inventario;
@@ -9,44 +10,56 @@ import jogo.utils.InputOutput;
 public class EventoDescoberta extends Evento {
 
     private final Item[] itensDescobertos;
-    private final Item itemNecessario;
+    private final IItemPerecivel itemNecessario;
 
-    public EventoDescoberta(String nome, String descricao, Item[] itensDescobertos, Item itemNecessario) {
+    private final InputOutput io = new InputOutput();
+
+    public EventoDescoberta(String nome, String descricao, Enum<?>[] itensDescobertosEnums, int[] quantidades, IItemPerecivel itemNecessario) {
         super(nome, descricao, 1);
 
-        this.itensDescobertos = itensDescobertos;
+        this.itensDescobertos = new Item[itensDescobertosEnums.length];
         this.itemNecessario = itemNecessario;
+
+        int i = 0;
+        for(Enum<?> itemDescobertoEnum: itensDescobertosEnums) {
+            itensDescobertos[i] = ConstrutorItem.construir(itemDescobertoEnum, quantidades[i]);
+            i++;
+        }
     }
 
     @Override
-    public void executar(Ambiente ambiente, Personagem personagem) {
-        InputOutput io = new InputOutput();
-        
+    public void executar(Personagem personagem) {
+
+        super.setDuracao(0);
+
         Inventario inventario = personagem.getInventario();
 
-        int indice = inventario.encontrarItem(itemNecessario);
+        if(itemNecessario != null) {
+            Item item = (Item) itemNecessario;
 
-        if(indice == -1) {
-            io.print(personagem.getNome() + " não tem " + this.itemNecessario);
-            // TODO mensagem para item nao encontrado
-            return;
-        }else {
-            io.print(personagem.getNome() + " utilizou " + this.itemNecessario);
+            int indice = inventario.encontrarItem(item);
+
+            if(indice == -1) {
+                io.print(personagem.getNome() + " precisa de " + item.getNome() + " para coletar os recursos");
+                return;
+            }
+
+            personagem.getGerenciadorDeInventario().usarPerecivel(indice);
+            io.print(personagem.getNome() + " utilizou " + item.getNome());
         }
 
         for(Item item: this.itensDescobertos) {
             inventario.adicionarItem(item);
+            io.print(personagem.getNome() + " coletou " + item.getNome());
         }
 
-        inventario.getItens().get(indice).decrementarDurabilidade();
     }
 
     @Override
     public String toString() {
         String itens = "";
-        for(Item item : this.itensDescobertos) {
-            itens += item.getNome();
-        }
+        for(Item item : this.itensDescobertos)
+            itens += item.getNome() + ", ";
 
         return  super.toString() +
                 "Recursos encontrados: " + itens + "\n";

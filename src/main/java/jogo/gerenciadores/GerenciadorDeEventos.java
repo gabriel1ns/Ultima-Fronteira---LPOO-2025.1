@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import jogo.Ambiente;
+import jogo.construtores.ConstrutorEvento;
 import jogo.eventos.Evento;
+import jogo.eventos.EventoClimatico;
 import jogo.eventos.EventoCriatura;
 import jogo.personagem.Personagem;
 import jogo.utils.InputOutput;
@@ -13,126 +15,119 @@ import jogo.utils.InputOutput;
 public class GerenciadorDeEventos {
     private final static int NUM_MAX_EVENTOS = 100;
 
-    private Evento[] eventosPossiveis;
-    private int[] probabilidadeDeEventos;
-    
-    private Evento[] eventosAtivos;
-    private int quantidadeDeEventos;
-    private EventoCriatura eventoCriaturaAtivo;
+    private Ambiente ambiente;
+    private final Personagem personagem;
 
-    public GerenciadorDeEventos(Evento[] eventosPossiveis, int[] probabilidadeDeEventos) {
-        setEventosPossiveis(eventosPossiveis);
-        setProbabilidadeDeEventos(probabilidadeDeEventos);
-        assert(eventosPossiveis.length == probabilidadeDeEventos.length);
-    
-        eventosAtivos = new Evento[NUM_MAX_EVENTOS];
-        quantidadeDeEventos = 0;
-        eventoCriaturaAtivo = null;
+    private ArrayList<Evento> eventosAtivos;
+
+    private final InputOutput io = new InputOutput();
+
+    public GerenciadorDeEventos(Ambiente ambiente, Personagem personagem) {
+        this.ambiente = ambiente;
+        this.personagem = personagem;
+
+        eventosAtivos = new ArrayList<>();
     }
 
     public void adicionarEventoAleatorio() {
-        if(quantidadeDeEventos == NUM_MAX_EVENTOS) return;
+        if(eventosAtivos.size() == NUM_MAX_EVENTOS) return;
 
-        ArrayList<Evento> bolhaDeEventos = new ArrayList<>();
-        Evento evento;
+        ArrayList<Enum<?>> bolhaDeEventos = new ArrayList<>();
 
-        for(int i = 0; i < probabilidadeDeEventos.length; i++) {
-            evento = eventosPossiveis[i];
-            int pesoDoEvento = probabilidadeDeEventos[i];
+        for(int i = 0; i < ambiente.getProbabilidadeDeEventos().length; i++) {
+            int pesoDoEvento = ambiente.getProbabilidadeDeEventos()[i];
 
             for(int j = 0; j < pesoDoEvento; j++) {
-                bolhaDeEventos.add(evento);
+                bolhaDeEventos.add(ambiente.getEventosPossiveis()[i]);
             }
         }
 
         Random seletorDeEvento = new Random();
-        int indice = seletorDeEvento.nextInt(bolhaDeEventos.size());   
+        int indiceAleatorio = seletorDeEvento.nextInt(bolhaDeEventos.size());   
         
-        evento = bolhaDeEventos.get(indice);
+        try {
+            Evento evento = ConstrutorEvento.construir(bolhaDeEventos.get(indiceAleatorio));
+            eventosAtivos.add(evento);
 
-        if(evento instanceof EventoCriatura eventoCriatura)
-            eventoCriaturaAtivo = eventoCriatura;
-        
-        eventosAtivos[quantidadeDeEventos] = evento;
-        quantidadeDeEventos++;
-    }
-
-    public void executarEventos(Ambiente ambiente, Personagem personagem) {
-        ArrayList<Evento> eventosParaRemocao = new ArrayList<>();
-        
-        InputOutput io = new InputOutput();
-
-        if(quantidadeDeEventos <= 0) {
-            io.print(personagem.getNome() + " não ecnontrou nada");
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
         }
 
-        for(int i = 0; i < quantidadeDeEventos; i++) {
-            Evento evento = eventosAtivos[i];
+        
+    }
+
+    public boolean executarEventos() {
+        ArrayList<Evento> eventosParaRemocao = new ArrayList<>();
+        
+        if(eventosAtivos.isEmpty())
+            return false;
+
+        // Executa os eventos
+        for(Evento evento: eventosAtivos) {
 
             if(evento.getDuracao() == 0) {
                 eventosParaRemocao.add(evento);
                 continue;
             }
 
-            io.print(evento.getDescricao());
-            
-            evento.executar(ambiente, personagem);
+            io.print(evento.toString());
+            io.getInput();
 
-            if(!(evento instanceof EventoCriatura))
-                evento.setDuracao(evento.getDuracao() - 1);
+            evento.executar(personagem);
         }
 
         for(Evento evento: eventosParaRemocao)
-            removerEvento(evento);
+            eventosAtivos.remove(evento);
+
+        return true;
     }
 
-    private void removerEvento(Evento eventoParaRemover) {
-        for(int i = 0; i < quantidadeDeEventos; i++) {
-            Evento evento = eventosAtivos[i];
+    public void fugirDeEventoCriatura(EventoCriatura criatura) {
+        int chanceDeSucesso = 7;
 
-            if(eventoParaRemover.equals(evento)) {
-                if(eventoParaRemover instanceof EventoCriatura)
-                    this.eventoCriaturaAtivo = null;
+        Random random = new Random();
+        boolean resultado = random.nextInt(10) >= chanceDeSucesso;
+        
+        if(resultado)
+            eventosAtivos.remove(criatura);
 
-                for(int i2 = i; i2 < quantidadeDeEventos-1; i2++)
-                    eventosAtivos[i2] = eventosAtivos[i2+1];
+        io.print(personagem.getNome() + (resultado? "" : " não") + " fugiu de " + criatura.getNome());
+        io.getInput();
+    }
 
-                quantidadeDeEventos--;
-                return;
-            }
+    public EventoCriatura buscarEventoCriaturaAtivo() {
+        for(Evento evento: eventosAtivos)
+            if(evento instanceof EventoCriatura criatura) return criatura;
+
+        return null;
+    }
+
+    public Ambiente getAmbiente() {
+        return ambiente;
+    }
+
+    public void setAmbiente(Ambiente ambiente) {
+        
+        // settando duração em 0 pra não remover os eventos enquanto itero pela coleção,
+        // deixando o executarEventos cuidar disso
+        for(Evento evento: eventosAtivos) {
+            if(evento instanceof EventoClimatico eventoClimatico)
+                eventoClimatico.setDuracao(0);
         }
+
+        this.ambiente = ambiente;
     }
 
-    public int buscarEventoCriaturaAtivo() {
-        for(int i = 0; i < quantidadeDeEventos; i++)
-            if(eventosAtivos[i] instanceof EventoCriatura)
-                return i;
-
-        return -1;
+    public Personagem getPersonagem() {
+        return personagem;
     }
 
-    final public void setEventosPossiveis(Evento[] eventosPossiveis) {
-        this.eventosPossiveis = eventosPossiveis;
-    }
-
-    final public void setProbabilidadeDeEventos(int[] probabilidadeDeEventos) {
-        this.probabilidadeDeEventos = probabilidadeDeEventos;
-    }
-
-    public Evento[] getEventosPossiveis() {
-        return eventosPossiveis;
-    }
-
-    public int[] getProbabilidadeDeEventos() {
-        return probabilidadeDeEventos;
-    }
-
-    public Evento[] getEventosAtivos() {
+    public ArrayList<Evento> getEventosAtivos() {
         return eventosAtivos;
     }
 
-    public EventoCriatura getEventoCriaturaAtivo() {
-        return eventoCriaturaAtivo;
+    public void setEventosAtivos(ArrayList<Evento> eventosAtivos) {
+        this.eventosAtivos = eventosAtivos;
     }
 
-} // criar metodos dps
+} 

@@ -4,7 +4,7 @@ import jogo.enums.itens.FerramentasEnum;
 import jogo.itens.ItemFerramenta;
 
 public class ConstrutorFerramenta {
-    public static ItemFerramenta construirFerramenta(FerramentasEnum ferramenta) {
-        return new ItemFerramenta(ferramenta.getNOME(), ferramenta.getEFICIENCIA(), ferramenta.getPESO(), ferramenta.getDURABILIDADE());
+    public static ItemFerramenta construirFerramenta(FerramentasEnum ferramenta, int quantidade) {
+        return new ItemFerramenta(ferramenta.getNOME(), ferramenta.getEFICIENCIA(), ferramenta.getPESO(), ferramenta.getDURABILIDADE(), quantidade);
     }
 }
