@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import jogo.construtores.ConstrutorItem;
+import jogo.construtores.itens.ConstrutorMaterial;
 import jogo.enums.CombinacoesEnum;
 import jogo.enums.ItensEnum;
 import jogo.enums.itens.MateriaisEnum;
@@ -34,14 +35,10 @@ public class GerenciadorDeInventario {
 
         for(CombinacoesEnum combinacao: CombinacoesEnum.values()) {
         
-            int combinacaoID = 0;
-            int i = 0;
-
-            // calcula o número identificador de cada combinação na base Item.QUANTIADE_MAXIMA (4 no momento)
-            for(MateriaisEnum material: combinacao.getMateriaisCombinados()) {
-                combinacaoID += combinacao.getQuantidades()[i] * IntMath.pow(Item.QUANTIDADE_MAXIMA, material.getId());
-                i++;
-            }
+            int combinacaoID = calcularIdDaCombinacao(
+                combinacao.getMateriaisCombinados(), 
+                combinacao.getQuantidades()
+            );
             
             // adiciona todas as combinacoes de materiais existentes no hashmap
             mapaDeCombinacoes.put(
@@ -49,6 +46,31 @@ public class GerenciadorDeInventario {
                 combinacao.getItemResultanteEnum()
             );
         }
+    }
+
+    private int calcularIdDaCombinacao(ItemMaterial[] materiaisCombinados) {
+        int combinacaoID = 0;
+
+        // calcula o número identificador de cada combinação a partir da fórmula
+        // somatório_(através dos materiais combinados)[ quantidade_do_material * (QUANTIDADE_MAXIMA(4 no momento)+1) ^ (ID_do_material)
+        // em que quantidade_do_material deverá ser menor que QUANTIDADE_MAXIMA e o ID_do_material de todos os materiais são distintos,
+        // assim permitindo que toda combinação de itens gere um inteiro único        
+        for(ItemMaterial material: materiaisCombinados) 
+            combinacaoID += material.getQuantidade() * IntMath.pow(Item.QUANTIDADE_MAXIMA, material.getID());
+
+        return combinacaoID;
+    }
+
+    private int calcularIdDaCombinacao(MateriaisEnum[] materiaisCombinadosEnum, int[] quantidades) {
+        ItemMaterial[] materiais = new ItemMaterial[materiaisCombinadosEnum.length];
+
+        int i = 0;
+        for(MateriaisEnum materialEnum: materiaisCombinadosEnum) {
+            materiais[i] = ConstrutorMaterial.construirMaterial(materialEnum, quantidades[i]);
+            i++;
+        }
+
+        return calcularIdDaCombinacao(materiais);
     }
 
     public void removerItens() {
@@ -131,18 +153,14 @@ public class GerenciadorDeInventario {
     }
 
     public void combinarMateriais(ItemMaterial[] materiaisCombinados) {
-        int combinacaoID = 0;
-        Item itemCombinado;
-
-        for(ItemMaterial material: materiaisCombinados) 
-            combinacaoID += material.getQuantidade() * IntMath.pow(Item.QUANTIDADE_MAXIMA, material.getID());
-
+        int combinacaoID = calcularIdDaCombinacao(materiaisCombinados);
+        
         if(mapaDeCombinacoes.get(combinacaoID) == null) {
             io.print("Combinação não existe");
             return;
         }
 
-        itemCombinado = ConstrutorItem.construir(mapaDeCombinacoes.get(combinacaoID), 1);
+        Item itemCombinado = ConstrutorItem.construir(mapaDeCombinacoes.get(combinacaoID), 1);
 
         for(ItemMaterial material: materiaisCombinados) 
             inventario.removerItem(material, material.getQuantidade());

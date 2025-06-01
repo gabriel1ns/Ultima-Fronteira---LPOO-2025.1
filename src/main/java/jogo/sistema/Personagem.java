@@ -9,17 +9,19 @@ public class Personagem {
     private static final int    MIN_ATRIBUTO = 0;
     private final int[]         MAX_ATRIBUTOS;
 
-    final private String        nome;
-    private final int[]         atributos = new int[PersonagemAtributosEnum.values().length];
-    private final Inventario    inventario;
-    private final GerenciadorDeInventario gerenciadorDeInventario;
+    private final String                    nome;
+    private final String                    classe;
+    private final int[]                     atributos = new int[PersonagemAtributosEnum.values().length];
+    private final Inventario                inventario;
+    private final GerenciadorDeInventario   gerenciadorDeInventario;
 
     private final InputOutput io = new InputOutput();
 
-    public Personagem(String nome, int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade, 
+    public Personagem(String nome, String classe, int maxVida, int maxFome, int maxSede, int maxEnergia, int maxSanidade, 
            int capacidadeDoInventario, Item[] itensIniciais) {
         
         this.nome = nome;
+        this.classe = classe;
         
         MAX_ATRIBUTOS = new int[]{maxVida, maxFome, maxSede, maxEnergia, maxSanidade};
         
@@ -68,13 +70,20 @@ public class Personagem {
         return gerenciadorDeInventario;
     }
 
+    public String getClasse() {
+        return classe;
+    }
+
     @Override
     public String toString() {
 
         String ret = "";
 
+        ret += "Classe: " + classe + "\n";
+
         for(PersonagemAtributosEnum atributo: PersonagemAtributosEnum.values())
             ret += atributo.name() + ": " + atributos[atributo.getIndice()] + "\n";
+        
         ret += getInventario().toString();
 
         return ret;
