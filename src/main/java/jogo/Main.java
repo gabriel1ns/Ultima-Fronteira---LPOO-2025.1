@@ -1,11 +1,14 @@
 package jogo;
+import jogo.construtores.ConstrutorItem;
 import jogo.construtores.ConstrutorPersonagem;
+import jogo.enums.itens.FerramentasEnum;
 import jogo.enums.personagem.PersonagemAtributosEnum;
 import jogo.enums.personagem.PersonagemClassesEnum;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.sistema.Ambiente;
 import jogo.sistema.Personagem;
 import jogo.sistema.Turno;
+import jogo.sistema.itens.Item;
 import jogo.utils.InputOutput;
 
 public class Main {
@@ -35,6 +38,8 @@ public class Main {
 
         Turno turno = new Turno(personagem, ambienteInicial, gerenciadorDeAmbientes, io);
 
+        Item jangada = ConstrutorItem.construir(FerramentasEnum.JANGADA, 1);
+
         for (int i = 1;;i++) {
             io.print("Turno" + i);
             turno.iniciarTurno();
@@ -52,6 +57,22 @@ public class Main {
                 });
 
                 if(escolha == 0) break;
+            }
+
+
+
+            if(personagem.getInventario().encontrarItem(jangada) != -1) {
+                io.print("PARABÉNS!");
+                io.print(personagem.getNome() + " construiu uma Jangada e conseguiu fugir da ilha!");
+
+                int escolha = io.decisaoEmIntervalo("O que deseja fazer?", new String[]{
+                    "Finalizar o jogo",
+                    "Continuar no modo infinito"
+                });
+
+                if(escolha == 0) break;
+            
+                personagem.getInventario().removerItem(jangada, 1);
             }
         }
 

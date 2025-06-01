@@ -41,6 +41,14 @@ public enum PersonagemClassesEnum {
     (80, 140, 80, 140, 100, 9, new Item[]{
         ConstrutorFerramenta.construirFerramenta(FerramentasEnum.PICARETA, 1),
         ConstrutorMaterial.construirMaterial(MateriaisEnum.PEDRA, 4),
+    }),
+    
+    DBG
+    (10, 10, 10, 10, 10, 10, new Item[]{
+        ConstrutorMaterial.construirMaterial(MateriaisEnum.MADEIRA, 4),
+        ConstrutorMaterial.construirMaterial(MateriaisEnum.FERRO, 4),
+        ConstrutorMaterial.construirMaterial(MateriaisEnum.CORDA, 4),
+        ConstrutorMaterial.construirMaterial(MateriaisEnum.PEDRA, 4)
     });
 
     private final int maxVida;

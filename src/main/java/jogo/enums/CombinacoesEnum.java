@@ -97,6 +97,22 @@ public enum CombinacoesEnum {
         2
     },
     FerramentasEnum.RECIPIENTE,
+    1),
+    
+    JANGADA
+    (new MateriaisEnum[]{
+        MateriaisEnum.MADEIRA,
+        MateriaisEnum.PEDRA,
+        MateriaisEnum.FERRO,
+        MateriaisEnum.CORDA
+    },
+    new int[]{
+        3,
+        3,
+        3,
+        3
+    },
+    FerramentasEnum.JANGADA,
     1);
 
     private final MateriaisEnum[] materiaisCombinados;

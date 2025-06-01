@@ -8,7 +8,10 @@ public enum FerramentasEnum {
     ("Machado", 5, 5, 10),
     
     RECIPIENTE
-    ("Recipiente", 5, 5, 20);
+    ("Recipiente", 5, 5, 20),
+    
+    JANGADA
+    ("Jangada", 0, 0, 0);
 
     private final String NOME;
     private final int EFICIENCIA;
