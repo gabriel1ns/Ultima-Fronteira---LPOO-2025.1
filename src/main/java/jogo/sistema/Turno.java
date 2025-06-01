@@ -9,6 +9,8 @@ import jogo.sistema.eventos.EventoCriatura;
 import jogo.utils.InputOutput;
 
 public class Turno {
+    public final static int QUANTIDADE_DE_TURNOS_PARA_VITORIA = 30;
+
     private final Personagem personagem;
     private Ambiente ambienteAtual;
     private final GerenciadorDeAmbientes gerenciadorDeAmbientes;

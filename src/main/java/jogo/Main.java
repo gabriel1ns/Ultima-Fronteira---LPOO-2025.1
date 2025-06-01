@@ -12,7 +12,8 @@ public class Main {
     public static void main(String[] args) {
         InputOutput io = new InputOutput();
 
-        io.print("Bem-vindo ao ÚLTIMA FRONTEIRA!");
+        io.print("Bem-vindo a ÚLTIMA FRONTEIRA!");
+        io.print("Você terá " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos para tentar sobreviver. Boa sorte!\n");
 
         String nomePersonagem = io.getInput("Diga o seu nome");
         int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", PersonagemClassesEnum.values());
@@ -40,7 +41,19 @@ public class Main {
 
             if(personagem.getAtributo(PersonagemAtributosEnum.VIDA) == 0) break;
             io.print("");
-        } // resolver saida do turno quando implementar as outras classes que faltam
+
+            if(i == Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA) {
+                io.print("PARABÉNS!");
+                io.print(personagem.getNome() + "conseguiu sobreviver por " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos!");
+
+                int escolha = io.decisaoEmIntervalo("O que deseja fazer?", new String[]{
+                    "Finalizar o jogo",
+                    "Continuar no modo infinito"
+                });
+
+                if(escolha == 0) break;
+            }
+        }
 
         io.print("Fim do jogo!");
     }
