@@ -17,11 +17,11 @@ public class Turno {
     private final GerenciadorDeEventos gerenciadorDeEventos;
     private final InputOutput io;
 
-    private int dVida;
+    // private int dVida;
     private int dSede;
     private int dFome;
     private int dEnergia;
-    private int dSanidade;
+    // private int dSanidade;
 
     public Turno(Personagem personagem, Ambiente ambienteInicial, GerenciadorDeAmbientes gerenciadorDeAmbientes,
                 InputOutput io) {
@@ -36,7 +36,6 @@ public class Turno {
     public void iniciarTurno() {
         io.print(" INÍCIO DO TURNO ");
 
-        dVida = 0;
         dSede = -2;
         dFome = -5;
         dEnergia = -1*ambienteAtual.getDificuldadeDeExploracao();
@@ -58,6 +57,7 @@ public class Turno {
 
     }
 
+    @SuppressWarnings("null")
     private void faseDeAcao() {
         EventoCriatura criatura = gerenciadorDeEventos.buscarEventoCriaturaAtivo();
         boolean isEventoCriaturaAtivo = criatura != null;
@@ -78,7 +78,7 @@ public class Turno {
 
 
             switch (escolha) {
-            case 1:
+            case 1 -> {
                 if(isEventoCriaturaAtivo) {
                     io.print(personagem.getNome() + " está no meio de uma batalha!");
                     continue;
@@ -90,18 +90,18 @@ public class Turno {
                 }
 
                 dEnergia *= 5;
-                dSede *= 5;    
-                dFome *= 5;    
-
+                dSede *= 5;
+                dFome *= 5;
+                
                 this.ambienteAtual = gerenciadorDeAmbientes.sortearAmbiente();
 
                 gerenciadorDeEventos.setAmbiente(ambienteAtual);
-
-                break;
-            case 2:
+                }
+            case 2 -> {
                 gerenciarInventario();
                 continue;
-            case 3:
+                }
+            case 3 -> {
                 if(isEventoCriaturaAtivo) {
                     faseDeAtaque(criatura);
                     break;
@@ -114,9 +114,8 @@ public class Turno {
                 }
 
                 gerenciadorDeEventos.adicionarEventoAleatorio();
-
-                break;
-            case 4:
+                }
+            case 4 -> {
                 if(isEventoCriaturaAtivo) {
                     gerenciadorDeEventos.fugirDeEventoCriatura(criatura);
                     break;
@@ -124,18 +123,19 @@ public class Turno {
 
                 io.print(personagem.getNome() + " está descansando");
                 dEnergia = +15;
-                break;
-            case 5:
+                }
+            case 5 -> {
                 if(isEventoCriaturaAtivo || personagem.getHabilidadeEspecialCooldown() > 0) {
                     io.print("Não é possível no momento");
                     continue;
                 }
                 
                 personagem.usarHabilidadeEspecial();
-                break;
-            default:
+                }
+            default -> {
                 io.print("Escolha inválida.");
                 continue;
+                }
             }
 
             break;
@@ -163,7 +163,7 @@ public class Turno {
             return;
         }
 
-        io.getInput();
+        io.print("", true);
 
         while(personagem.getInventario().estaCheio()) {
             
@@ -205,20 +205,11 @@ public class Turno {
             int escolha = io.decisaoEmIntervalo("Escolha uma ação", opcoes) + 1;
 
             switch (escolha) {
-            case 1:
-                gerenciadorDeInventario.usarItemConsumivel();
-                break;
-            case 2:
-                gerenciadorDeInventario.combinarMateriais();
-                break;
-            case 3:
-                gerenciadorDeInventario.removerItens();
-                break;
-            case 4:
-                fecharInventario = true;
-                break;
-            default:
-                io.print("Opção inválida!");
+            case 1 -> gerenciadorDeInventario.usarItemConsumivel();
+            case 2 -> gerenciadorDeInventario.combinarMateriais();
+            case 3 -> gerenciadorDeInventario.removerItens();
+            case 4 -> fecharInventario = true;
+            default -> io.print("Opção inválida!");
             }
         }
     }

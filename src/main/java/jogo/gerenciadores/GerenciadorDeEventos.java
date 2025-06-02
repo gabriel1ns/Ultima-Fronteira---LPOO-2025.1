@@ -44,7 +44,7 @@ public class GerenciadorDeEventos {
 
         Random seletorDeEvento = new Random();
         if (bolhaDeEventos.isEmpty()) {
-            // io.print("Nenhum evento possível para este ambiente no momento."); // To console
+            io.print("Nenhum evento possível para este ambiente no momento.", true);
             return;
         }
         int indiceAleatorio = seletorDeEvento.nextInt(bolhaDeEventos.size());
@@ -52,8 +52,6 @@ public class GerenciadorDeEventos {
         try {
             Evento evento = ConstrutorEvento.construir(bolhaDeEventos.get(indiceAleatorio));
             eventosAtivos.add(evento);
-            // io.print("Novo evento adicionado: " + evento.getNome()); // To console
-
         } catch (IllegalArgumentException e) {
             System.err.println("Erro ao construir evento: " + e.getMessage());
         }
@@ -74,15 +72,12 @@ public class GerenciadorDeEventos {
             }
             // This io.print will go to console, not the GUI log area.
             // The GUI's logEvento in TelaDeEscolha should ideally be used.
-            io.print(evento.toString()); // Describes the event to the console.
-
-            // REMOVED: io.getInput(); // This was blocking the GUI thread.
+            io.print(evento.toString(), true); // Describes the event to the console.
 
             evento.executar(personagem); // Personagem actions within will log to console via Personagem's io.
         }
 
         for(Evento evento: eventosParaRemocao) {
-            // io.print("Evento finalizado e removido: " + evento.getNome()); // To console
             eventosAtivos.remove(evento);
         }
 
@@ -96,13 +91,12 @@ public class GerenciadorDeEventos {
         boolean resultado = random.nextInt(10) < chanceDeSucesso; // 0-6 is success (7 numbers)
 
         if(resultado) {
-            io.print(personagem.getNome() + " conseguiu fugir de " + criatura.getNome() + "!"); // To console
+            io.print(personagem.getNome() + " conseguiu fugir de " + criatura.getNome() + "!", true); // To console
             eventosAtivos.remove(criatura);
         } else {
-            io.print(personagem.getNome() + " não conseguiu fugir de " + criatura.getNome() + "."); // To console
+            io.print(personagem.getNome() + " não conseguiu fugir de " + criatura.getNome() + ".", true); // To console
             // Creature might attack if escape fails, typically handled in the next phase or creature's turn.
         }
-        // REMOVED: io.getInput(); // Not needed for GUI
     }
 
     public EventoCriatura buscarEventoCriaturaAtivo() {

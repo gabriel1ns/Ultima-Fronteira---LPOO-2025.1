@@ -16,8 +16,9 @@ public class Inventario {
     private final int capacidadeMaxima;
     private int quantidadeItens;
 
-    private ArrayList<Item>[] itens;
+    private final ArrayList<Item>[] itens;
 
+    @SuppressWarnings("unchecked")
     public Inventario(int capacidadeMaxima, Item[] itensIniciais) {
 
         this.capacidadeMaxima = capacidadeMaxima;
