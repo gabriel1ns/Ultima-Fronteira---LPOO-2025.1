@@ -2,5 +2,5 @@ package jogo.sistema.itens;
 
 public interface IItemPerecivel {
     public void decrementarDurabilidade();
-    public boolean estaPerecido();
+    public boolean estaPerecido(); //teste
 }
