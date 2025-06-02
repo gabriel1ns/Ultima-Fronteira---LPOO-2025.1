@@ -2,8 +2,10 @@ package jogo.sistema;
 import java.util.ArrayList;
 
 import jogo.construtores.itens.ConstrutorArma;
+import jogo.construtores.itens.ConstrutorMaterial;
 import jogo.enums.ItensEnum;
 import jogo.enums.itens.ArmasEnum;
+import jogo.enums.itens.MateriaisEnum;
 import jogo.sistema.itens.Item;
 import jogo.sistema.itens.ItemArma;
 import jogo.sistema.itens.ItemFerramenta;
@@ -130,6 +132,25 @@ public class Inventario {
         }
 
         return true;
+    }
+
+
+    /**
+     * Calcula a quantidade total de um material específico no inventário,
+     * somando todas as pilhas desse material.
+     * @param materialEnum O enum do material a ser verificado.
+     * @return A quantidade total do material que o personagem possui.
+     */
+    public int getQuantidadeTotalDeMaterial(MateriaisEnum materialEnum) {
+        int total = 0;
+        Item materialDeReferencia = ConstrutorMaterial.construirMaterial(materialEnum, 1);
+
+        for (Item itemDaPilha : getItens()) {
+            if (itemDaPilha instanceof ItemMaterial && itemDaPilha.getNome().equals(materialDeReferencia.getNome())) {
+                total += itemDaPilha.getQuantidade();
+            }
+        }
+        return total;
     }
 
     public void alterarQuantidadeDeItens(int dQuantidade) {

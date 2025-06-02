@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.text.Normalizer;
-import java.util.function.Consumer;
+// Removido: import java.util.function.Consumer; // Não usado diretamente
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -27,7 +27,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog; // Para pedir quantidade
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -52,11 +52,14 @@ import jogo.utils.InputOutput;
 import jogo.construtores.ConstrutorItem;
 import jogo.construtores.ConstrutorPersonagem;
 import jogo.construtores.itens.ConstrutorArma;
+import jogo.construtores.itens.ConstrutorMaterial; // Importar ConstrutorMaterial
 import jogo.enums.ItensEnum;
 import jogo.enums.itens.ArmasEnum;
 import jogo.enums.itens.FerramentasEnum;
+import jogo.enums.itens.MateriaisEnum; // Importar MateriaisEnum
 import jogo.enums.personagem.PersonagemAtributosEnum;
 import jogo.enums.personagem.PersonagemClassesEnum;
+import jogo.enums.CombinacoesEnum; // Importar CombinacoesEnum
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;
 import jogo.sistema.Ambiente;
@@ -65,7 +68,8 @@ import jogo.sistema.Turno;
 import jogo.sistema.eventos.EventoCriatura;
 import jogo.sistema.itens.Item;
 import jogo.sistema.itens.ItemArma;
-import jogo.sistema.itens.consumiveis.Consumivel; // Import Consumivel
+import jogo.sistema.itens.ItemMaterial; // Importar ItemMaterial
+import jogo.sistema.itens.consumiveis.Consumivel;
 
 public class TelaDeEscolha extends Application {
 
@@ -486,14 +490,18 @@ public class TelaDeEscolha extends Application {
                     if (imagem.isError()) {
                         System.err.println("Erro ao carregar imagem: " + classeExibicaoSelecionada.caminhoImagem +
                                 (imagem.getException() != null ? " - " + imagem.getException().getMessage() : " (Causa desconhecida)"));
-                        throw new RuntimeException("Erro ao carregar imagem: " + classeExibicaoSelecionada.caminhoImagem);
+                        // Não lançar RuntimeException aqui, apenas logar e mostrar texto alternativo
+                        Label arteTextoAlternativo = new Label("Erro na Imagem\n" + classeExibicaoSelecionada.nomeDisplay);
+                        configurarTextoAlternativoImagem(arteTextoAlternativo);
+                        arteClassePainel.getChildren().add(arteTextoAlternativo);
+                    } else {
+                        ImageView visualizadorImagem = new ImageView(imagem);
+                        visualizadorImagem.setFitWidth(LARGURA_ARTE_CLASSE - 10);
+                        visualizadorImagem.setFitHeight(ALTURA_ARTE_CLASSE - 10);
+                        visualizadorImagem.setPreserveRatio(true);
+                        visualizadorImagem.setSmooth(true);
+                        arteClassePainel.getChildren().add(visualizadorImagem);
                     }
-                    ImageView visualizadorImagem = new ImageView(imagem);
-                    visualizadorImagem.setFitWidth(LARGURA_ARTE_CLASSE - 10);
-                    visualizadorImagem.setFitHeight(ALTURA_ARTE_CLASSE - 10);
-                    visualizadorImagem.setPreserveRatio(true);
-                    visualizadorImagem.setSmooth(true);
-                    arteClassePainel.getChildren().add(visualizadorImagem);
                 } else {
                     System.err.println("Recurso de imagem não encontrado (stream nulo): " + classeExibicaoSelecionada.caminhoImagem);
                     Label arteTextoAlternativo = new Label("Imagem não encontrada\n" + classeExibicaoSelecionada.nomeDisplay);
@@ -508,6 +516,7 @@ public class TelaDeEscolha extends Application {
             }
         } catch (Exception e) {
             System.err.println("Falha EXCEPCIONAL ao carregar arte da classe '" + classeExibicaoSelecionada.nomeDisplay + "' de '" + classeExibicaoSelecionada.caminhoImagem +"': " + e.getMessage());
+            e.printStackTrace(System.err); // Para mais detalhes no console
             Label arteTextoAlternativo = new Label("Erro ao carregar Arte\n" + classeExibicaoSelecionada.nomeDisplay);
             configurarTextoAlternativoImagem(arteTextoAlternativo);
             arteClassePainel.getChildren().add(arteTextoAlternativo);
@@ -534,7 +543,7 @@ public class TelaDeEscolha extends Application {
     private void estilizarRotulo(Label rotulo, int tamanhoFonte, boolean negrito, Pos alinhamento, boolean paraJogoPrincipal) {
         String familiaFonte = FAMILIA_FONTE_MEDIEVAL;
         rotulo.setFont(Font.font(familiaFonte, negrito ? FontWeight.BOLD : FontWeight.NORMAL, tamanhoFonte));
-        rotulo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO)); // Assegura que as cores são válidas
+        rotulo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
         rotulo.setAlignment(alinhamento);
         if (alinhamento == Pos.CENTER || alinhamento == Pos.CENTER_LEFT || alinhamento == Pos.CENTER_RIGHT) {
             rotulo.setMaxWidth(Double.MAX_VALUE);
@@ -957,11 +966,10 @@ public class TelaDeEscolha extends Application {
             aplicarEfeitosDeFimDeTurno(true);
         });
 
-        // Ação do botão de Gerenciar Inventário
         botaoGerenciarInventario.setOnAction(e -> {
             if (this.jogoFinalizado) return;
             logEvento(this.nomePersonagemParaAcoes + " acessa o inventário.");
-            abrirDialogoGerenciamentoInventario(); // Chama o novo diálogo
+            abrirDialogoGerenciamentoInventario();
         });
 
 
@@ -1038,29 +1046,27 @@ public class TelaDeEscolha extends Application {
             this.botaoAcaoPrincipal.setText("Explorar");
             this.botaoAcaoPrincipal.setOnAction(e -> {
                 try {
-                    // Log inicial para confirmar que o clique está sendo processado
-                    logEvento("Botão Explorar - Ação Iniciada.");
+                    logEvento("[DEBUG] Botão Explorar - Ação Iniciada.");
 
                     if (this.jogoFinalizado) {
-                        logEvento("Explorar Ação: Jogo finalizado. Retornando.");
+                        logEvento("[DEBUG] Explorar Ação: Jogo finalizado. Retornando.");
                         return;
                     }
                     if (this.personagem == null) {
-                        logEvento("Explorar Ação: Personagem é nulo. Retornando.");
+                        logEvento("[DEBUG] Explorar Ação: Personagem é nulo. Retornando.");
                         return;
                     }
                     if (this.ambienteAtual == null) {
-                        // Este log é crucial. Se ambienteAtual for nulo, a próxima linha falhará.
-                        logEvento("Explorar Ação: Ambiente Atual é nulo! Retornando.");
-                        this.botaoAcaoPrincipal.setDisable(true); // Desabilita para evitar mais cliques
+                        logEvento("[DEBUG] Explorar Ação: Ambiente Atual é nulo! Retornando.");
+                        this.botaoAcaoPrincipal.setDisable(true);
                         return;
                     }
                     if (this.gerenciadorDeEventos == null) {
-                        logEvento("Explorar Ação: Gerenciador de Eventos é nulo. Retornando.");
+                        logEvento("[DEBUG] Explorar Ação: Gerenciador de Eventos é nulo. Retornando.");
                         return;
                     }
 
-                    logEvento("Explorar Ação: Verificando energia...");
+                    logEvento("[DEBUG] Explorar Ação: Verificando energia...");
                     int custoEnergiaExplorar = this.ambienteAtual.getDificuldadeDeExploracao();
                     int energiaAtual = this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA);
 
@@ -1070,16 +1076,16 @@ public class TelaDeEscolha extends Application {
                         return;
                     }
 
-                    logEvento("Explorar Ação: Energia OK. Deduzindo custo " + custoEnergiaExplorar + ".");
+                    logEvento("[DEBUG] Explorar Ação: Energia OK. Deduzindo custo " + custoEnergiaExplorar + ".");
                     this.personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -custoEnergiaExplorar);
 
                     logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "...");
 
-                    logEvento("Explorar Ação: Adicionando evento aleatório...");
+                    logEvento("[DEBUG] Explorar Ação: Adicionando evento aleatório...");
                     this.gerenciadorDeEventos.adicionarEventoAleatorio();
-                    logEvento("Explorar Ação: Evento aleatório processado. Chamando aplicarEfeitosDeFimDeTurno...");
+                    logEvento("[DEBUG] Explorar Ação: Evento aleatório processado. Chamando aplicarEfeitosDeFimDeTurno...");
                     aplicarEfeitosDeFimDeTurno(true);
-                    // logEvento("Explorar Ação: aplicarEfeitosDeFimDeTurno concluído."); // Opcional
+                    // logEvento("[DEBUG] Explorar Ação: aplicarEfeitosDeFimDeTurno concluído.");
 
                 } catch (Exception ex) {
                     logEvento("ERRO CRÍTICO NA AÇÃO DO BOTÃO EXPLORAR: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
@@ -1476,7 +1482,10 @@ public class TelaDeEscolha extends Application {
         dialog.setTitle("Gerenciar Inventário");
         dialog.setHeaderText("O que " + personagem.getNome() + " irá fazer?");
         dialog.getDialogPane().setStyle(obterEstiloPainelInterno());
-        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().clear(); // Ou adicione um ícone se desejar
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        if (stage != null) {
+            stage.getIcons().clear();
+        }
 
 
         ButtonType usarConsumivelButtonType = new ButtonType("Usar Consumível");
@@ -1486,7 +1495,6 @@ public class TelaDeEscolha extends Application {
 
         dialog.getDialogPane().getButtonTypes().addAll(usarConsumivelButtonType, descartarItensButtonType, combinarMateriaisButtonType, sairButtonType);
 
-        // Estilizar botões do diálogo
         for(ButtonType bt : dialog.getDialogPane().getButtonTypes()){
             Button b = (Button) dialog.getDialogPane().lookupButton(bt);
             if (b != null) {
@@ -1494,12 +1502,11 @@ public class TelaDeEscolha extends Application {
             }
         }
 
-
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == usarConsumivelButtonType) return "USAR";
             if (dialogButton == descartarItensButtonType) return "DESCARTAR";
             if (dialogButton == combinarMateriaisButtonType) return "COMBINAR";
-            return null; // Sair ou fechar
+            return null;
         });
 
         Optional<String> resultado = dialog.showAndWait();
@@ -1512,9 +1519,7 @@ public class TelaDeEscolha extends Application {
                     abrirDialogoDescartarItem();
                     break;
                 case "COMBINAR":
-                    // Por ora, apenas uma mensagem. A implementação completa é complexa.
-                    mostrarAlerta("Combinar Materiais", "Interface gráfica para combinação de materiais em desenvolvimento.");
-                    logEvento("Tentativa de combinar materiais (GUI em desenvolvimento).");
+                    abrirDialogoCombinarMateriais_RecipeBook();
                     break;
             }
         });
@@ -1539,7 +1544,8 @@ public class TelaDeEscolha extends Application {
         dialog.setTitle("Usar Consumível");
         dialog.setHeaderText("Escolha um item para consumir:");
         dialog.getDialogPane().setStyle(obterEstiloPainelInterno());
-        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().clear();
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        if (stage != null) stage.getIcons().clear();
 
 
         ListView<Consumivel> listView = new ListView<>(consumiveisObservaveis);
@@ -1557,25 +1563,22 @@ public class TelaDeEscolha extends Application {
         dialog.getDialogPane().getButtonTypes().addAll(usarButtonType, ButtonType.CANCEL);
 
         Node usarButtonNode = dialog.getDialogPane().lookupButton(usarButtonType);
-        usarButtonNode.setDisable(true); // Desabilita até um item ser selecionado
+        usarButtonNode.setDisable(true);
         listView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> usarButtonNode.setDisable(newVal == null));
 
-        // Estilizar botões do diálogo
         for(ButtonType bt : dialog.getDialogPane().getButtonTypes()){
             Button b = (Button) dialog.getDialogPane().lookupButton(bt);
             if (b != null) b.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
         }
 
-
         dialog.setResultConverter(dialogButton -> dialogButton == usarButtonType ? listView.getSelectionModel().getSelectedItem() : null);
 
         Optional<Consumivel> resultado = dialog.showAndWait();
         resultado.ifPresent(consumivelSelecionado -> {
-            // Encontrar o índice do consumível na lista específica de consumíveis do inventário
             int indiceConsumivel = -1;
             ArrayList<Item> listaDeConsumiveis = personagem.getInventario().getItens(ItensEnum.CONSUMIVEL.getIndice());
             for (int i = 0; i < listaDeConsumiveis.size(); i++) {
-                if (listaDeConsumiveis.get(i) == consumivelSelecionado) { // Comparação de instância
+                if (listaDeConsumiveis.get(i) == consumivelSelecionado) {
                     indiceConsumivel = i;
                     break;
                 }
@@ -1583,10 +1586,8 @@ public class TelaDeEscolha extends Application {
 
             if (indiceConsumivel != -1) {
                 personagem.getGerenciadorDeInventario().usarItemConsumivel(indiceConsumivel);
-                // GerenciadorDeInventario.usarItemConsumivel já loga e remove do inventário
                 atualizarAtributosGUI();
                 atualizarExibicaoInventario();
-                logEvento(personagem.getNome() + " usou " + consumivelSelecionado.getNome() + ".");
             } else {
                 logEvento("Erro ao tentar usar " + consumivelSelecionado.getNome() + ": não encontrado na lista específica.");
             }
@@ -1594,7 +1595,7 @@ public class TelaDeEscolha extends Application {
     }
 
     private void abrirDialogoDescartarItem() {
-        List<Item> todosOsItens = new ArrayList<>(personagem.getInventario().getItens()); // Copia para evitar ConcurrentModificationException se a lista for alterada
+        List<Item> todosOsItens = new ArrayList<>(personagem.getInventario().getItens());
         if (todosOsItens.isEmpty()) {
             mostrarAlerta("Descartar Item", "Inventário vazio. Nada para descartar.");
             logEvento("Inventário vazio, nada para descartar.");
@@ -1607,7 +1608,8 @@ public class TelaDeEscolha extends Application {
         dialog.setTitle("Descartar Item");
         dialog.setHeaderText("Escolha um item para descartar:");
         dialog.getDialogPane().setStyle(obterEstiloPainelInterno());
-        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().clear();
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        if (stage != null) stage.getIcons().clear();
 
 
         ListView<Item> listView = new ListView<>(itensObservaveis);
@@ -1641,7 +1643,8 @@ public class TelaDeEscolha extends Application {
             qtdDialog.setTitle("Quantidade para Descartar");
             qtdDialog.setHeaderText("Descartar " + itemSelecionado.getNome());
             qtdDialog.setContentText("Quantidade (máx " + itemSelecionado.getQuantidade() + "):");
-            ((Stage) qtdDialog.getDialogPane().getScene().getWindow()).getIcons().clear();
+            Stage qtdStage = (Stage) qtdDialog.getDialogPane().getScene().getWindow();
+            if(qtdStage != null) qtdStage.getIcons().clear();
             ((Button) qtdDialog.getDialogPane().lookupButton(ButtonType.OK)).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
             ((Button) qtdDialog.getDialogPane().lookupButton(ButtonType.CANCEL)).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
 
@@ -1651,21 +1654,12 @@ public class TelaDeEscolha extends Application {
                 try {
                     int quantidade = Integer.parseInt(s);
                     if (quantidade > 0 && quantidade <= itemSelecionado.getQuantidade()) {
-                        // Encontrar o índice do item na lista principal do inventário
-                        int indiceItemPrincipal = -1;
-                        List<Item> inventarioAtual = personagem.getInventario().getItens();
-                        for(int i=0; i < inventarioAtual.size(); i++){
-                            if(inventarioAtual.get(i) == itemSelecionado){ // Comparação de instância
-                                indiceItemPrincipal = i;
-                                break;
-                            }
-                        }
-                        if(indiceItemPrincipal != -1){
-                            personagem.getInventario().removerItem(indiceItemPrincipal, quantidade);
+                        boolean removido = personagem.getInventario().removerItem(itemSelecionado, quantidade);
+                        if (removido) {
                             logEvento(personagem.getNome() + " descartou " + quantidade + " de " + itemSelecionado.getNome() + ".");
                             atualizarExibicaoInventario();
                         } else {
-                            logEvento("Erro ao descartar: item não encontrado no inventário principal.");
+                            logEvento("Falha ao descartar " + itemSelecionado.getNome() + " (item não encontrado ou quantidade insuficiente após seleção).");
                         }
                     } else {
                         mostrarAlerta("Quantidade Inválida", "Por favor, insira um número válido entre 1 e " + itemSelecionado.getQuantidade() + ".");
@@ -1676,6 +1670,136 @@ public class TelaDeEscolha extends Application {
                     logEvento("Tentativa de descarte com entrada não numérica.");
                 }
             });
+        });
+    }
+
+    private void abrirDialogoCombinarMateriais_RecipeBook() {
+        if (personagem == null || personagem.getInventario() == null) {
+            logEvento("Não é possível combinar materiais: personagem ou inventário não disponível.");
+            return;
+        }
+
+        ObservableList<CombinacoesEnum> receitasDisponiveis = FXCollections.observableArrayList(CombinacoesEnum.values());
+
+        if (receitasDisponiveis.isEmpty()) {
+            mostrarAlerta("Combinar Materiais", "Nenhuma receita de combinação definida no jogo.");
+            logEvento("Nenhuma receita de combinação disponível.");
+            return;
+        }
+
+        Dialog<CombinacoesEnum> dialog = new Dialog<>();
+        dialog.setTitle("Combinar Materiais - Livro de Receitas");
+        dialog.setHeaderText("Escolha uma receita para criar:");
+        dialog.getDialogPane().setStyle(obterEstiloPainelInterno());
+        dialog.getDialogPane().setPrefWidth(550);
+        dialog.getDialogPane().setPrefHeight(400);
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        if (stage != null) stage.getIcons().clear();
+
+        ListView<CombinacoesEnum> listViewReceitas = new ListView<>(receitasDisponiveis);
+        // Dentro de abrirDialogoCombinarMateriais_RecipeBook() em TelaDeEscolha.java
+// ...
+        listViewReceitas.setCellFactory(lv -> new ListCell<CombinacoesEnum>() {
+            @Override
+            protected void updateItem(CombinacoesEnum receita, boolean empty) {
+                super.updateItem(receita, empty);
+                if (empty || receita == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    String nomeItemResultante = "Item Desconhecido";
+                    Enum<?> itemResultanteEnum = receita.getItemResultanteEnum();
+
+                    if (itemResultanteEnum instanceof ArmasEnum) nomeItemResultante = ((ArmasEnum)itemResultanteEnum).getNome();
+                    else if (itemResultanteEnum instanceof FerramentasEnum) nomeItemResultante = ((FerramentasEnum)itemResultanteEnum).getNOME();
+                    else if (itemResultanteEnum instanceof MateriaisEnum) nomeItemResultante = ((MateriaisEnum)itemResultanteEnum).getNome();
+                    else nomeItemResultante = capitalizeString(itemResultanteEnum.name().toLowerCase().replace("_", " "));
+
+                    sb.append("Criar: ").append(capitalizeString(nomeItemResultante.toLowerCase()));
+                    // CORREÇÃO AQUI: Usar getQuantidade() em vez de getQuantidadeItemResultante()
+                    sb.append(" (x").append(receita.getQuantidade()).append(")\n");
+                    sb.append("   Requer: ");
+                    for (int i = 0; i < receita.getMateriaisCombinados().length; i++) {
+                        sb.append(receita.getQuantidades()[i]).append(" ")
+                                .append(capitalizeString(receita.getMateriaisCombinados()[i].getNome().toLowerCase()));
+                        if (i < receita.getMateriaisCombinados().length - 1) {
+                            sb.append(", ");
+                        }
+                    }
+                    setText(sb.toString());
+                    setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_PEQUENA_ESCOLHA));
+
+                    boolean podeCriar = true;
+                    for (int i = 0; i < receita.getMateriaisCombinados().length; i++) {
+                        MateriaisEnum matEnum = receita.getMateriaisCombinados()[i];
+                        int qtdNecessaria = receita.getQuantidades()[i];
+                        if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) {
+                            podeCriar = false;
+                            break;
+                        }
+                    }
+                    if (!podeCriar) {
+                        setTextFill(Color.DARKRED);
+                    } else {
+                        setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
+                    }
+                }
+            }
+        });
+// ...
+
+        dialog.getDialogPane().setContent(listViewReceitas);
+
+        ButtonType criarButtonType = new ButtonType("Criar Selecionado", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(criarButtonType, ButtonType.CANCEL);
+
+        Node criarButtonNode = dialog.getDialogPane().lookupButton(criarButtonType);
+        criarButtonNode.setDisable(true);
+
+        listViewReceitas.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) {
+                criarButtonNode.setDisable(true);
+            } else {
+                boolean podeCriar = true;
+                for (int i = 0; i < newVal.getMateriaisCombinados().length; i++) {
+                    MateriaisEnum matEnum = newVal.getMateriaisCombinados()[i];
+                    int qtdNecessaria = newVal.getQuantidades()[i];
+                    if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) {
+                        podeCriar = false;
+                        break;
+                    }
+                }
+                criarButtonNode.setDisable(!podeCriar);
+            }
+        });
+
+        for(ButtonType bt : dialog.getDialogPane().getButtonTypes()){
+            Button b = (Button) dialog.getDialogPane().lookupButton(bt);
+            if (b != null) b.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
+        }
+
+        dialog.setResultConverter(dialogButton -> dialogButton == criarButtonType ? listViewReceitas.getSelectionModel().getSelectedItem() : null);
+
+        Optional<CombinacoesEnum> resultadoReceita = dialog.showAndWait();
+        resultadoReceita.ifPresent(receitaSelecionada -> {
+            ItemMaterial[] materiaisParaConsumir = new ItemMaterial[receitaSelecionada.getMateriaisCombinados().length];
+            for (int i = 0; i < receitaSelecionada.getMateriaisCombinados().length; i++) {
+                materiaisParaConsumir[i] = ConstrutorMaterial.construirMaterial(
+                        receitaSelecionada.getMateriaisCombinados()[i],
+                        receitaSelecionada.getQuantidades()[i]
+                );
+            }
+            personagem.getGerenciadorDeInventario().combinarMateriais(materiaisParaConsumir);
+
+            atualizarExibicaoInventario();
+            atualizarAtributosGUI(); // Se a combinação afetar atributos (improvável, mas por segurança)
+
+            // Forçar a reavaliação da lista de receitas no diálogo (se fosse reabrir ou permanecer)
+            // Como o diálogo fecha, na próxima vez que abrir, a verificação será refeita.
+            // Se o diálogo precisasse ficar aberto e atualizar, seria necessário:
+            // listViewReceitas.refresh();
+            // E forçar a reavaliação do botão "Criar" para o item atualmente selecionado (se houver).
         });
     }
 
