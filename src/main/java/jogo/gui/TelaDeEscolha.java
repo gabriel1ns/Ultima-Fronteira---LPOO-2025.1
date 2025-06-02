@@ -1,6 +1,7 @@
 package jogo.gui;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -29,6 +31,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -43,6 +46,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -67,16 +71,15 @@ import jogo.sistema.Turno;
 import jogo.sistema.eventos.EventoCriatura;
 import jogo.sistema.itens.Item;
 import jogo.sistema.itens.ItemArma;
-import jogo.sistema.itens.ItemFerramenta; // Importação necessária para instanceof em GerenciadorDeInventario
+import jogo.sistema.itens.ItemFerramenta;
 import jogo.sistema.itens.ItemMaterial;
 import jogo.sistema.itens.consumiveis.Consumivel;
-import jogo.sistema.itens.consumiveis.ConsumivelAlimento; // Importação necessária para instanceof em GerenciadorDeInventario
+import jogo.sistema.itens.consumiveis.ConsumivelAlimento;
 
 
 public class TelaDeEscolha extends Application {
 
-    // ... (Constantes e outras variáveis de classe permanecem as mesmas) ...
-    private static final String FAMILIA_FONTE_MEDIEVAL = "Georgia";
+    private static final String FAMILIA_FONTE_MEDIEVAL = "Georgia"; // Fallback for other UI elements
     private static final String COR_TEXTO_MARROM_ESCURO = "#4A3B31";
     private static final String FUNDO_PERGAMINHO = "#F5EACE";
     private static final String FUNDO_SECAO_PAINEL = "#E8DCC6";
@@ -97,8 +100,8 @@ public class TelaDeEscolha extends Application {
     private static final String COR_SEDE = "#4682B4";
     private static final String COR_ENERGIA = "#556B2F";
 
-    private static final double LARGURA_JANELA_ESCOLHA = 900;
-    private static final double ALTURA_JANELA_ESCOLHA = 700;
+    private static final double LARGURA_JANELA_ESCOLHA = 900; // Used for start screen too
+    private static final double ALTURA_JANELA_ESCOLHA = 700;  // Used for start screen too
     private static final double VALOR_PADDING_ESCOLHA = 20;
     private static final int TAMANHO_FONTE_CABECALHO_ESCOLHA = 22;
     private static final int TAMANHO_FONTE_SUB_CABECALHO_ESCOLHA = 18;
@@ -118,6 +121,14 @@ public class TelaDeEscolha extends Application {
     private static final double LARGURA_MIN_BOTAO_ACAO_JOGO = 160;
     private static final double ALTURA_PREF_BOTAO_ACAO_JOGO = 45;
     private static final double TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO = 200;
+
+
+    private static final String FONT_PATH_START_SCREEN = "/res/PressStart2P-Regular.ttf";
+
+    // Font sizes from MenuAppTraining example for the start screen
+    private static final int TAMANHO_FONTE_TITULO_INICIO_CUSTOM = 36;
+    private static final int TAMANHO_FONTE_BOTAO_INICIO_CUSTOM = 24;
+
 
     private ProgressBar barraVida;
     private ProgressBar barraFome;
@@ -196,7 +207,7 @@ public class TelaDeEscolha extends Application {
 
     private int turnoAtual = 0;
     private boolean jogoFinalizado = false;
-    private boolean modoInfinitoAtivo = false; // <<<< NOVA VARIÁVEL
+    private boolean modoInfinitoAtivo = false;
 
     private void logMensagemDoJogo(String mensagem) {
         logEvento(mensagem);
@@ -205,7 +216,150 @@ public class TelaDeEscolha extends Application {
     @Override
     public void start(Stage palcoPrincipalArgumento) {
         this.palcoPrincipal = palcoPrincipalArgumento;
-        this.palcoPrincipal.setTitle("Seleção de Personagem - Ultima Fronteira");
+        mostrarTelaDeInicio(this.palcoPrincipal);
+    }
+
+    private void mostrarTelaDeInicio(Stage stage) {
+        stage.setTitle("Ultima Fronteira");
+
+        StackPane rootInicio = new StackPane();
+
+
+        try {
+
+            InputStream backgroundStream = getClass().getResourceAsStream("/res/ImagemBGInicial.png");
+            if (backgroundStream != null) {
+                Image backgroundImage = new Image(backgroundStream);
+                ImageView backgroundImageView = new ImageView(backgroundImage);
+                backgroundImageView.setPreserveRatio(false); // Make it fill the pane
+                backgroundImageView.setSmooth(true);
+
+
+                backgroundImageView.fitWidthProperty().bind(rootInicio.widthProperty());
+                backgroundImageView.fitHeightProperty().bind(rootInicio.heightProperty());
+
+                rootInicio.getChildren().add(backgroundImageView);
+            } else {
+                System.err.println("Error: Could not find background image: /res/PressStart2P-Regular.ttf");
+                rootInicio.setStyle("-fx-background-color: #2c3e50;");
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading background image: " + e.getMessage());
+            e.printStackTrace();
+            rootInicio.setStyle("-fx-background-color: #2c3e50;"); // A dark fallback color
+        }
+
+        // Load custom font for title
+        Font titleCustomFont = null;
+        try {
+            URL fontUrl = getClass().getResource(FONT_PATH_START_SCREEN);
+            if (fontUrl != null) {
+                titleCustomFont = Font.loadFont(fontUrl.toExternalForm(), TAMANHO_FONTE_TITULO_INICIO_CUSTOM);
+            } else {
+                System.err.println("Error: Could not find font resource for title: " + FONT_PATH_START_SCREEN);
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading title font: " + e.getMessage());
+        }
+        if (titleCustomFont == null) { // Fallback font
+            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM);
+        }
+
+        Text tituloJogo = new Text("ULTIMA FRONTEIRA");
+        tituloJogo.setFont(titleCustomFont);
+        tituloJogo.setFill(Color.WHITE); // White text as per MenuAppTraining example
+
+        // Apply DropShadow effect to title
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.BLACK);
+        dropShadow.setRadius(5);
+        dropShadow.setOffsetX(3);
+        dropShadow.setOffsetY(3);
+        tituloJogo.setEffect(dropShadow);
+
+        // Create the "JOGAR" button using the StartScreenMenuItem style
+        StartScreenMenuItem botaoJogar = new StartScreenMenuItem("JOGAR", () -> mostrarTelaDeSelecaoPersonagem(stage));
+
+        VBox layoutVertical = new VBox(60); // Spacing between title and button
+        layoutVertical.getChildren().addAll(tituloJogo, botaoJogar);
+        layoutVertical.setAlignment(Pos.CENTER);
+
+        // Add VBox to root. If backgroundImageView was added, VBox will be on top.
+        rootInicio.getChildren().add(layoutVertical);
+        StackPane.setAlignment(layoutVertical, Pos.CENTER); // Ensure VBox is centered in StackPane
+
+
+        Scene cenaInicio = new Scene(rootInicio, LARGURA_JANELA_ESCOLHA, ALTURA_JANELA_ESCOLHA);
+        stage.setScene(cenaInicio);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+
+    // Inner class for the styled button, based on MenuAppTraining.MenuItem
+    public static class StartScreenMenuItem extends StackPane {
+        private Text textNode;
+        private Rectangle bgNode;
+        private static Font menuItemFont = null;
+
+        // Static initializer to load font once for all menu items
+        static {
+            try {
+                // Ensure FONT_PATH_START_SCREEN is accessible here or pass font
+                URL fontUrl = StartScreenMenuItem.class.getResource(FONT_PATH_START_SCREEN);
+                if (fontUrl != null) {
+                    menuItemFont = Font.loadFont(fontUrl.toExternalForm(), TAMANHO_FONTE_BOTAO_INICIO_CUSTOM);
+                } else {
+                    System.err.println("Error: Could not find font resource for menu items: " + FONT_PATH_START_SCREEN);
+                }
+            } catch (Exception e) {
+                System.err.println("Error loading menu item font: " + e.getMessage());
+            }
+            if (menuItemFont == null) { // Fallback font
+                menuItemFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_BOTAO_INICIO_CUSTOM);
+            }
+        }
+
+        public StartScreenMenuItem(String name, Runnable action) {
+            bgNode = new Rectangle(250, 60); // Dimensions from MenuAppTraining
+            bgNode.setOpacity(0.7);
+            bgNode.setFill(Color.BLACK);
+            bgNode.setArcWidth(15);
+            bgNode.setArcHeight(15);
+
+            textNode = new Text(name);
+            textNode.setFont(menuItemFont);
+            textNode.setFill(Color.WHITE);
+
+            setAlignment(Pos.CENTER);
+            getChildren().addAll(bgNode, textNode);
+
+            setOnMouseEntered(event -> {
+                bgNode.setFill(Color.WHITE);
+                textNode.setFill(Color.BLACK);
+                setCursor(Cursor.HAND);
+            });
+
+            setOnMouseExited(event -> {
+                bgNode.setFill(Color.BLACK);
+                textNode.setFill(Color.WHITE);
+                setCursor(Cursor.DEFAULT);
+            });
+
+            setOnMousePressed(event -> bgNode.setFill(Color.DARKGRAY));
+
+            setOnMouseReleased(event -> {
+                // Revert to normal (non-hover) state before running action for better UX
+                bgNode.setFill(Color.BLACK); // Revert to normal non-hover
+                textNode.setFill(Color.WHITE);
+                action.run();
+            });
+        }
+    }
+
+
+    private void mostrarTelaDeSelecaoPersonagem(Stage stage) {
+        stage.setTitle("Seleção de Personagem - Ultima Fronteira");
         inicializarClassesParaExibicao();
 
         BorderPane painelRaizEscolha = new BorderPane();
@@ -228,22 +382,24 @@ public class TelaDeEscolha extends Application {
         painelRaizEscolha.setCenter(painelDireito);
 
         if (classesParaExibicao != null && !classesParaExibicao.isEmpty()) {
-            if (classeToggleGrupo != null && !classeToggleGrupo.getToggles().isEmpty()) {
+            // Ensure classeToggleGrupo is initialized before accessing its toggles
+            if (classeToggleGrupo != null && classeToggleGrupo.getToggles() != null && !classeToggleGrupo.getToggles().isEmpty()) {
                 ToggleButton primeiroBotao = (ToggleButton) classeToggleGrupo.getToggles().get(0);
                 if (primeiroBotao != null) {
                     primeiroBotao.setSelected(true);
-                    selecionarClasseParaExibicao((InfoClasseDisplay) primeiroBotao.getUserData());
+                    if (primeiroBotao.getUserData() instanceof InfoClasseDisplay) {
+                        selecionarClasseParaExibicao((InfoClasseDisplay) primeiroBotao.getUserData());
+                    }
                 }
             }
         }
 
         Scene cenaEscolha = new Scene(painelRaizEscolha, LARGURA_JANELA_ESCOLHA, ALTURA_JANELA_ESCOLHA);
-        this.palcoPrincipal.setScene(cenaEscolha);
-        this.palcoPrincipal.centerOnScreen();
-        this.palcoPrincipal.show();
+        stage.setScene(cenaEscolha);
+        stage.centerOnScreen();
     }
 
-    // ... (outros métodos como slugify, inicializarClassesParaExibicao, capitalizeString, etc., permanecem os mesmos)
+
     private String slugify(String text) {
         if (text == null) return "";
         String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
@@ -255,7 +411,7 @@ public class TelaDeEscolha extends Application {
         classesParaExibicao = new ArrayList<>();
         String basePathImagens = "/img/personagens/";
 
-        for (PersonagemClassesEnum classeEnum : PersonagemClassesEnum.values()) {
+        for (PersonagemClassesEnum classeEnum : PersonagemClassesEnum.values()) { //
             String nomeDisplay = capitalizeString(classeEnum.name().replace("_", " "));
             String nomeReal = classeEnum.name();
             String textoIcone = nomeDisplay.length() > 0 ? nomeDisplay.substring(0, 1) : "?";
@@ -264,9 +420,9 @@ public class TelaDeEscolha extends Application {
 
 
             String itensIniciaisStr = "Nenhum";
-            if (classeEnum.getItensIniciais() != null && classeEnum.getItensIniciais().length > 0) {
-                itensIniciaisStr = java.util.Arrays.stream(classeEnum.getItensIniciais())
-                        .map(item -> item.getNome() + (item.getQuantidade() > 1 ? " (x" + item.getQuantidade() + ")" : ""))
+            if (classeEnum.getItensIniciais() != null && classeEnum.getItensIniciais().length > 0) { //
+                itensIniciaisStr = java.util.Arrays.stream(classeEnum.getItensIniciais()) //
+                        .map(item -> item.getNome() + (item.getQuantidade() > 1 ? " (x" + item.getQuantidade() + ")" : "")) //
                         .collect(Collectors.joining(", "));
             }
 
@@ -275,13 +431,13 @@ public class TelaDeEscolha extends Application {
                     nomeReal,
                     textoIcone,
                     caminhoImagem,
-                    String.valueOf(classeEnum.getMaxVida()),
-                    String.valueOf(classeEnum.getMaxFome()),
-                    String.valueOf(classeEnum.getMaxSede()),
-                    String.valueOf(classeEnum.getMaxEnergia()),
-                    String.valueOf(classeEnum.getMaxSanidade()),
+                    String.valueOf(classeEnum.getMaxVida()), //
+                    String.valueOf(classeEnum.getMaxFome()), //
+                    String.valueOf(classeEnum.getMaxSede()), //
+                    String.valueOf(classeEnum.getMaxEnergia()), //
+                    String.valueOf(classeEnum.getMaxSanidade()), //
                     itensIniciaisStr,
-                    classeEnum.getHabiliadeEspecial()
+                    classeEnum.getHabiliadeEspecial() //
             ));
         }
     }
@@ -401,14 +557,14 @@ public class TelaDeEscolha extends Application {
             }
 
             this.nomePersonagemParaAcoes = nome.trim();
-            PersonagemClassesEnum classeEscolhida = PersonagemClassesEnum.valueOf(classeExibicaoSelecionada.nomeReal);
-            this.personagem = ConstrutorPersonagem.construirPersonagem(nomePersonagemParaAcoes, classeEscolhida);
+            PersonagemClassesEnum classeEscolhida = PersonagemClassesEnum.valueOf(classeExibicaoSelecionada.nomeReal); //
+            this.personagem = ConstrutorPersonagem.construirPersonagem(nomePersonagemParaAcoes, classeEscolhida); //
 
-            this.maxVidaPersonagem = classeEscolhida.getMaxVida();
-            this.maxFomePersonagem = classeEscolhida.getMaxFome();
-            this.maxSedePersonagem = classeEscolhida.getMaxSede();
-            this.maxEnergiaPersonagem = classeEscolhida.getMaxEnergia();
-            this.maxSanidadePersonagem = classeEscolhida.getMaxSanidade();
+            this.maxVidaPersonagem = classeEscolhida.getMaxVida(); //
+            this.maxFomePersonagem = classeEscolhida.getMaxFome(); //
+            this.maxSedePersonagem = classeEscolhida.getMaxSede(); //
+            this.maxEnergiaPersonagem = classeEscolhida.getMaxEnergia(); //
+            this.maxSanidadePersonagem = classeEscolhida.getMaxSanidade(); //
 
             System.out.println("Aventureiro Criado: " + this.personagem.getNome() + " (" + classeExibicaoSelecionada.nomeDisplay + ")");
             configurarTelaPrincipalJogo();
@@ -545,7 +701,8 @@ public class TelaDeEscolha extends Application {
 
 
     private void estilizarRotulo(Label rotulo, int tamanhoFonte, boolean negrito, Pos alinhamento, boolean paraJogoPrincipal) {
-        String familiaFonte = FAMILIA_FONTE_MEDIEVAL;
+        String familiaFonte = FAMILIA_FONTE_MEDIEVAL; // Fallback font for general UI
+        // For specific labels, you might check if a custom game font is loaded and prefer that.
         rotulo.setFont(Font.font(familiaFonte, negrito ? FontWeight.BOLD : FontWeight.NORMAL, tamanhoFonte));
         rotulo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
         rotulo.setAlignment(alinhamento);
@@ -573,27 +730,26 @@ public class TelaDeEscolha extends Application {
     }
 
     private void configurarTelaPrincipalJogo() {
-        InputOutput.setGlobalLogger(this::logMensagemDoJogo);
+        InputOutput.setGlobalLogger(this::logMensagemDoJogo); //
 
         this.palcoPrincipal.setTitle("Ultima Fronteira - O Jogo");
         this.jogoFinalizado = false;
         this.turnoAtual = 0;
-        this.modoInfinitoAtivo = false; // <<<< INICIALIZAÇÃO DA NOVA VARIÁVEL
+        this.modoInfinitoAtivo = false;
 
 
-        this.gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
-        this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente();
+        this.gerenciadorDeAmbientes = new GerenciadorDeAmbientes(); //
+        this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente(); //
         if (this.ambienteAtual == null) {
             mostrarAlerta("Erro Crítico", "Não foi possível carregar um ambiente inicial. O jogo não pode continuar.");
             Platform.exit();
             return;
         }
-        this.gerenciadorDeEventos = new GerenciadorDeEventos(
+        this.gerenciadorDeEventos = new GerenciadorDeEventos( //
                 ambienteAtual,
                 personagem
         );
 
-        // ... (resto do método configurarTelaPrincipalJogo permanece o mesmo) ...
         BorderPane painelRaizJogo = new BorderPane();
         painelRaizJogo.setPadding(new Insets(VALOR_PADDING_JOGO));
         painelRaizJogo.setStyle("-fx-background-color: " + FUNDO_PERGAMINHO + ";");
@@ -644,9 +800,9 @@ public class TelaDeEscolha extends Application {
         this.palcoPrincipal.centerOnScreen();
 
         logEvento("Bem-vindo(a) à Ultima Fronteira, " + this.nomePersonagemParaAcoes + "!");
-        logEvento("Você é um " + capitalizeString(personagem.getClasse()) + ".");
+        logEvento("Você é um " + capitalizeString(personagem.getClasse()) + "."); //
         if (this.ambienteAtual != null) {
-            logEvento("Você se encontra em: " + this.ambienteAtual.getNome());
+            logEvento("Você se encontra em: " + this.ambienteAtual.getNome()); //
         } else {
             logEvento("Você se encontra em um local desconhecido (erro ao carregar ambiente).");
         }
@@ -657,11 +813,10 @@ public class TelaDeEscolha extends Application {
         atualizarExibicaoInventario();
         aplicarEfeitosDeFimDeTurno(false);
     }
-    // ... (atualizarRotuloAmbiente, atualizarAtributosGUI, criarSecaoAtributosJogo, etc. permanecem os mesmos)
 
     private void atualizarRotuloAmbiente() {
         if (this.rotuloNomeAmbienteAtual != null && this.ambienteAtual != null) {
-            this.rotuloNomeAmbienteAtual.setText(" Ambiente Atual: " + this.ambienteAtual.getNome());
+            this.rotuloNomeAmbienteAtual.setText(" Ambiente Atual: " + this.ambienteAtual.getNome()); //
         } else if (this.rotuloNomeAmbienteAtual != null) {
             this.rotuloNomeAmbienteAtual.setText(" Ambiente Atual: Desconhecido");
         }
@@ -680,12 +835,12 @@ public class TelaDeEscolha extends Application {
             return;
         }
 
-        barraVida.setProgress(maxVidaPersonagem > 0 ? (double)personagem.getAtributo(PersonagemAtributosEnum.VIDA) / maxVidaPersonagem : 0);
-        barraFome.setProgress(maxFomePersonagem > 0 ? (double)personagem.getAtributo(PersonagemAtributosEnum.FOME) / maxFomePersonagem : 0);
-        barraSede.setProgress(maxSedePersonagem > 0 ? (double)personagem.getAtributo(PersonagemAtributosEnum.SEDE) / maxSedePersonagem : 0);
-        barraEnergia.setProgress(maxEnergiaPersonagem > 0 ? (double)personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) / maxEnergiaPersonagem : 0);
+        barraVida.setProgress(maxVidaPersonagem > 0 ? (double)personagem.getAtributo(PersonagemAtributosEnum.VIDA) / maxVidaPersonagem : 0); //
+        barraFome.setProgress(maxFomePersonagem > 0 ? (double)personagem.getAtributo(PersonagemAtributosEnum.FOME) / maxFomePersonagem : 0); //
+        barraSede.setProgress(maxSedePersonagem > 0 ? (double)personagem.getAtributo(PersonagemAtributosEnum.SEDE) / maxSedePersonagem : 0); //
+        barraEnergia.setProgress(maxEnergiaPersonagem > 0 ? (double)personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) / maxEnergiaPersonagem : 0); //
 
-        rotuloValorSanidade.setText(String.valueOf(personagem.getAtributo(PersonagemAtributosEnum.SANIDADE)) + "/" + maxSanidadePersonagem);
+        rotuloValorSanidade.setText(String.valueOf(personagem.getAtributo(PersonagemAtributosEnum.SANIDADE)) + "/" + maxSanidadePersonagem); //
         rotuloStatusPersonagem.setText(obterStatusPersonagem(personagem));
     }
 
@@ -698,11 +853,11 @@ public class TelaDeEscolha extends Application {
         Label rotuloTituloAtributos = new Label("Atributos de " + (this.nomePersonagemParaAcoes != null ? this.nomePersonagemParaAcoes : "Aventureiro"));
         estilizarRotulo(rotuloTituloAtributos, TAMANHO_FONTE_CABECALHO_JOGO, true, Pos.CENTER_LEFT, true);
 
-        double vidaProg = (personagem != null && maxVidaPersonagem > 0) ? (double)personagem.getAtributo(PersonagemAtributosEnum.VIDA) / maxVidaPersonagem : 1.0;
-        double fomeProg = (personagem != null && maxFomePersonagem > 0) ? (double)personagem.getAtributo(PersonagemAtributosEnum.FOME) / maxFomePersonagem : 1.0;
-        double sedeProg = (personagem != null && maxSedePersonagem > 0) ? (double)personagem.getAtributo(PersonagemAtributosEnum.SEDE) / maxSedePersonagem : 1.0;
-        double energiaProg = (personagem != null && maxEnergiaPersonagem > 0) ? (double)personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) / maxEnergiaPersonagem : 1.0;
-        String sanidadeText = (personagem != null) ? personagem.getAtributo(PersonagemAtributosEnum.SANIDADE) + "/" + maxSanidadePersonagem : "100/100";
+        double vidaProg = (personagem != null && maxVidaPersonagem > 0) ? (double)personagem.getAtributo(PersonagemAtributosEnum.VIDA) / maxVidaPersonagem : 1.0; //
+        double fomeProg = (personagem != null && maxFomePersonagem > 0) ? (double)personagem.getAtributo(PersonagemAtributosEnum.FOME) / maxFomePersonagem : 1.0; //
+        double sedeProg = (personagem != null && maxSedePersonagem > 0) ? (double)personagem.getAtributo(PersonagemAtributosEnum.SEDE) / maxSedePersonagem : 1.0; //
+        double energiaProg = (personagem != null && maxEnergiaPersonagem > 0) ? (double)personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) / maxEnergiaPersonagem : 1.0; //
+        String sanidadeText = (personagem != null) ? personagem.getAtributo(PersonagemAtributosEnum.SANIDADE) + "/" + maxSanidadePersonagem : "100/100"; //
         String statusText = (personagem != null) ? obterStatusPersonagem(personagem) : "Normal";
 
 
@@ -735,11 +890,11 @@ public class TelaDeEscolha extends Application {
 
     private String obterStatusPersonagem(Personagem p) {
         if (p == null) return "<status>";
-        if (p.getAtributo(PersonagemAtributosEnum.VIDA) <= 0) return "Morto";
-        if (maxVidaPersonagem > 0 && p.getAtributo(PersonagemAtributosEnum.VIDA) < maxVidaPersonagem * 0.25) return "Em Perigo";
-        if ((maxFomePersonagem > 0 && p.getAtributo(PersonagemAtributosEnum.FOME) < maxFomePersonagem * 0.1) ||
-                (maxSedePersonagem > 0 && p.getAtributo(PersonagemAtributosEnum.SEDE) < maxSedePersonagem * 0.1)) return "Esgotado";
-        if (maxSanidadePersonagem > 0 && p.getAtributo(PersonagemAtributosEnum.SANIDADE) < maxSanidadePersonagem * 0.25) return "Instável";
+        if (p.getAtributo(PersonagemAtributosEnum.VIDA) <= 0) return "Morto"; //
+        if (maxVidaPersonagem > 0 && p.getAtributo(PersonagemAtributosEnum.VIDA) < maxVidaPersonagem * 0.25) return "Em Perigo"; //
+        if ((maxFomePersonagem > 0 && p.getAtributo(PersonagemAtributosEnum.FOME) < maxFomePersonagem * 0.1) || //
+                (maxSedePersonagem > 0 && p.getAtributo(PersonagemAtributosEnum.SEDE) < maxSedePersonagem * 0.1)) return "Esgotado"; //
+        if (maxSanidadePersonagem > 0 && p.getAtributo(PersonagemAtributosEnum.SANIDADE) < maxSanidadePersonagem * 0.25) return "Instável"; //
         return "Normal";
     }
 
@@ -847,11 +1002,11 @@ public class TelaDeEscolha extends Application {
             return;
         }
 
-        List<Item> itensAtuais = this.personagem.getInventario().getItens();
+        List<Item> itensAtuais = this.personagem.getInventario().getItens(); //
 
         this.gradeInventario.getChildren().clear();
 
-        int capacidadeInventario = this.personagem.getInventario().getCapacidadeMaxima();
+        int capacidadeInventario = this.personagem.getInventario().getCapacidadeMaxima(); //
         int numLinhas = (int) Math.ceil((double) capacidadeInventario / COLS_INVENTARIO_JOGO);
 
         if (this.gradeInventario.getRowConstraints().size() != numLinhas) {
@@ -894,8 +1049,8 @@ public class TelaDeEscolha extends Application {
 
             if (slotIndex < itensAtuais.size()) {
                 Item item = itensAtuais.get(slotIndex);
-                String itemText = item.getNome();
-                itemText += " (x" + item.getQuantidade() + ")";
+                String itemText = item.getNome(); //
+                itemText += " (x" + item.getQuantidade() + ")"; //
 
                 Label itemLabel = new Label(itemText);
                 itemLabel.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.NORMAL, TAMANHO_FONTE_PEQUENA_ESCOLHA - 2));
@@ -931,30 +1086,30 @@ public class TelaDeEscolha extends Application {
 
         this.botaoMudarAmbiente.setOnAction(e -> {
             if (this.jogoFinalizado) return;
-            if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
-                logEvento(this.personagem.getNome() + " está em combate e não pode mudar de ambiente!");
+            if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) { //
+                logEvento(this.personagem.getNome() + " está em combate e não pode mudar de ambiente!"); //
                 return;
             }
-            int custoEnergiaMudarAmbiente = (this.ambienteAtual != null ? (5 * this.ambienteAtual.getDificuldadeDeExploracao()) : 15);
-            if (this.personagem == null || this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaMudarAmbiente) {
-                logEvento( (this.personagem != null ? this.personagem.getNome() : "Personagem") + " está cansado demais para viajar! (Requer " + custoEnergiaMudarAmbiente + " energia)");
+            int custoEnergiaMudarAmbiente = (this.ambienteAtual != null ? (5 * this.ambienteAtual.getDificuldadeDeExploracao()) : 15); //
+            if (this.personagem == null || this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaMudarAmbiente) { //
+                logEvento( (this.personagem != null ? this.personagem.getNome() : "Personagem") + " está cansado demais para viajar! (Requer " + custoEnergiaMudarAmbiente + " energia)"); //
                 return;
             }
 
-            personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -custoEnergiaMudarAmbiente);
-            personagem.mudarAtributo(PersonagemAtributosEnum.SEDE , -10);
-            personagem.mudarAtributo(PersonagemAtributosEnum.FOME, -25);
+            personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -custoEnergiaMudarAmbiente); //
+            personagem.mudarAtributo(PersonagemAtributosEnum.SEDE , -10); //
+            personagem.mudarAtributo(PersonagemAtributosEnum.FOME, -25); //
 
-            InputOutput io = new InputOutput();
-            io.print(this.nomePersonagemParaAcoes + " viaja para um novo local...");
-            this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente();
+            InputOutput io = new InputOutput(); // This will use the global logger set in configurarTelaPrincipalJogo
+            io.print(this.nomePersonagemParaAcoes + " viaja para um novo local..."); //
+            this.ambienteAtual = this.gerenciadorDeAmbientes.sortearAmbiente(); //
             if (this.ambienteAtual == null) {
                 logEvento("ERRO CRÍTICO: Novo ambiente não pôde ser carregado!");
                 finalizarJogo("Erro ao mudar de ambiente.");
                 return;
             }
-            this.gerenciadorDeEventos.setAmbiente(ambienteAtual);
-            io.print("Chegou em: " + this.ambienteAtual.getNome());
+            this.gerenciadorDeEventos.setAmbiente(ambienteAtual); //
+            io.print("Chegou em: " + this.ambienteAtual.getNome()); //
 
             atualizarRotuloAmbiente();
             aplicarEfeitosDeFimDeTurno(true);
@@ -962,13 +1117,13 @@ public class TelaDeEscolha extends Application {
 
         this.botaoDescansar.setOnAction(e -> {
             if (this.jogoFinalizado) return;
-            if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
-                logEvento(this.personagem.getNome() + " não pode descansar durante um combate! Use 'Tentar Fugir'.");
+            if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) { //
+                logEvento(this.personagem.getNome() + " não pode descansar durante um combate! Use 'Tentar Fugir'."); //
                 return;
             }
             logEvento(this.nomePersonagemParaAcoes + " decide descansar.");
             if (this.personagem != null) {
-                personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, +15);
+                personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, +15); //
             }
             aplicarEfeitosDeFimDeTurno(true);
         });
@@ -982,15 +1137,15 @@ public class TelaDeEscolha extends Application {
 
         this.botaoUsarHabilidadeEspecial.setOnAction(e -> {
             if (this.jogoFinalizado) return;
-            if (this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
-                logEvento(personagem.getNome() + " não pode usar habilidade em combate!");
+            if (this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) { //
+                logEvento(personagem.getNome() + " não pode usar habilidade em combate!"); //
                 return;
             }
-            if (personagem == null || personagem.getHabilidadeEspecialCooldown() > 0) {
-                logEvento((personagem != null ? personagem.getNome() : "Personagem") + " não pode usar a habilidade especial ainda! Cooldown: " + (personagem != null ? personagem.getHabilidadeEspecialCooldown() : "N/A") + " turnos.");
+            if (personagem == null || personagem.getHabilidadeEspecialCooldown() > 0) { //
+                logEvento((personagem != null ? personagem.getNome() : "Personagem") + " não pode usar a habilidade especial ainda! Cooldown: " + (personagem != null ? personagem.getHabilidadeEspecialCooldown() : "N/A") + " turnos."); //
                 return;
             }
-            personagem.usarHabilidadeEspecial();
+            personagem.usarHabilidadeEspecial(); //
             aplicarEfeitosDeFimDeTurno(true);
         });
 
@@ -1028,13 +1183,12 @@ public class TelaDeEscolha extends Application {
         botaoAcaoPrincipal.setDisable(false);
         botaoMudarAmbiente.setDisable(false);
         botaoDescansar.setDisable(false);
-        // botaoUsarHabilidadeEspecial será habilitado/desabilitado abaixo
 
-        EventoCriatura criaturaAtiva = this.gerenciadorDeEventos.buscarEventoCriaturaAtivo();
+        EventoCriatura criaturaAtiva = this.gerenciadorDeEventos.buscarEventoCriaturaAtivo(); //
         boolean emCombate = (criaturaAtiva != null);
 
         if (emCombate) {
-            String nomeCriatura = criaturaAtiva.getNome();
+            String nomeCriatura = criaturaAtiva.getNome(); //
             this.botaoAcaoPrincipal.setText("Batalhar " + nomeCriatura);
             this.botaoAcaoPrincipal.setOnAction(e -> {
                 if (this.jogoFinalizado) return;
@@ -1045,10 +1199,10 @@ public class TelaDeEscolha extends Application {
             this.botaoDescansar.setText("Tentar Fugir");
             this.botaoDescansar.setOnAction(e -> {
                 if (this.jogoFinalizado) return;
-                this.gerenciadorDeEventos.fugirDeEventoCriatura(criaturaAtiva);
+                this.gerenciadorDeEventos.fugirDeEventoCriatura(criaturaAtiva); //
                 aplicarEfeitosDeFimDeTurno(true);
             });
-            this.botaoUsarHabilidadeEspecial.setDisable(true); // Não pode usar habilidade em combate
+            this.botaoUsarHabilidadeEspecial.setDisable(true);
         } else {
             this.botaoAcaoPrincipal.setText("Explorar");
             this.botaoAcaoPrincipal.setOnAction(e -> {
@@ -1058,14 +1212,14 @@ public class TelaDeEscolha extends Application {
                     if (this.ambienteAtual == null) { logEvento("ERRO: Ambiente atual não definido."); this.botaoAcaoPrincipal.setDisable(true); return; }
                     if (this.gerenciadorDeEventos == null) { logEvento("ERRO: Gerenciador de eventos não definido."); return; }
 
-                    int custoEnergiaExplorar = this.ambienteAtual.getDificuldadeDeExploracao();
-                    if (this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaExplorar) {
-                        logEvento(this.personagem.getNome() + " está cansado demais para explorar! (Requer " + custoEnergiaExplorar + " energia)");
+                    int custoEnergiaExplorar = this.ambienteAtual.getDificuldadeDeExploracao(); //
+                    if (this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaExplorar) { //
+                        logEvento(this.personagem.getNome() + " está cansado demais para explorar! (Requer " + custoEnergiaExplorar + " energia)"); //
                         return;
                     }
-                    this.personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -custoEnergiaExplorar);
-                    logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "...");
-                    this.gerenciadorDeEventos.adicionarEventoAleatorio();
+                    this.personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -custoEnergiaExplorar); //
+                    logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "..."); //
+                    this.gerenciadorDeEventos.adicionarEventoAleatorio(); //
                     aplicarEfeitosDeFimDeTurno(true);
                 } catch (Exception ex) {
                     logEvento("Ocorreu um erro inesperado durante a ação de explorar: " + ex.getClass().getSimpleName());
@@ -1074,27 +1228,27 @@ public class TelaDeEscolha extends Application {
                 }
             });
 
-            boolean desabilitarExplorar = (this.ambienteAtual == null || (this.personagem != null && this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < this.ambienteAtual.getDificuldadeDeExploracao()) || this.personagem == null);
+            boolean desabilitarExplorar = (this.ambienteAtual == null || (this.personagem != null && this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < this.ambienteAtual.getDificuldadeDeExploracao()) || this.personagem == null); //
             this.botaoAcaoPrincipal.setDisable(desabilitarExplorar);
 
-            int custoEnergiaMudarAmbiente = (this.ambienteAtual != null ? (5 * this.ambienteAtual.getDificuldadeDeExploracao()) : 15);
-            this.botaoMudarAmbiente.setDisable(this.personagem == null || this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaMudarAmbiente );
+            int custoEnergiaMudarAmbiente = (this.ambienteAtual != null ? (5 * this.ambienteAtual.getDificuldadeDeExploracao()) : 15); //
+            this.botaoMudarAmbiente.setDisable(this.personagem == null || this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaMudarAmbiente ); //
 
             this.botaoDescansar.setText("Descansar");
             this.botaoDescansar.setOnAction(ev -> {
                 if (this.jogoFinalizado) return;
-                if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
-                    logEvento(this.personagem.getNome() + " não pode descansar durante um combate!");
+                if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) { //
+                    logEvento(this.personagem.getNome() + " não pode descansar durante um combate!"); //
                     return;
                 }
                 logEvento(this.nomePersonagemParaAcoes + " decide descansar.");
                 if (this.personagem != null) {
-                    personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, +15);
+                    personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, +15); //
                 }
                 aplicarEfeitosDeFimDeTurno(true);
             });
 
-            this.botaoUsarHabilidadeEspecial.setDisable(this.personagem == null || this.personagem.getHabilidadeEspecialCooldown() > 0);
+            this.botaoUsarHabilidadeEspecial.setDisable(this.personagem == null || this.personagem.getHabilidadeEspecialCooldown() > 0); //
         }
     }
 
@@ -1112,91 +1266,77 @@ public class TelaDeEscolha extends Application {
         logEvento("--- Processando Turno " + turnoAtual + " ---");
 
         if (this.gerenciadorDeEventos != null) {
-            this.gerenciadorDeEventos.executarEventos();
+            this.gerenciadorDeEventos.executarEventos(); //
         }
 
         if (personagem != null && !jogoFinalizado) {
             if (acaoDoJogador) {
-                personagem.mudarAtributo(PersonagemAtributosEnum.FOME, -5);
-                personagem.mudarAtributo(PersonagemAtributosEnum.SEDE, -2);
+                personagem.mudarAtributo(PersonagemAtributosEnum.FOME, -5); //
+                personagem.mudarAtributo(PersonagemAtributosEnum.SEDE, -2); //
             }
 
-            if (personagem.getHabilidadeEspecialCooldown() > 0) {
-                personagem.setHabilidadeEspecialCooldown(personagem.getHabilidadeEspecialCooldown() - 1);
-                if (personagem.getHabilidadeEspecialCooldown() == 0) {
+            if (personagem.getHabilidadeEspecialCooldown() > 0) { //
+                personagem.setHabilidadeEspecialCooldown(personagem.getHabilidadeEspecialCooldown() - 1); //
+                if (personagem.getHabilidadeEspecialCooldown() == 0) { //
                     logEvento("Habilidade especial está pronta para ser usada novamente!");
                 }
             }
-            if (personagem.getAtributo(PersonagemAtributosEnum.FOME) <= 0) {
-                logEvento(personagem.getNome() + " está faminto e perde saúde!");
-                personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -5);
+            if (personagem.getAtributo(PersonagemAtributosEnum.FOME) <= 0) { //
+                logEvento(personagem.getNome() + " está faminto e perde saúde!"); //
+                personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -5); //
             }
-            if (personagem.getAtributo(PersonagemAtributosEnum.SEDE) <= 0) {
-                logEvento(personagem.getNome() + " está desidratado e perde saúde!");
-                personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -2);
+            if (personagem.getAtributo(PersonagemAtributosEnum.SEDE) <= 0) { //
+                logEvento(personagem.getNome() + " está desidratado e perde saúde!"); //
+                personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -2); //
             }
         }
 
-        // Atualiza atributos no GUI APÓS os efeitos passivos e de eventos,
-        // mas ANTES da checagem de morte, para que a morte seja refletida se ocorrer.
         if(personagem != null) atualizarAtributosGUI();
 
         if (personagem != null && !jogoFinalizado) {
-            if (personagem.getAtributo(PersonagemAtributosEnum.VIDA) <= 0) {
-                finalizarJogo("Fim de Jogo: " + personagem.getNome() + " não sobreviveu."); return;
+            if (personagem.getAtributo(PersonagemAtributosEnum.VIDA) <= 0) { //
+                finalizarJogo("Fim de Jogo: " + personagem.getNome() + " não sobreviveu."); return; //
             }
 
-            // Condição de vitória por turnos (só se não estiver em modo infinito)
-            if (!this.modoInfinitoAtivo && turnoAtual >= Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA) {
-                finalizarJogoComOpcaoDeContinuar("Vitória por Sobrevivência!", personagem.getNome() + " sobreviveu " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos!");
+            if (!this.modoInfinitoAtivo && turnoAtual >= Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA) { //
+                finalizarJogoComOpcaoDeContinuar("Vitória por Sobrevivência!", personagem.getNome() + " sobreviveu " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos!"); //
                 if(jogoFinalizado) return;
             }
 
-            // Condição de vitória por jangada (só se não estiver em modo infinito, ou se for a primeira vez)
-            Item jangadaParaVerificar = ConstrutorItem.construir(FerramentasEnum.JANGADA, 1);
-            if (personagem.getInventario().encontrarItem(jangadaParaVerificar) != -1) {
-                // A remoção acontece após a chamada de finalizarJogoComOpcaoDeContinuar
-                finalizarJogoComOpcaoDeContinuar("Vitória por Fuga!", personagem.getNome() + " construiu uma Jangada e escapou!");
-                personagem.getInventario().removerItem(jangadaParaVerificar, 1); // Remove para não acionar de novo
-                if(jogoFinalizado && !modoInfinitoAtivo) return; // Só retorna se o jogo realmente acabou E não ativou modo infinito
+            Item jangadaParaVerificar = ConstrutorItem.construir(FerramentasEnum.JANGADA, 1); //
+            if (personagem.getInventario().encontrarItem(jangadaParaVerificar) != -1) { //
+                finalizarJogoComOpcaoDeContinuar("Vitória por Fuga!", personagem.getNome() + " construiu uma Jangada e escapou!"); //
+                personagem.getInventario().removerItem(jangadaParaVerificar, 1); //
+                if(jogoFinalizado && !modoInfinitoAtivo) return;
             }
 
-            // --- START: MODIFICATION FOR FORCED DISCARD ---
             while (personagem.getInventario().estaCheio()) { //
-                int diff = personagem.getInventario().getQuantidadeItens() - personagem.getInventario().getCapacidadeMaxima();
+                int diff = personagem.getInventario().getQuantidadeItens() - personagem.getInventario().getCapacidadeMaxima(); //
                 String itemOuItens = (diff == 1 ? " item" : " itens");
                 logEvento("!!! INVENTÁRIO CHEIO !!!");
-                logEvento(personagem.getNome() + " precisa descartar " + diff + itemOuItens + " para continuar.");
+                logEvento(personagem.getNome() + " precisa descartar " + diff + itemOuItens + " para continuar."); //
 
-                // Show a modal alert to make it very clear to the user what they need to do.
                 mostrarAlerta("Inventário Lotado – Ação Necessária",
                         "Seu inventário excedeu a capacidade em " + diff + itemOuItens + ".\n" +
                                 "Você DEVE descartar itens para prosseguir com o jogo.");
 
-                abrirDialogoDescartarItem(); // This method handles the actual discard UI and logic
+                abrirDialogoDescartarItem();
 
-                // The abrirDialogoDescartarItem method itself calls atualizarExibicaoInventario
-                // if a discard happens. We also need to update attributes.
                 atualizarAtributosGUI();
-                // atualizarExibicaoInventario(); // Called within abrirDialogoDescartarItem if discard occurs,
-                // but calling again here ensures UI consistency if player cancels discard.
-                // Let's make sure it's called after the dialog regardless.
+                atualizarExibicaoInventario();
 
-                if (!personagem.getInventario().estaCheio()) {
+
+                if (!personagem.getInventario().estaCheio()) { //
                     logEvento("Inventário não está mais superlotado. O turno pode ser finalizado.");
                 } else {
-                    // If still full, the loop continues, and they will be prompted again.
                     logEvento("Inventário AINDA está superlotado. É necessário descartar mais.");
                 }
             }
-            // --- END: MODIFICATION FOR FORCED DISCARD ---
         }
 
-        // Final UI updates for the turn before awaiting next player action
-        atualizarExibicaoInventario(); // Ensure it's definitely up-to-date
-        atualizarAtributosGUI();      // Ensure attributes are final for the turn
-        atualizarInterfaceAcoes();    // Update available actions based on new state
-
+        atualizarExibicaoInventario();
+        atualizarAtributosGUI();
+        atualizarInterfaceAcoes();
         if (!jogoFinalizado) {
             logEvento("--- Aguardando sua próxima ação ---");
         }
@@ -1212,13 +1352,12 @@ public class TelaDeEscolha extends Application {
     private void finalizarJogoComOpcaoDeContinuar(String tituloVitoria, String mensagemVitoria) {
         if (this.modoInfinitoAtivo) {
             logEvento(mensagemVitoria + " - O jogo continua no modo infinito.");
-            this.jogoFinalizado = false; // Garante que o jogo continue
+            this.jogoFinalizado = false;
             atualizarInterfaceAcoes();
             return;
         }
 
-        // Se não estiver em modo infinito, mostra o diálogo
-        this.jogoFinalizado = true; // Assume que o jogo vai acabar, a menos que o jogador escolha continuar
+        this.jogoFinalizado = true;
         logEvento(mensagemVitoria);
 
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -1244,16 +1383,11 @@ public class TelaDeEscolha extends Application {
             this.modoInfinitoAtivo = true;
             logEvento("Modo infinito ativado! O jogo continua...");
         } else {
-            // this.jogoFinalizado já está true
             logEvento("Jogo finalizado pelo jogador após vitória.");
         }
         atualizarInterfaceAcoes();
     }
 
-    // ... (mostrarAlerta, abrirDialogoSelecaoArma, definirRestricoesGradeBotoesJogo, criarBotaoMedievalJogo,
-    //      criarContainerEventosJogo, logEvento, atualizarLogUI, e todos os métodos de gerenciamento de inventário
-    //      (abrirDialogoGerenciamentoInventario, abrirDialogoUsarConsumivel, abrirDialogoDescartarItem,
-    //      abrirDialogoCombinarMateriais_RecipeBook) permanecem os mesmos da última versão fornecida)
     private void mostrarAlerta(String titulo, String conteudo) {
         Dialog<Void> alerta = new Dialog<>();
         alerta.initModality(Modality.APPLICATION_MODAL);
@@ -1274,7 +1408,7 @@ public class TelaDeEscolha extends Application {
             return;
         }
 
-        ArrayList<Item> itensArmaDoInventario = personagem.getInventario().getItens(ItensEnum.ARMA.getIndice());
+        ArrayList<Item> itensArmaDoInventario = personagem.getInventario().getItens(ItensEnum.ARMA.getIndice()); //
         ObservableList<ItemArma> armasObservaveis = FXCollections.observableArrayList();
         for (Item item : itensArmaDoInventario) {
             if (item instanceof ItemArma) {
@@ -1282,21 +1416,21 @@ public class TelaDeEscolha extends Application {
             }
         }
 
-        ItemArma punhos = ConstrutorArma.construirArma(ArmasEnum.PUNHOS, 1);
-        boolean temApenasPunhosOuNenhumaArma = armasObservaveis.isEmpty() || (armasObservaveis.size() == 1 && armasObservaveis.get(0).getNome().equals(punhos.getNome()));
+        ItemArma punhos = ConstrutorArma.construirArma(ArmasEnum.PUNHOS, 1); //
+        boolean temApenasPunhosOuNenhumaArma = armasObservaveis.isEmpty() || (armasObservaveis.size() == 1 && armasObservaveis.get(0).getNome().equals(punhos.getNome())); //
 
         if (temApenasPunhosOuNenhumaArma) {
             int indicePunhosNaListaDeArmas = -1;
-            ArrayList<Item> listaRealDeArmas = personagem.getInventario().getItens(ItensEnum.ARMA.getIndice());
+            ArrayList<Item> listaRealDeArmas = personagem.getInventario().getItens(ItensEnum.ARMA.getIndice()); //
             for(int i=0; i < listaRealDeArmas.size(); i++) {
-                if(listaRealDeArmas.get(i).getNome().equals(ArmasEnum.PUNHOS.getNome())) {
+                if(listaRealDeArmas.get(i).getNome().equals(ArmasEnum.PUNHOS.getNome())) { //
                     indicePunhosNaListaDeArmas = i;
                     break;
                 }
             }
 
             if (indicePunhosNaListaDeArmas != -1) {
-                personagem.getGerenciadorDeInventario().usarItemArma(indicePunhosNaListaDeArmas, criaturaAlvo);
+                personagem.getGerenciadorDeInventario().usarItemArma(indicePunhosNaListaDeArmas, criaturaAlvo); //
             } else {
                 logEvento("ERRO: 'Punhos' não encontrados na lista de armas do inventário para ataque automático.");
             }
@@ -1306,7 +1440,7 @@ public class TelaDeEscolha extends Application {
 
         Dialog<ItemArma> dialog = new Dialog<>();
         dialog.setTitle("Escolha sua Arma");
-        dialog.setHeaderText("Atacar " + criaturaAlvo.getNome() + ". Qual arma usar?");
+        dialog.setHeaderText("Atacar " + criaturaAlvo.getNome() + ". Qual arma usar?"); //
 
         DialogPane dialogPane = dialog.getDialogPane();
         dialogPane.setMinWidth(380);
@@ -1321,7 +1455,7 @@ public class TelaDeEscolha extends Application {
                 if (empty || arma == null) {
                     setText(null);
                 } else {
-                    setText(arma.getNome() + " (Dano: " + arma.getDano() + ", Dur: " + arma.getDurabilidade() + ")");
+                    setText(arma.getNome() + " (Dano: " + arma.getDano() + ", Dur: " + arma.getDurabilidade() + ")"); //
                     setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_CORPO_ESCOLHA));
                 }
             }
@@ -1356,18 +1490,18 @@ public class TelaDeEscolha extends Application {
         if (resultado.isPresent()) {
             ItemArma armaEscolhida = resultado.get();
             int indiceArmaNaListaDeArmas = -1;
-            ArrayList<Item> listaDeArmasDoInventario = personagem.getInventario().getItens(ItensEnum.ARMA.getIndice());
+            ArrayList<Item> listaDeArmasDoInventario = personagem.getInventario().getItens(ItensEnum.ARMA.getIndice()); //
             for(int i = 0; i < listaDeArmasDoInventario.size(); i++) {
-                if(listaDeArmasDoInventario.get(i) == armaEscolhida) { // Comparação de referência de objeto aqui é importante
+                if(listaDeArmasDoInventario.get(i) == armaEscolhida) {
                     indiceArmaNaListaDeArmas = i;
                     break;
                 }
             }
 
             if(indiceArmaNaListaDeArmas != -1) {
-                personagem.getGerenciadorDeInventario().usarItemArma(indiceArmaNaListaDeArmas, criaturaAlvo);
+                personagem.getGerenciadorDeInventario().usarItemArma(indiceArmaNaListaDeArmas, criaturaAlvo); //
             } else {
-                logEvento("ERRO: Arma selecionada ("+ armaEscolhida.getNome() +") não encontrada na lista específica de armas do inventário para ataque.");
+                logEvento("ERRO: Arma selecionada ("+ armaEscolhida.getNome() +") não encontrada na lista específica de armas do inventário para ataque."); //
             }
         } else {
             logEvento("Seleção de arma cancelada.");
@@ -1483,7 +1617,6 @@ public class TelaDeEscolha extends Application {
     }
 
 
-    // --- INÍCIO: Métodos para Gerenciamento de Inventário ---
     private void abrirDialogoGerenciamentoInventario() {
         if (personagem == null) {
             logEvento("Personagem não disponível para gerenciar inventário.");
@@ -1492,7 +1625,7 @@ public class TelaDeEscolha extends Application {
 
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Gerenciar Inventário");
-        dialog.setHeaderText("O que " + personagem.getNome() + " irá fazer?");
+        dialog.setHeaderText("O que " + personagem.getNome() + " irá fazer?"); //
         dialog.getDialogPane().setStyle(obterEstiloPainelInterno());
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         if (stage != null) {
@@ -1538,7 +1671,7 @@ public class TelaDeEscolha extends Application {
     }
 
     private void abrirDialogoUsarConsumivel() {
-        ArrayList<Item> consumiveisDoInventario = personagem.getInventario().getItens(ItensEnum.CONSUMIVEL.getIndice());
+        ArrayList<Item> consumiveisDoInventario = personagem.getInventario().getItens(ItensEnum.CONSUMIVEL.getIndice()); //
         ObservableList<Consumivel> consumiveisObservaveis = FXCollections.observableArrayList();
         for (Item item : consumiveisDoInventario) {
             if (item instanceof Consumivel) {
@@ -1565,7 +1698,7 @@ public class TelaDeEscolha extends Application {
             @Override
             protected void updateItem(Consumivel item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getNome() + " (x" + item.getQuantidade() + ")");
+                setText(empty || item == null ? null : item.getNome() + " (x" + item.getQuantidade() + ")"); //
                 if (item != null) setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_PEQUENA_ESCOLHA));
             }
         });
@@ -1587,25 +1720,21 @@ public class TelaDeEscolha extends Application {
 
         Optional<Consumivel> resultado = dialog.showAndWait();
         resultado.ifPresent(consumivelSelecionado -> {
-            int indiceConsumivel = -1;
-            // Precisamos do índice na lista específica de consumíveis que foi mostrada ao usuário
-            // A lista consumiveisObservaveis contém as mesmas instâncias que uma sub-lista de personagem.getInventario().getItens(ItensEnum.CONSUMIVEL.getIndice())
-            // Então, encontrar o índice em consumiveisObservaveis é o que precisamos.
-            indiceConsumivel = consumiveisObservaveis.indexOf(consumivelSelecionado);
+            int indiceConsumivelNaSubLista = consumiveisObservaveis.indexOf(consumivelSelecionado);
 
 
-            if (indiceConsumivel != -1) {
-                personagem.getGerenciadorDeInventario().usarItemConsumivel(indiceConsumivel);
+            if (indiceConsumivelNaSubLista != -1) {
+                personagem.getGerenciadorDeInventario().usarItemConsumivel(indiceConsumivelNaSubLista); //
                 atualizarAtributosGUI();
                 atualizarExibicaoInventario();
             } else {
-                logEvento("Erro ao tentar usar " + consumivelSelecionado.getNome() + ": consumível não encontrado na lista de seleção.");
+                logEvento("Erro ao tentar usar " + consumivelSelecionado.getNome() + ": consumível não encontrado na lista de seleção."); //
             }
         });
     }
 
     private void abrirDialogoDescartarItem() {
-        List<Item> todosOsItens = new ArrayList<>(personagem.getInventario().getItens());
+        List<Item> todosOsItens = new ArrayList<>(personagem.getInventario().getItens()); //
         if (todosOsItens.isEmpty()) {
             mostrarAlerta("Descartar Item", "Inventário vazio. Nada para descartar.");
             logEvento("Inventário vazio, nada para descartar.");
@@ -1627,7 +1756,7 @@ public class TelaDeEscolha extends Application {
             @Override
             protected void updateItem(Item item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getNome() + " (x" + item.getQuantidade() + ")");
+                setText(empty || item == null ? null : item.getNome() + " (x" + item.getQuantidade() + ")"); //
                 if (item != null) setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_PEQUENA_ESCOLHA));
             }
         });
@@ -1651,8 +1780,8 @@ public class TelaDeEscolha extends Application {
         resultadoItem.ifPresent(itemSelecionado -> {
             TextInputDialog qtdDialog = new TextInputDialog("1");
             qtdDialog.setTitle("Quantidade para Descartar");
-            qtdDialog.setHeaderText("Descartar " + itemSelecionado.getNome());
-            qtdDialog.setContentText("Quantidade (máx " + itemSelecionado.getQuantidade() + "):");
+            qtdDialog.setHeaderText("Descartar " + itemSelecionado.getNome()); //
+            qtdDialog.setContentText("Quantidade (máx " + itemSelecionado.getQuantidade() + "):"); //
             Stage qtdStage = (Stage) qtdDialog.getDialogPane().getScene().getWindow();
             if(qtdStage != null) qtdStage.getIcons().clear();
             ((Button) qtdDialog.getDialogPane().lookupButton(ButtonType.OK)).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
@@ -1663,16 +1792,16 @@ public class TelaDeEscolha extends Application {
             resultadoQtd.ifPresent(s -> {
                 try {
                     int quantidade = Integer.parseInt(s);
-                    if (quantidade > 0 && quantidade <= itemSelecionado.getQuantidade()) {
-                        boolean removido = personagem.getInventario().removerItem(itemSelecionado, quantidade);
+                    if (quantidade > 0 && quantidade <= itemSelecionado.getQuantidade()) { //
+                        boolean removido = personagem.getInventario().removerItem(itemSelecionado, quantidade); //
                         if (removido) {
-                            logEvento(personagem.getNome() + " descartou " + quantidade + " de " + itemSelecionado.getNome() + ".");
+                            logEvento(personagem.getNome() + " descartou " + quantidade + " de " + itemSelecionado.getNome() + "."); //
                             atualizarExibicaoInventario();
                         } else {
-                            logEvento("Falha ao descartar " + itemSelecionado.getNome() + " (item não encontrado ou quantidade insuficiente após seleção).");
+                            logEvento("Falha ao descartar " + itemSelecionado.getNome() + " (item não encontrado ou quantidade insuficiente após seleção)."); //
                         }
                     } else {
-                        mostrarAlerta("Quantidade Inválida", "Por favor, insira um número válido entre 1 e " + itemSelecionado.getQuantidade() + ".");
+                        mostrarAlerta("Quantidade Inválida", "Por favor, insira um número válido entre 1 e " + itemSelecionado.getQuantidade() + "."); //
                         logEvento("Tentativa de descarte com quantidade inválida.");
                     }
                 } catch (NumberFormatException ex) {
@@ -1689,7 +1818,7 @@ public class TelaDeEscolha extends Application {
             return;
         }
 
-        ObservableList<CombinacoesEnum> receitasDisponiveis = FXCollections.observableArrayList(CombinacoesEnum.values());
+        ObservableList<CombinacoesEnum> receitasDisponiveis = FXCollections.observableArrayList(CombinacoesEnum.values()); //
 
         if (receitasDisponiveis.isEmpty()) {
             mostrarAlerta("Combinar Materiais", "Nenhuma receita de combinação definida no jogo.");
@@ -1717,21 +1846,21 @@ public class TelaDeEscolha extends Application {
                 } else {
                     StringBuilder sb = new StringBuilder();
                     String nomeItemResultante = "Item Desconhecido";
-                    Enum<?> itemResultanteEnum = receita.getItemResultanteEnum();
+                    Enum<?> itemResultanteEnum = receita.getItemResultanteEnum(); //
 
-                    if (itemResultanteEnum instanceof ArmasEnum) nomeItemResultante = ((ArmasEnum)itemResultanteEnum).getNome();
-                    else if (itemResultanteEnum instanceof FerramentasEnum) nomeItemResultante = ((FerramentasEnum)itemResultanteEnum).getNOME();
-                    else if (itemResultanteEnum instanceof MateriaisEnum) nomeItemResultante = ((MateriaisEnum)itemResultanteEnum).getNome();
+                    if (itemResultanteEnum instanceof ArmasEnum) nomeItemResultante = ((ArmasEnum)itemResultanteEnum).getNome(); //
+                    else if (itemResultanteEnum instanceof FerramentasEnum) nomeItemResultante = ((FerramentasEnum)itemResultanteEnum).getNOME(); //
+                    else if (itemResultanteEnum instanceof MateriaisEnum) nomeItemResultante = ((MateriaisEnum)itemResultanteEnum).getNome(); //
                     else nomeItemResultante = capitalizeString(itemResultanteEnum.name().toLowerCase().replace("_", " "));
 
 
                     sb.append("Criar: ").append(capitalizeString(nomeItemResultante.toLowerCase()));
-                    sb.append(" (x").append(receita.getQuantidade()).append(")\n");
+                    sb.append(" (x").append(receita.getQuantidade()).append(")\n"); //
                     sb.append("   Requer: ");
-                    for (int i = 0; i < receita.getMateriaisCombinados().length; i++) {
-                        sb.append(receita.getQuantidades()[i]).append(" ")
-                                .append(capitalizeString(receita.getMateriaisCombinados()[i].getNome().toLowerCase()));
-                        if (i < receita.getMateriaisCombinados().length - 1) {
+                    for (int i = 0; i < receita.getMateriaisCombinados().length; i++) { //
+                        sb.append(receita.getQuantidades()[i]).append(" ") //
+                                .append(capitalizeString(receita.getMateriaisCombinados()[i].getNome().toLowerCase())); //
+                        if (i < receita.getMateriaisCombinados().length - 1) { //
                             sb.append(", ");
                         }
                     }
@@ -1740,10 +1869,10 @@ public class TelaDeEscolha extends Application {
 
                     boolean podeCriar = true;
                     if (personagem != null && personagem.getInventario() != null) {
-                        for (int i = 0; i < receita.getMateriaisCombinados().length; i++) {
-                            MateriaisEnum matEnum = receita.getMateriaisCombinados()[i];
-                            int qtdNecessaria = receita.getQuantidades()[i];
-                            if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) {
+                        for (int i = 0; i < receita.getMateriaisCombinados().length; i++) { //
+                            MateriaisEnum matEnum = receita.getMateriaisCombinados()[i]; //
+                            int qtdNecessaria = receita.getQuantidades()[i]; //
+                            if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) { //
                                 podeCriar = false;
                                 break;
                             }
@@ -1775,10 +1904,10 @@ public class TelaDeEscolha extends Application {
             } else {
                 boolean podeCriar = true;
                 if (personagem != null && personagem.getInventario() != null) {
-                    for (int i = 0; i < newVal.getMateriaisCombinados().length; i++) {
-                        MateriaisEnum matEnum = newVal.getMateriaisCombinados()[i];
-                        int qtdNecessaria = newVal.getQuantidades()[i];
-                        if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) {
+                    for (int i = 0; i < newVal.getMateriaisCombinados().length; i++) { //
+                        MateriaisEnum matEnum = newVal.getMateriaisCombinados()[i]; //
+                        int qtdNecessaria = newVal.getQuantidades()[i]; //
+                        if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) { //
                             podeCriar = false;
                             break;
                         }
@@ -1799,21 +1928,20 @@ public class TelaDeEscolha extends Application {
 
         Optional<CombinacoesEnum> resultadoReceita = dialog.showAndWait();
         resultadoReceita.ifPresent(receitaSelecionada -> {
-            ItemMaterial[] materiaisParaConsumir = new ItemMaterial[receitaSelecionada.getMateriaisCombinados().length];
-            for (int i = 0; i < receitaSelecionada.getMateriaisCombinados().length; i++) {
-                materiaisParaConsumir[i] = ConstrutorMaterial.construirMaterial(
-                        receitaSelecionada.getMateriaisCombinados()[i],
-                        receitaSelecionada.getQuantidades()[i]
+            ItemMaterial[] materiaisParaConsumir = new ItemMaterial[receitaSelecionada.getMateriaisCombinados().length]; //
+            for (int i = 0; i < receitaSelecionada.getMateriaisCombinados().length; i++) { //
+                materiaisParaConsumir[i] = ConstrutorMaterial.construirMaterial( //
+                        receitaSelecionada.getMateriaisCombinados()[i], //
+                        receitaSelecionada.getQuantidades()[i] //
                 );
             }
-            personagem.getGerenciadorDeInventario().combinarMateriais(materiaisParaConsumir);
+            personagem.getGerenciadorDeInventario().combinarMateriais(materiaisParaConsumir); //
 
             atualizarExibicaoInventario();
             atualizarAtributosGUI();
         });
     }
 
-    // --- FIM: Métodos para Gerenciamento de Inventário ---
 
     public static void main(String[] args) {
         launch(args);
