@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.text.Normalizer;
-// Removido: import java.util.function.Consumer; // Não usado diretamente
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -52,14 +51,14 @@ import jogo.utils.InputOutput;
 import jogo.construtores.ConstrutorItem;
 import jogo.construtores.ConstrutorPersonagem;
 import jogo.construtores.itens.ConstrutorArma;
-import jogo.construtores.itens.ConstrutorMaterial; // Importar ConstrutorMaterial
+import jogo.construtores.itens.ConstrutorMaterial;
 import jogo.enums.ItensEnum;
 import jogo.enums.itens.ArmasEnum;
 import jogo.enums.itens.FerramentasEnum;
-import jogo.enums.itens.MateriaisEnum; // Importar MateriaisEnum
+import jogo.enums.itens.MateriaisEnum;
 import jogo.enums.personagem.PersonagemAtributosEnum;
 import jogo.enums.personagem.PersonagemClassesEnum;
-import jogo.enums.CombinacoesEnum; // Importar CombinacoesEnum
+import jogo.enums.CombinacoesEnum;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
 import jogo.gerenciadores.GerenciadorDeEventos;
 import jogo.sistema.Ambiente;
@@ -68,7 +67,7 @@ import jogo.sistema.Turno;
 import jogo.sistema.eventos.EventoCriatura;
 import jogo.sistema.itens.Item;
 import jogo.sistema.itens.ItemArma;
-import jogo.sistema.itens.ItemMaterial; // Importar ItemMaterial
+import jogo.sistema.itens.ItemMaterial;
 import jogo.sistema.itens.consumiveis.Consumivel;
 
 public class TelaDeEscolha extends Application {
@@ -490,7 +489,6 @@ public class TelaDeEscolha extends Application {
                     if (imagem.isError()) {
                         System.err.println("Erro ao carregar imagem: " + classeExibicaoSelecionada.caminhoImagem +
                                 (imagem.getException() != null ? " - " + imagem.getException().getMessage() : " (Causa desconhecida)"));
-                        // Não lançar RuntimeException aqui, apenas logar e mostrar texto alternativo
                         Label arteTextoAlternativo = new Label("Erro na Imagem\n" + classeExibicaoSelecionada.nomeDisplay);
                         configurarTextoAlternativoImagem(arteTextoAlternativo);
                         arteClassePainel.getChildren().add(arteTextoAlternativo);
@@ -516,7 +514,7 @@ public class TelaDeEscolha extends Application {
             }
         } catch (Exception e) {
             System.err.println("Falha EXCEPCIONAL ao carregar arte da classe '" + classeExibicaoSelecionada.nomeDisplay + "' de '" + classeExibicaoSelecionada.caminhoImagem +"': " + e.getMessage());
-            e.printStackTrace(System.err); // Para mais detalhes no console
+            e.printStackTrace(System.err);
             Label arteTextoAlternativo = new Label("Erro ao carregar Arte\n" + classeExibicaoSelecionada.nomeDisplay);
             configurarTextoAlternativoImagem(arteTextoAlternativo);
             arteClassePainel.getChildren().add(arteTextoAlternativo);
@@ -1046,27 +1044,27 @@ public class TelaDeEscolha extends Application {
             this.botaoAcaoPrincipal.setText("Explorar");
             this.botaoAcaoPrincipal.setOnAction(e -> {
                 try {
-                    logEvento("[DEBUG] Botão Explorar - Ação Iniciada.");
+                    // Removido o log de DEBUG inicial para um Diário mais limpo
+                    // logEvento("Botão Explorar - Ação Iniciada.");
 
                     if (this.jogoFinalizado) {
-                        logEvento("[DEBUG] Explorar Ação: Jogo finalizado. Retornando.");
+                        // logEvento("Explorar Ação: Jogo finalizado. Retornando."); // O botão já deve estar desabilitado
                         return;
                     }
                     if (this.personagem == null) {
-                        logEvento("[DEBUG] Explorar Ação: Personagem é nulo. Retornando.");
+                        logEvento("ERRO: Personagem não definido. Não é possível explorar.");
                         return;
                     }
                     if (this.ambienteAtual == null) {
-                        logEvento("[DEBUG] Explorar Ação: Ambiente Atual é nulo! Retornando.");
+                        logEvento("ERRO: Ambiente atual não definido. Não é possível explorar.");
                         this.botaoAcaoPrincipal.setDisable(true);
                         return;
                     }
                     if (this.gerenciadorDeEventos == null) {
-                        logEvento("[DEBUG] Explorar Ação: Gerenciador de Eventos é nulo. Retornando.");
+                        logEvento("ERRO: Gerenciador de eventos não definido. Não é possível explorar.");
                         return;
                     }
 
-                    logEvento("[DEBUG] Explorar Ação: Verificando energia...");
                     int custoEnergiaExplorar = this.ambienteAtual.getDificuldadeDeExploracao();
                     int energiaAtual = this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA);
 
@@ -1076,19 +1074,14 @@ public class TelaDeEscolha extends Application {
                         return;
                     }
 
-                    logEvento("[DEBUG] Explorar Ação: Energia OK. Deduzindo custo " + custoEnergiaExplorar + ".");
+                    // O log da mudança de atributo já acontece via InputOutput global
                     this.personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -custoEnergiaExplorar);
-
                     logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "...");
-
-                    logEvento("[DEBUG] Explorar Ação: Adicionando evento aleatório...");
                     this.gerenciadorDeEventos.adicionarEventoAleatorio();
-                    logEvento("[DEBUG] Explorar Ação: Evento aleatório processado. Chamando aplicarEfeitosDeFimDeTurno...");
                     aplicarEfeitosDeFimDeTurno(true);
-                    // logEvento("[DEBUG] Explorar Ação: aplicarEfeitosDeFimDeTurno concluído.");
 
                 } catch (Exception ex) {
-                    logEvento("ERRO CRÍTICO NA AÇÃO DO BOTÃO EXPLORAR: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+                    logEvento("Ocorreu um erro inesperado durante a ação de explorar: " + ex.getClass().getSimpleName());
                     System.err.println("--- DETALHES DO ERRO EM 'Explorar OnAction' ---");
                     ex.printStackTrace(System.err);
                 }
@@ -1697,8 +1690,6 @@ public class TelaDeEscolha extends Application {
         if (stage != null) stage.getIcons().clear();
 
         ListView<CombinacoesEnum> listViewReceitas = new ListView<>(receitasDisponiveis);
-        // Dentro de abrirDialogoCombinarMateriais_RecipeBook() em TelaDeEscolha.java
-// ...
         listViewReceitas.setCellFactory(lv -> new ListCell<CombinacoesEnum>() {
             @Override
             protected void updateItem(CombinacoesEnum receita, boolean empty) {
@@ -1716,8 +1707,8 @@ public class TelaDeEscolha extends Application {
                     else if (itemResultanteEnum instanceof MateriaisEnum) nomeItemResultante = ((MateriaisEnum)itemResultanteEnum).getNome();
                     else nomeItemResultante = capitalizeString(itemResultanteEnum.name().toLowerCase().replace("_", " "));
 
+
                     sb.append("Criar: ").append(capitalizeString(nomeItemResultante.toLowerCase()));
-                    // CORREÇÃO AQUI: Usar getQuantidade() em vez de getQuantidadeItemResultante()
                     sb.append(" (x").append(receita.getQuantidade()).append(")\n");
                     sb.append("   Requer: ");
                     for (int i = 0; i < receita.getMateriaisCombinados().length; i++) {
@@ -1731,14 +1722,19 @@ public class TelaDeEscolha extends Application {
                     setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_PEQUENA_ESCOLHA));
 
                     boolean podeCriar = true;
-                    for (int i = 0; i < receita.getMateriaisCombinados().length; i++) {
-                        MateriaisEnum matEnum = receita.getMateriaisCombinados()[i];
-                        int qtdNecessaria = receita.getQuantidades()[i];
-                        if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) {
-                            podeCriar = false;
-                            break;
+                    if (personagem != null && personagem.getInventario() != null) { // Adicionado null check
+                        for (int i = 0; i < receita.getMateriaisCombinados().length; i++) {
+                            MateriaisEnum matEnum = receita.getMateriaisCombinados()[i];
+                            int qtdNecessaria = receita.getQuantidades()[i];
+                            if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) {
+                                podeCriar = false;
+                                break;
+                            }
                         }
+                    } else {
+                        podeCriar = false; // Não pode criar se personagem ou inventário for nulo
                     }
+
                     if (!podeCriar) {
                         setTextFill(Color.DARKRED);
                     } else {
@@ -1747,7 +1743,6 @@ public class TelaDeEscolha extends Application {
                 }
             }
         });
-// ...
 
         dialog.getDialogPane().setContent(listViewReceitas);
 
@@ -1762,13 +1757,17 @@ public class TelaDeEscolha extends Application {
                 criarButtonNode.setDisable(true);
             } else {
                 boolean podeCriar = true;
-                for (int i = 0; i < newVal.getMateriaisCombinados().length; i++) {
-                    MateriaisEnum matEnum = newVal.getMateriaisCombinados()[i];
-                    int qtdNecessaria = newVal.getQuantidades()[i];
-                    if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) {
-                        podeCriar = false;
-                        break;
+                if (personagem != null && personagem.getInventario() != null) { // Adicionado null check
+                    for (int i = 0; i < newVal.getMateriaisCombinados().length; i++) {
+                        MateriaisEnum matEnum = newVal.getMateriaisCombinados()[i];
+                        int qtdNecessaria = newVal.getQuantidades()[i];
+                        if (personagem.getInventario().getQuantidadeTotalDeMaterial(matEnum) < qtdNecessaria) {
+                            podeCriar = false;
+                            break;
+                        }
                     }
+                } else {
+                    podeCriar = false;
                 }
                 criarButtonNode.setDisable(!podeCriar);
             }
@@ -1793,13 +1792,7 @@ public class TelaDeEscolha extends Application {
             personagem.getGerenciadorDeInventario().combinarMateriais(materiaisParaConsumir);
 
             atualizarExibicaoInventario();
-            atualizarAtributosGUI(); // Se a combinação afetar atributos (improvável, mas por segurança)
-
-            // Forçar a reavaliação da lista de receitas no diálogo (se fosse reabrir ou permanecer)
-            // Como o diálogo fecha, na próxima vez que abrir, a verificação será refeita.
-            // Se o diálogo precisasse ficar aberto e atualizar, seria necessário:
-            // listViewReceitas.refresh();
-            // E forçar a reavaliação do botão "Criar" para o item atualmente selecionado (se houver).
+            atualizarAtributosGUI();
         });
     }
 
