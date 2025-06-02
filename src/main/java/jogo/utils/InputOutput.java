@@ -19,12 +19,19 @@ public class InputOutput {
         globalLogger = logger;
     }
 
-
     public void print(String mensagem) {
         if (globalLogger != null) {
             globalLogger.accept(mensagem);
         } else {
             System.out.println("\n" + mensagem);
+        }
+    }
+
+    public void print(String messagem, boolean pausarTela) {
+        print(messagem);
+
+        if(pausarTela) {
+            getInput("Aperte qualquer tecla para continuar...");
         }
     }
 
