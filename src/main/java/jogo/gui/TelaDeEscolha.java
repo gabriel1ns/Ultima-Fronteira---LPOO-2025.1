@@ -67,11 +67,15 @@ import jogo.sistema.Turno;
 import jogo.sistema.eventos.EventoCriatura;
 import jogo.sistema.itens.Item;
 import jogo.sistema.itens.ItemArma;
+import jogo.sistema.itens.ItemFerramenta; // Importação necessária para instanceof em GerenciadorDeInventario
 import jogo.sistema.itens.ItemMaterial;
 import jogo.sistema.itens.consumiveis.Consumivel;
+import jogo.sistema.itens.consumiveis.ConsumivelAlimento; // Importação necessária para instanceof em GerenciadorDeInventario
+
 
 public class TelaDeEscolha extends Application {
 
+    // ... (Constantes e outras variáveis de classe permanecem as mesmas) ...
     private static final String FAMILIA_FONTE_MEDIEVAL = "Georgia";
     private static final String COR_TEXTO_MARROM_ESCURO = "#4A3B31";
     private static final String FUNDO_PERGAMINHO = "#F5EACE";
@@ -192,6 +196,7 @@ public class TelaDeEscolha extends Application {
 
     private int turnoAtual = 0;
     private boolean jogoFinalizado = false;
+    private boolean modoInfinitoAtivo = false; // <<<< NOVA VARIÁVEL
 
     private void logMensagemDoJogo(String mensagem) {
         logEvento(mensagem);
@@ -238,6 +243,7 @@ public class TelaDeEscolha extends Application {
         this.palcoPrincipal.show();
     }
 
+    // ... (outros métodos como slugify, inicializarClassesParaExibicao, capitalizeString, etc., permanecem os mesmos)
     private String slugify(String text) {
         if (text == null) return "";
         String nfdNormalizedString = Normalizer.normalize(text, Normalizer.Form.NFD);
@@ -572,6 +578,7 @@ public class TelaDeEscolha extends Application {
         this.palcoPrincipal.setTitle("Ultima Fronteira - O Jogo");
         this.jogoFinalizado = false;
         this.turnoAtual = 0;
+        this.modoInfinitoAtivo = false; // <<<< INICIALIZAÇÃO DA NOVA VARIÁVEL
 
 
         this.gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
@@ -586,6 +593,7 @@ public class TelaDeEscolha extends Application {
                 personagem
         );
 
+        // ... (resto do método configurarTelaPrincipalJogo permanece o mesmo) ...
         BorderPane painelRaizJogo = new BorderPane();
         painelRaizJogo.setPadding(new Insets(VALOR_PADDING_JOGO));
         painelRaizJogo.setStyle("-fx-background-color: " + FUNDO_PERGAMINHO + ";");
@@ -649,6 +657,7 @@ public class TelaDeEscolha extends Application {
         atualizarExibicaoInventario();
         aplicarEfeitosDeFimDeTurno(false);
     }
+    // ... (atualizarRotuloAmbiente, atualizarAtributosGUI, criarSecaoAtributosJogo, etc. permanecem os mesmos)
 
     private void atualizarRotuloAmbiente() {
         if (this.rotuloNomeAmbienteAtual != null && this.ambienteAtual != null) {
@@ -1019,7 +1028,7 @@ public class TelaDeEscolha extends Application {
         botaoAcaoPrincipal.setDisable(false);
         botaoMudarAmbiente.setDisable(false);
         botaoDescansar.setDisable(false);
-        botaoUsarHabilidadeEspecial.setDisable(false);
+        // botaoUsarHabilidadeEspecial será habilitado/desabilitado abaixo
 
         EventoCriatura criaturaAtiva = this.gerenciadorDeEventos.buscarEventoCriaturaAtivo();
         boolean emCombate = (criaturaAtiva != null);
@@ -1039,47 +1048,25 @@ public class TelaDeEscolha extends Application {
                 this.gerenciadorDeEventos.fugirDeEventoCriatura(criaturaAtiva);
                 aplicarEfeitosDeFimDeTurno(true);
             });
-            this.botaoUsarHabilidadeEspecial.setDisable(true);
+            this.botaoUsarHabilidadeEspecial.setDisable(true); // Não pode usar habilidade em combate
         } else {
             this.botaoAcaoPrincipal.setText("Explorar");
             this.botaoAcaoPrincipal.setOnAction(e -> {
                 try {
-                    // Removido o log de DEBUG inicial para um Diário mais limpo
-                    // logEvento("Botão Explorar - Ação Iniciada.");
-
-                    if (this.jogoFinalizado) {
-                        // logEvento("Explorar Ação: Jogo finalizado. Retornando."); // O botão já deve estar desabilitado
-                        return;
-                    }
-                    if (this.personagem == null) {
-                        logEvento("ERRO: Personagem não definido. Não é possível explorar.");
-                        return;
-                    }
-                    if (this.ambienteAtual == null) {
-                        logEvento("ERRO: Ambiente atual não definido. Não é possível explorar.");
-                        this.botaoAcaoPrincipal.setDisable(true);
-                        return;
-                    }
-                    if (this.gerenciadorDeEventos == null) {
-                        logEvento("ERRO: Gerenciador de eventos não definido. Não é possível explorar.");
-                        return;
-                    }
+                    if (this.jogoFinalizado) return;
+                    if (this.personagem == null) { logEvento("ERRO: Personagem não definido."); return; }
+                    if (this.ambienteAtual == null) { logEvento("ERRO: Ambiente atual não definido."); this.botaoAcaoPrincipal.setDisable(true); return; }
+                    if (this.gerenciadorDeEventos == null) { logEvento("ERRO: Gerenciador de eventos não definido."); return; }
 
                     int custoEnergiaExplorar = this.ambienteAtual.getDificuldadeDeExploracao();
-                    int energiaAtual = this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA);
-
-                    if (energiaAtual < custoEnergiaExplorar) {
-                        logEvento(this.personagem.getNome() + " está cansado demais para explorar! (Requer " +
-                                custoEnergiaExplorar + " energia, possui " + energiaAtual + ")");
+                    if (this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaExplorar) {
+                        logEvento(this.personagem.getNome() + " está cansado demais para explorar! (Requer " + custoEnergiaExplorar + " energia)");
                         return;
                     }
-
-                    // O log da mudança de atributo já acontece via InputOutput global
                     this.personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -custoEnergiaExplorar);
                     logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "...");
                     this.gerenciadorDeEventos.adicionarEventoAleatorio();
                     aplicarEfeitosDeFimDeTurno(true);
-
                 } catch (Exception ex) {
                     logEvento("Ocorreu um erro inesperado durante a ação de explorar: " + ex.getClass().getSimpleName());
                     System.err.println("--- DETALHES DO ERRO EM 'Explorar OnAction' ---");
@@ -1087,19 +1074,8 @@ public class TelaDeEscolha extends Application {
                 }
             });
 
-            boolean desabilitarExplorar = false;
-            if (this.ambienteAtual == null) {
-                desabilitarExplorar = true;
-            } else if (this.personagem != null) {
-                int custoEnergiaExplorar = this.ambienteAtual.getDificuldadeDeExploracao();
-                if (personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaExplorar) {
-                    desabilitarExplorar = true;
-                }
-            } else {
-                desabilitarExplorar = true;
-            }
+            boolean desabilitarExplorar = (this.ambienteAtual == null || (this.personagem != null && this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < this.ambienteAtual.getDificuldadeDeExploracao()) || this.personagem == null);
             this.botaoAcaoPrincipal.setDisable(desabilitarExplorar);
-
 
             int custoEnergiaMudarAmbiente = (this.ambienteAtual != null ? (5 * this.ambienteAtual.getDificuldadeDeExploracao()) : 15);
             this.botaoMudarAmbiente.setDisable(this.personagem == null || this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaMudarAmbiente );
@@ -1122,15 +1098,18 @@ public class TelaDeEscolha extends Application {
         }
     }
 
-
     private void aplicarEfeitosDeFimDeTurno(boolean acaoDoJogador) {
-        if (jogoFinalizado && acaoDoJogador) return;
+        if (jogoFinalizado && acaoDoJogador && turnoAtual > 0) {
+            atualizarAtributosGUI();
+            atualizarExibicaoInventario();
+            atualizarInterfaceAcoes();
+            return;
+        }
 
         if (acaoDoJogador || turnoAtual == 0) {
             turnoAtual++;
         }
         logEvento("--- Processando Turno " + turnoAtual + " ---");
-
 
         if (this.gerenciadorDeEventos != null) {
             this.gerenciadorDeEventos.executarEventos();
@@ -1148,38 +1127,36 @@ public class TelaDeEscolha extends Application {
                     logEvento("Habilidade especial está pronta para ser usada novamente!");
                 }
             }
+            if (personagem.getAtributo(PersonagemAtributosEnum.FOME) <= 0) {
+                logEvento(personagem.getNome() + " está faminto e perde saúde!");
+                personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -5);
+            }
+            if (personagem.getAtributo(PersonagemAtributosEnum.SEDE) <= 0) {
+                logEvento(personagem.getNome() + " está desidratado e perde saúde!");
+                personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -2);
+            }
         }
+
         if(personagem != null) atualizarAtributosGUI();
 
         if (personagem != null && !jogoFinalizado) {
             if (personagem.getAtributo(PersonagemAtributosEnum.VIDA) <= 0) {
-                finalizarJogo("Fim de Jogo: " + personagem.getNome() + " Morreu!"); return;
-            }
-            if (personagem.getAtributo(PersonagemAtributosEnum.FOME) <= 0) {
-                personagem.setAtributo(PersonagemAtributosEnum.VIDA, 0);
-                finalizarJogo("Fim de Jogo: " + personagem.getNome() + " Morreu de Fome!"); return;
-            }
-            if (personagem.getAtributo(PersonagemAtributosEnum.SEDE) <= 0) {
-                personagem.setAtributo(PersonagemAtributosEnum.VIDA, 0);
-                finalizarJogo("Fim de Jogo: " + personagem.getNome() + " Morreu de Sede!"); return;
+                finalizarJogo("Fim de Jogo: " + personagem.getNome() + " não sobreviveu."); return;
             }
 
-
-            if (turnoAtual >= Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA) {
+            // Condição de vitória por turnos (só se não estiver em modo infinito)
+            if (!this.modoInfinitoAtivo && turnoAtual >= Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA) {
                 finalizarJogoComOpcaoDeContinuar("Vitória por Sobrevivência!", personagem.getNome() + " sobreviveu " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos!");
                 if(jogoFinalizado) return;
             }
 
+            // Condição de vitória por jangada (só se não estiver em modo infinito, ou se for a primeira vez)
             Item jangadaParaVerificar = ConstrutorItem.construir(FerramentasEnum.JANGADA, 1);
             if (personagem.getInventario().encontrarItem(jangadaParaVerificar) != -1) {
+                // A remoção acontece após a chamada de finalizarJogoComOpcaoDeContinuar
                 finalizarJogoComOpcaoDeContinuar("Vitória por Fuga!", personagem.getNome() + " construiu uma Jangada e escapou!");
-                if(jogoFinalizado) {
-                    personagem.getInventario().removerItem(jangadaParaVerificar, 1);
-                    return;
-                } else {
-                    personagem.getInventario().removerItem(jangadaParaVerificar, 1);
-                    logEvento("Jangada usada para escapar... mas a aventura na ilha continua no modo infinito!");
-                }
+                personagem.getInventario().removerItem(jangadaParaVerificar, 1); // Remove para não acionar de novo
+                if(jogoFinalizado && !modoInfinitoAtivo) return; // Só retorna se o jogo realmente acabou E não ativou modo infinito
             }
 
             if (personagem.getInventario().estaCheio()) {
@@ -1196,7 +1173,6 @@ public class TelaDeEscolha extends Application {
         }
     }
 
-
     private void finalizarJogo(String mensagem) {
         this.jogoFinalizado = true;
         logEvento(mensagem);
@@ -1204,14 +1180,22 @@ public class TelaDeEscolha extends Application {
         atualizarInterfaceAcoes();
     }
 
-    private void finalizarJogoComOpcaoDeContinuar(String titulo, String mensagem) {
-        this.jogoFinalizado = true;
-        logEvento(mensagem);
+    private void finalizarJogoComOpcaoDeContinuar(String tituloVitoria, String mensagemVitoria) {
+        if (this.modoInfinitoAtivo) {
+            logEvento(mensagemVitoria + " - O jogo continua no modo infinito.");
+            this.jogoFinalizado = false; // Garante que o jogo continue
+            atualizarInterfaceAcoes();
+            return;
+        }
+
+        // Se não estiver em modo infinito, mostra o diálogo
+        this.jogoFinalizado = true; // Assume que o jogo vai acabar, a menos que o jogador escolha continuar
+        logEvento(mensagemVitoria);
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.setTitle(titulo);
-        dialog.setHeaderText(mensagem);
+        dialog.setTitle(tituloVitoria);
+        dialog.setHeaderText(mensagemVitoria);
         dialog.setContentText("O que deseja fazer?");
 
         DialogPane dialogPane = dialog.getDialogPane();
@@ -1225,16 +1209,22 @@ public class TelaDeEscolha extends Application {
         ((Button)dialogPane.lookupButton(continuarButton)).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_CORPO_ESCOLHA));
 
         Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isPresent() && result.get() == finalizarButton) {
-            logEvento("Jogo finalizado pelo jogador.");
-        } else {
+
+        if (result.isPresent() && result.get() == continuarButton) {
             this.jogoFinalizado = false;
+            this.modoInfinitoAtivo = true;
             logEvento("Modo infinito ativado! O jogo continua...");
+        } else {
+            // this.jogoFinalizado já está true
+            logEvento("Jogo finalizado pelo jogador após vitória.");
         }
         atualizarInterfaceAcoes();
     }
 
-
+    // ... (mostrarAlerta, abrirDialogoSelecaoArma, definirRestricoesGradeBotoesJogo, criarBotaoMedievalJogo,
+    //      criarContainerEventosJogo, logEvento, atualizarLogUI, e todos os métodos de gerenciamento de inventário
+    //      (abrirDialogoGerenciamentoInventario, abrirDialogoUsarConsumivel, abrirDialogoDescartarItem,
+    //      abrirDialogoCombinarMateriais_RecipeBook) permanecem os mesmos da última versão fornecida)
     private void mostrarAlerta(String titulo, String conteudo) {
         Dialog<Void> alerta = new Dialog<>();
         alerta.initModality(Modality.APPLICATION_MODAL);
@@ -1339,7 +1329,7 @@ public class TelaDeEscolha extends Application {
             int indiceArmaNaListaDeArmas = -1;
             ArrayList<Item> listaDeArmasDoInventario = personagem.getInventario().getItens(ItensEnum.ARMA.getIndice());
             for(int i = 0; i < listaDeArmasDoInventario.size(); i++) {
-                if(listaDeArmasDoInventario.get(i) == armaEscolhida) {
+                if(listaDeArmasDoInventario.get(i) == armaEscolhida) { // Comparação de referência de objeto aqui é importante
                     indiceArmaNaListaDeArmas = i;
                     break;
                 }
@@ -1348,7 +1338,7 @@ public class TelaDeEscolha extends Application {
             if(indiceArmaNaListaDeArmas != -1) {
                 personagem.getGerenciadorDeInventario().usarItemArma(indiceArmaNaListaDeArmas, criaturaAlvo);
             } else {
-                logEvento("ERRO: Arma selecionada ("+ armaEscolhida.getNome() +") não encontrada na lista de armas do inventário para ataque.");
+                logEvento("ERRO: Arma selecionada ("+ armaEscolhida.getNome() +") não encontrada na lista específica de armas do inventário para ataque.");
             }
         } else {
             logEvento("Seleção de arma cancelada.");
@@ -1569,20 +1559,18 @@ public class TelaDeEscolha extends Application {
         Optional<Consumivel> resultado = dialog.showAndWait();
         resultado.ifPresent(consumivelSelecionado -> {
             int indiceConsumivel = -1;
-            ArrayList<Item> listaDeConsumiveis = personagem.getInventario().getItens(ItensEnum.CONSUMIVEL.getIndice());
-            for (int i = 0; i < listaDeConsumiveis.size(); i++) {
-                if (listaDeConsumiveis.get(i) == consumivelSelecionado) {
-                    indiceConsumivel = i;
-                    break;
-                }
-            }
+            // Precisamos do índice na lista específica de consumíveis que foi mostrada ao usuário
+            // A lista consumiveisObservaveis contém as mesmas instâncias que uma sub-lista de personagem.getInventario().getItens(ItensEnum.CONSUMIVEL.getIndice())
+            // Então, encontrar o índice em consumiveisObservaveis é o que precisamos.
+            indiceConsumivel = consumiveisObservaveis.indexOf(consumivelSelecionado);
+
 
             if (indiceConsumivel != -1) {
                 personagem.getGerenciadorDeInventario().usarItemConsumivel(indiceConsumivel);
                 atualizarAtributosGUI();
                 atualizarExibicaoInventario();
             } else {
-                logEvento("Erro ao tentar usar " + consumivelSelecionado.getNome() + ": não encontrado na lista específica.");
+                logEvento("Erro ao tentar usar " + consumivelSelecionado.getNome() + ": consumível não encontrado na lista de seleção.");
             }
         });
     }
@@ -1722,7 +1710,7 @@ public class TelaDeEscolha extends Application {
                     setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_PEQUENA_ESCOLHA));
 
                     boolean podeCriar = true;
-                    if (personagem != null && personagem.getInventario() != null) { // Adicionado null check
+                    if (personagem != null && personagem.getInventario() != null) {
                         for (int i = 0; i < receita.getMateriaisCombinados().length; i++) {
                             MateriaisEnum matEnum = receita.getMateriaisCombinados()[i];
                             int qtdNecessaria = receita.getQuantidades()[i];
@@ -1732,7 +1720,7 @@ public class TelaDeEscolha extends Application {
                             }
                         }
                     } else {
-                        podeCriar = false; // Não pode criar se personagem ou inventário for nulo
+                        podeCriar = false;
                     }
 
                     if (!podeCriar) {
@@ -1757,7 +1745,7 @@ public class TelaDeEscolha extends Application {
                 criarButtonNode.setDisable(true);
             } else {
                 boolean podeCriar = true;
-                if (personagem != null && personagem.getInventario() != null) { // Adicionado null check
+                if (personagem != null && personagem.getInventario() != null) {
                     for (int i = 0; i < newVal.getMateriaisCombinados().length; i++) {
                         MateriaisEnum matEnum = newVal.getMateriaisCombinados()[i];
                         int qtdNecessaria = newVal.getQuantidades()[i];
@@ -1797,7 +1785,6 @@ public class TelaDeEscolha extends Application {
     }
 
     // --- FIM: Métodos para Gerenciamento de Inventário ---
-
 
     public static void main(String[] args) {
         launch(args);

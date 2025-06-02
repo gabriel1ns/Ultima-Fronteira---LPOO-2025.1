@@ -1,3 +1,4 @@
+
 package jogo.gerenciadores;
 
 import java.util.ArrayList;
@@ -27,23 +28,23 @@ public class GerenciadorDeInventario {
     private final Inventario inventario;
 
     public GerenciadorDeInventario(Personagem personagem) {
-        
+
         this.personagem = personagem;
         this.inventario = personagem.getInventario();
-        
-        mapaDeCombinacoes = new HashMap<>();    
+
+        mapaDeCombinacoes = new HashMap<>();
 
         for(CombinacoesEnum combinacao: CombinacoesEnum.values()) {
-        
+
             int combinacaoID = calcularIdDaCombinacao(
-                combinacao.getMateriaisCombinados(), 
-                combinacao.getQuantidades()
+                    combinacao.getMateriaisCombinados(),
+                    combinacao.getQuantidades()
             );
-            
+
             // adiciona todas as combinacoes de materiais existentes no hashmap
             mapaDeCombinacoes.put(
-                combinacaoID, 
-                combinacao.getItemResultanteEnum()
+                    combinacaoID,
+                    combinacao.getItemResultanteEnum()
             );
         }
     }
@@ -54,8 +55,8 @@ public class GerenciadorDeInventario {
         // calcula o número identificador de cada combinação a partir da fórmula
         // somatório_(através dos materiais combinados)[ quantidade_do_material * (QUANTIDADE_MAXIMA(4 no momento)+1) ^ (ID_do_material)
         // em que quantidade_do_material deverá ser menor que QUANTIDADE_MAXIMA e o ID_do_material de todos os materiais são distintos,
-        // assim permitindo que toda combinação de itens gere um inteiro único        
-        for(ItemMaterial material: materiaisCombinados) 
+        // assim permitindo que toda combinação de itens gere um inteiro único
+        for(ItemMaterial material: materiaisCombinados)
             combinacaoID += material.getQuantidade() * IntMath.pow(Item.QUANTIDADE_MAXIMA, material.getID());
 
         return combinacaoID;
@@ -81,7 +82,7 @@ public class GerenciadorDeInventario {
 
         ArrayList<Item> itens = inventario.getItens();
 
-        while(true) { 
+        while(true) {
             int indice = io.decisaoEmIntervalo("Escolha o item para descarte ou digite 0 para parar", itens.toArray(Item[]::new));
 
             if(indice == -1) break;
@@ -124,10 +125,10 @@ public class GerenciadorDeInventario {
 
             if(materiaisEscolhidos.containsKey(material.getNome())) {
                 quantidade = Math.min(
-                    Item.QUANTIDADE_MAXIMA - materiaisEscolhidos.get(material.getNome()).getQuantidade(),
-                    quantidade
+                        Item.QUANTIDADE_MAXIMA - materiaisEscolhidos.get(material.getNome()).getQuantidade(),
+                        quantidade
                 );
-                
+
                 materiaisEscolhidos.get(material.getNome()).mudarQuantidade(quantidade);
             } else {
                 ItemMaterial materialAdicionado = new ItemMaterial(material);
@@ -146,7 +147,7 @@ public class GerenciadorDeInventario {
 
             io.print(materiaisEscolhidosStr);
         }
-        
+
         ItemMaterial[] materiaisEscolhidosArr = materiaisEscolhidos.values().toArray(ItemMaterial[]::new);
 
         combinarMateriais(materiaisEscolhidosArr);
@@ -154,7 +155,7 @@ public class GerenciadorDeInventario {
 
     public void combinarMateriais(ItemMaterial[] materiaisCombinados) {
         int combinacaoID = calcularIdDaCombinacao(materiaisCombinados);
-        
+
         if(mapaDeCombinacoes.get(combinacaoID) == null) {
             io.print("Combinação não existe");
             return;
@@ -162,9 +163,9 @@ public class GerenciadorDeInventario {
 
         Item itemCombinado = ConstrutorItem.construir(mapaDeCombinacoes.get(combinacaoID), 1);
 
-        for(ItemMaterial material: materiaisCombinados) 
+        for(ItemMaterial material: materiaisCombinados)
             inventario.removerItem(material, material.getQuantidade());
-        
+
         inventario.adicionarItem(itemCombinado);
 
         io.print(personagem.getNome() + " construiu " + itemCombinado.getNome());
@@ -184,7 +185,7 @@ public class GerenciadorDeInventario {
         ArrayList<Item> armas = inventario.getItens(ItensEnum.ARMA.getIndice());
 
         int escolha = io.decisaoEmIntervalo("Escolha sua arma", armas.toArray(ItemArma[]::new));
-            
+
         personagem.getGerenciadorDeInventario().usarItemArma(escolha, criatura);
     }
 
@@ -193,10 +194,10 @@ public class GerenciadorDeInventario {
 
         if(criatura.serAtacada(arma, personagem)) {
             io.print(personagem.getNome() + " atacou " + criatura.getNome() + " com " + arma.getNome());
-            usarPerecivel(indice);    
+            usarPerecivel(indice);
         } else {
             io.print(arma.getNome() + " não tem alcance suficiente para " + criatura.getNome());
-        }    
+        }
     }
 
     public void usarItemConsumivel() {
@@ -217,9 +218,9 @@ public class GerenciadorDeInventario {
 
         consumivel.consumir(personagem);
         io.print(personagem.getNome() + " consumiu " + consumivel.getNome());
-        
+
         inventario.removerItem(consumivel, 1);
     }
 
-    
+
 }
