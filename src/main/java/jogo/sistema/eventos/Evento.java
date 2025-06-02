@@ -36,10 +36,9 @@ public abstract class Evento {
         this.duracao = duracao;
     }
 
+
     @Override
     public String toString() {
-        return   "Evento: " + descricao + "\n"; 
+        return "Evento: " + descricao; // Removed trailing "\n"
     }
-
-    
 }
