@@ -27,6 +27,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog; // Para pedir quantidade
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -64,10 +65,9 @@ import jogo.sistema.Turno;
 import jogo.sistema.eventos.EventoCriatura;
 import jogo.sistema.itens.Item;
 import jogo.sistema.itens.ItemArma;
-
+import jogo.sistema.itens.consumiveis.Consumivel; // Import Consumivel
 
 public class TelaDeEscolha extends Application {
-
 
     private static final String FAMILIA_FONTE_MEDIEVAL = "Georgia";
     private static final String COR_TEXTO_MARROM_ESCURO = "#4A3B31";
@@ -202,7 +202,7 @@ public class TelaDeEscolha extends Application {
 
         BorderPane painelRaizEscolha = new BorderPane();
         painelRaizEscolha.setPadding(new Insets(VALOR_PADDING_ESCOLHA));
-        painelRaizEscolha.setStyle("-fx-background-color: " + FUNDO_PERGAMINHO);
+        painelRaizEscolha.setStyle("-fx-background-color: " + FUNDO_PERGAMINHO + ";");
 
         Label tituloTela = new Label("Escolha seu Sobrevivente");
         estilizarRotulo(tituloTela, TAMANHO_FONTE_CABECALHO_ESCOLHA, true, Pos.CENTER, false);
@@ -302,24 +302,24 @@ public class TelaDeEscolha extends Application {
         return capitalizedString.toString().trim();
     }
 
-
     private String obterEstiloPainelPrincipal() {
-        return "-fx-background-color: " + FUNDO_SECAO_PAINEL +
-                " -fx-border-color: " + COR_BORDA_MARROM_SUTIL +
+        return "-fx-background-color: " + FUNDO_SECAO_PAINEL + ";" +
+                " -fx-border-color: " + COR_BORDA_MARROM_SUTIL + ";" +
                 " -fx-border-width: 2px;" +
-                " -fx-padding: " + VALOR_PADDING_ESCOLHA / 1.5 + "px;" +
+                " -fx-padding: " + (VALOR_PADDING_ESCOLHA / 1.5) + "px;" +
                 " -fx-border-radius: 3px;" +
                 " -fx-background-radius: 3px;";
     }
 
     private String obterEstiloPainelInterno() {
-        return "-fx-background-color: " + FUNDO_PAINEL_INTERNO +
-                " -fx-border-color: " + COR_BORDA_MARROM_SUTIL +
+        return "-fx-background-color: " + FUNDO_PAINEL_INTERNO + ";" +
+                " -fx-border-color: " + COR_BORDA_MARROM_SUTIL + ";" +
                 " -fx-border-width: 1px;" +
-                " -fx-padding: " + VALOR_PADDING_ESCOLHA / 2 + "px;" +
+                " -fx-padding: " + (VALOR_PADDING_ESCOLHA / 2) + "px;" +
                 " -fx-border-radius: 2px;" +
                 " -fx-background-radius: 2px;";
     }
+
 
     private VBox criarPainelEsquerdoSelecao() {
         VBox painel = new VBox(VALOR_PADDING_ESCOLHA * 1.2);
@@ -330,7 +330,9 @@ public class TelaDeEscolha extends Application {
         estilizarRotulo(rotuloNomePersonagem, TAMANHO_FONTE_SUB_CABECALHO_ESCOLHA, true, Pos.CENTER_LEFT, false);
         nomePersonagemCampo = new TextField();
         nomePersonagemCampo.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_CORPO_ESCOLHA));
-        nomePersonagemCampo.setStyle("-fx-text-fill: " + COR_TEXTO_MARROM_ESCURO + "; -fx-background-color: " + FUNDO_PAINEL_INTERNO + "; -fx-border-color: " + COR_BORDA_MARROM_SUTIL + ";");
+        nomePersonagemCampo.setStyle("-fx-text-fill: " + COR_TEXTO_MARROM_ESCURO + ";" +
+                " -fx-background-color: " + FUNDO_PAINEL_INTERNO + ";" +
+                " -fx-border-color: " + COR_BORDA_MARROM_SUTIL + ";");
         nomePersonagemCampo.setPromptText("Digite o nome aqui");
 
         Label rotuloEscolhaClasse = new Label("Escolha sua Vocação:");
@@ -419,7 +421,8 @@ public class TelaDeEscolha extends Application {
         arteClassePainel = new StackPane();
         arteClassePainel.setPrefSize(LARGURA_ARTE_CLASSE, ALTURA_ARTE_CLASSE);
         arteClassePainel.setMinSize(LARGURA_ARTE_CLASSE, ALTURA_ARTE_CLASSE);
-        arteClassePainel.setStyle(obterEstiloPainelInterno() + "-fx-alignment: center;");
+        arteClassePainel.setStyle(obterEstiloPainelInterno() + " -fx-alignment: center;");
+
 
         VBox painelAtributos = new VBox(5);
         painelAtributos.setStyle(obterEstiloPainelInterno());
@@ -442,7 +445,9 @@ public class TelaDeEscolha extends Application {
         classeHabilidadeArea.setWrapText(true);
         classeHabilidadeArea.setEditable(false);
         classeHabilidadeArea.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_PEQUENA_ESCOLHA));
-        classeHabilidadeArea.setStyle("-fx-control-inner-background: " + FUNDO_PAINEL_INTERNO + ";" + "-fx-text-fill: " + COR_TEXTO_MARROM_ESCURO + ";" + "-fx-border-color: " + COR_BORDA_MARROM_SUTIL + ";");
+        classeHabilidadeArea.setStyle("-fx-control-inner-background: " + FUNDO_PAINEL_INTERNO + ";" +
+                "-fx-text-fill: " + COR_TEXTO_MARROM_ESCURO + ";" +
+                "-fx-border-color: " + COR_BORDA_MARROM_SUTIL + ";");
         classeHabilidadeArea.setPrefRowCount(4);
         painelHabilidade.getChildren().addAll(tituloHabilidade, classeHabilidadeArea);
 
@@ -529,7 +534,7 @@ public class TelaDeEscolha extends Application {
     private void estilizarRotulo(Label rotulo, int tamanhoFonte, boolean negrito, Pos alinhamento, boolean paraJogoPrincipal) {
         String familiaFonte = FAMILIA_FONTE_MEDIEVAL;
         rotulo.setFont(Font.font(familiaFonte, negrito ? FontWeight.BOLD : FontWeight.NORMAL, tamanhoFonte));
-        rotulo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
+        rotulo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO)); // Assegura que as cores são válidas
         rotulo.setAlignment(alinhamento);
         if (alinhamento == Pos.CENTER || alinhamento == Pos.CENTER_LEFT || alinhamento == Pos.CENTER_RIGHT) {
             rotulo.setMaxWidth(Double.MAX_VALUE);
@@ -576,7 +581,8 @@ public class TelaDeEscolha extends Application {
 
         BorderPane painelRaizJogo = new BorderPane();
         painelRaizJogo.setPadding(new Insets(VALOR_PADDING_JOGO));
-        painelRaizJogo.setStyle("-fx-background-color: " + FUNDO_PERGAMINHO);
+        painelRaizJogo.setStyle("-fx-background-color: " + FUNDO_PERGAMINHO + ";");
+
 
         VBox secaoAtributosJogo = criarSecaoAtributosJogo();
         VBox secaoAmbienteJogo = criarSecaoAmbienteJogo();
@@ -584,9 +590,9 @@ public class TelaDeEscolha extends Application {
         VBox secaoAcoesJogo = criarSecaoAcoesJogo();
         VBox containerEventosJogo = criarContainerEventosJogo();
 
-        String estiloSecaoJogo = "-fx-background-color: " + FUNDO_SECAO_PAINEL +
-                "; -fx-border-color: " + COR_BORDA_MARROM_SUTIL +
-                "; -fx-border-width: 1px;" +
+        String estiloSecaoJogo = "-fx-background-color: " + FUNDO_SECAO_PAINEL + ";" +
+                " -fx-border-color: " + COR_BORDA_MARROM_SUTIL + ";" +
+                " -fx-border-width: 1px;" +
                 " -fx-padding: 10px;" +
                 " -fx-border-radius: 3px;" +
                 " -fx-background-radius: 3px;";
@@ -887,7 +893,6 @@ public class TelaDeEscolha extends Application {
         }
     }
 
-
     private VBox criarSecaoAcoesJogo() {
         VBox caixaAcoes = new VBox(10);
         caixaAcoes.setAlignment(Pos.TOP_LEFT);
@@ -916,7 +921,7 @@ public class TelaDeEscolha extends Application {
             }
             int custoEnergiaMudarAmbiente = (this.ambienteAtual != null ? (5 * this.ambienteAtual.getDificuldadeDeExploracao()) : 15);
             if (this.personagem == null || this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA) < custoEnergiaMudarAmbiente) {
-                logEvento(this.personagem.getNome() + " está cansado demais para viajar! (Requer " + custoEnergiaMudarAmbiente + " energia)");
+                logEvento( (this.personagem != null ? this.personagem.getNome() : "Personagem") + " está cansado demais para viajar! (Requer " + custoEnergiaMudarAmbiente + " energia)");
                 return;
             }
 
@@ -939,7 +944,6 @@ public class TelaDeEscolha extends Application {
             aplicarEfeitosDeFimDeTurno(true);
         });
 
-        // A ação de Descansar é definida aqui e sobrescrita em atualizarInterfaceAcoes se em combate (para Fugir)
         this.botaoDescansar.setOnAction(e -> {
             if (this.jogoFinalizado) return;
             if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
@@ -953,14 +957,13 @@ public class TelaDeEscolha extends Application {
             aplicarEfeitosDeFimDeTurno(true);
         });
 
+        // Ação do botão de Gerenciar Inventário
         botaoGerenciarInventario.setOnAction(e -> {
             if (this.jogoFinalizado) return;
-            logEvento(this.nomePersonagemParaAcoes + " abre o inventário.");
-            if (this.personagem != null && this.personagem.getInventario() != null) {
-                new InputOutput().print(this.personagem.getInventario().toString());
-            }
-            mostrarAlerta("Inventário", "Gestão de inventário gráfico em desenvolvimento. Itens listados no Diário de Bordo.");
+            logEvento(this.nomePersonagemParaAcoes + " acessa o inventário.");
+            abrirDialogoGerenciamentoInventario(); // Chama o novo diálogo
         });
+
 
         this.botaoUsarHabilidadeEspecial.setOnAction(e -> {
             if (this.jogoFinalizado) return;
@@ -969,7 +972,7 @@ public class TelaDeEscolha extends Application {
                 return;
             }
             if (personagem == null || personagem.getHabilidadeEspecialCooldown() > 0) {
-                logEvento(personagem.getNome() + " não pode usar a habilidade especial ainda! Cooldown: " + (personagem != null ? personagem.getHabilidadeEspecialCooldown() : "N/A") + " turnos.");
+                logEvento((personagem != null ? personagem.getNome() : "Personagem") + " não pode usar a habilidade especial ainda! Cooldown: " + (personagem != null ? personagem.getHabilidadeEspecialCooldown() : "N/A") + " turnos.");
                 return;
             }
             personagem.usarHabilidadeEspecial();
@@ -1031,11 +1034,12 @@ public class TelaDeEscolha extends Application {
                 aplicarEfeitosDeFimDeTurno(true);
             });
             this.botaoUsarHabilidadeEspecial.setDisable(true);
-        } else { // Não está em combate
+        } else {
             this.botaoAcaoPrincipal.setText("Explorar");
             this.botaoAcaoPrincipal.setOnAction(e -> {
                 try {
-                    logEvento("Botão Explorar clicado (Início da Ação).");
+                    // Log inicial para confirmar que o clique está sendo processado
+                    logEvento("Botão Explorar - Ação Iniciada.");
 
                     if (this.jogoFinalizado) {
                         logEvento("Explorar Ação: Jogo finalizado. Retornando.");
@@ -1046,7 +1050,9 @@ public class TelaDeEscolha extends Application {
                         return;
                     }
                     if (this.ambienteAtual == null) {
-                        logEvento("Explorar Ação: Ambiente Atual é nulo. Retornando.");
+                        // Este log é crucial. Se ambienteAtual for nulo, a próxima linha falhará.
+                        logEvento("Explorar Ação: Ambiente Atual é nulo! Retornando.");
+                        this.botaoAcaoPrincipal.setDisable(true); // Desabilita para evitar mais cliques
                         return;
                     }
                     if (this.gerenciadorDeEventos == null) {
@@ -1054,6 +1060,7 @@ public class TelaDeEscolha extends Application {
                         return;
                     }
 
+                    logEvento("Explorar Ação: Verificando energia...");
                     int custoEnergiaExplorar = this.ambienteAtual.getDificuldadeDeExploracao();
                     int energiaAtual = this.personagem.getAtributo(PersonagemAtributosEnum.ENERGIA);
 
@@ -1063,16 +1070,16 @@ public class TelaDeEscolha extends Application {
                         return;
                     }
 
-                    logEvento("Explorar Ação: Deduzindo energia " + custoEnergiaExplorar);
+                    logEvento("Explorar Ação: Energia OK. Deduzindo custo " + custoEnergiaExplorar + ".");
                     this.personagem.mudarAtributo(PersonagemAtributosEnum.ENERGIA, -custoEnergiaExplorar);
 
                     logEvento(this.nomePersonagemParaAcoes + " explora " + this.ambienteAtual.getNome() + "...");
 
                     logEvento("Explorar Ação: Adicionando evento aleatório...");
                     this.gerenciadorDeEventos.adicionarEventoAleatorio();
-                    logEvento("Explorar Ação: Chamando aplicarEfeitosDeFimDeTurno...");
+                    logEvento("Explorar Ação: Evento aleatório processado. Chamando aplicarEfeitosDeFimDeTurno...");
                     aplicarEfeitosDeFimDeTurno(true);
-                    logEvento("Explorar Ação: aplicarEfeitosDeFimDeTurno concluído.");
+                    // logEvento("Explorar Ação: aplicarEfeitosDeFimDeTurno concluído."); // Opcional
 
                 } catch (Exception ex) {
                     logEvento("ERRO CRÍTICO NA AÇÃO DO BOTÃO EXPLORAR: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
@@ -1140,12 +1147,10 @@ public class TelaDeEscolha extends Application {
                 personagem.setHabilidadeEspecialCooldown(personagem.getHabilidadeEspecialCooldown() - 1);
                 if (personagem.getHabilidadeEspecialCooldown() == 0) {
                     logEvento("Habilidade especial está pronta para ser usada novamente!");
-                } else {
-                    // logEvento("Cooldown da habilidade especial: " + personagem.getHabilidadeEspecialCooldown() + " turnos.");
                 }
             }
         }
-        atualizarAtributosGUI();
+        if(personagem != null) atualizarAtributosGUI();
 
         if (personagem != null && !jogoFinalizado) {
             if (personagem.getAtributo(PersonagemAtributosEnum.VIDA) <= 0) {
@@ -1458,6 +1463,223 @@ public class TelaDeEscolha extends Application {
             }
         }
     }
+
+
+    // --- INÍCIO: Métodos para Gerenciamento de Inventário ---
+    private void abrirDialogoGerenciamentoInventario() {
+        if (personagem == null) {
+            logEvento("Personagem não disponível para gerenciar inventário.");
+            return;
+        }
+
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Gerenciar Inventário");
+        dialog.setHeaderText("O que " + personagem.getNome() + " irá fazer?");
+        dialog.getDialogPane().setStyle(obterEstiloPainelInterno());
+        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().clear(); // Ou adicione um ícone se desejar
+
+
+        ButtonType usarConsumivelButtonType = new ButtonType("Usar Consumível");
+        ButtonType descartarItensButtonType = new ButtonType("Descartar Itens");
+        ButtonType combinarMateriaisButtonType = new ButtonType("Combinar Materiais");
+        ButtonType sairButtonType = new ButtonType("Sair", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        dialog.getDialogPane().getButtonTypes().addAll(usarConsumivelButtonType, descartarItensButtonType, combinarMateriaisButtonType, sairButtonType);
+
+        // Estilizar botões do diálogo
+        for(ButtonType bt : dialog.getDialogPane().getButtonTypes()){
+            Button b = (Button) dialog.getDialogPane().lookupButton(bt);
+            if (b != null) {
+                b.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
+            }
+        }
+
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == usarConsumivelButtonType) return "USAR";
+            if (dialogButton == descartarItensButtonType) return "DESCARTAR";
+            if (dialogButton == combinarMateriaisButtonType) return "COMBINAR";
+            return null; // Sair ou fechar
+        });
+
+        Optional<String> resultado = dialog.showAndWait();
+        resultado.ifPresent(acao -> {
+            switch (acao) {
+                case "USAR":
+                    abrirDialogoUsarConsumivel();
+                    break;
+                case "DESCARTAR":
+                    abrirDialogoDescartarItem();
+                    break;
+                case "COMBINAR":
+                    // Por ora, apenas uma mensagem. A implementação completa é complexa.
+                    mostrarAlerta("Combinar Materiais", "Interface gráfica para combinação de materiais em desenvolvimento.");
+                    logEvento("Tentativa de combinar materiais (GUI em desenvolvimento).");
+                    break;
+            }
+        });
+    }
+
+    private void abrirDialogoUsarConsumivel() {
+        ArrayList<Item> consumiveisDoInventario = personagem.getInventario().getItens(ItensEnum.CONSUMIVEL.getIndice());
+        ObservableList<Consumivel> consumiveisObservaveis = FXCollections.observableArrayList();
+        for (Item item : consumiveisDoInventario) {
+            if (item instanceof Consumivel) {
+                consumiveisObservaveis.add((Consumivel) item);
+            }
+        }
+
+        if (consumiveisObservaveis.isEmpty()) {
+            mostrarAlerta("Usar Consumível", "Nenhum item consumível no inventário.");
+            logEvento("Nenhum consumível para usar.");
+            return;
+        }
+
+        Dialog<Consumivel> dialog = new Dialog<>();
+        dialog.setTitle("Usar Consumível");
+        dialog.setHeaderText("Escolha um item para consumir:");
+        dialog.getDialogPane().setStyle(obterEstiloPainelInterno());
+        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().clear();
+
+
+        ListView<Consumivel> listView = new ListView<>(consumiveisObservaveis);
+        listView.setCellFactory(lv -> new ListCell<Consumivel>() {
+            @Override
+            protected void updateItem(Consumivel item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getNome() + " (x" + item.getQuantidade() + ")");
+                if (item != null) setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_PEQUENA_ESCOLHA));
+            }
+        });
+
+        dialog.getDialogPane().setContent(listView);
+        ButtonType usarButtonType = new ButtonType("Usar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(usarButtonType, ButtonType.CANCEL);
+
+        Node usarButtonNode = dialog.getDialogPane().lookupButton(usarButtonType);
+        usarButtonNode.setDisable(true); // Desabilita até um item ser selecionado
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> usarButtonNode.setDisable(newVal == null));
+
+        // Estilizar botões do diálogo
+        for(ButtonType bt : dialog.getDialogPane().getButtonTypes()){
+            Button b = (Button) dialog.getDialogPane().lookupButton(bt);
+            if (b != null) b.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
+        }
+
+
+        dialog.setResultConverter(dialogButton -> dialogButton == usarButtonType ? listView.getSelectionModel().getSelectedItem() : null);
+
+        Optional<Consumivel> resultado = dialog.showAndWait();
+        resultado.ifPresent(consumivelSelecionado -> {
+            // Encontrar o índice do consumível na lista específica de consumíveis do inventário
+            int indiceConsumivel = -1;
+            ArrayList<Item> listaDeConsumiveis = personagem.getInventario().getItens(ItensEnum.CONSUMIVEL.getIndice());
+            for (int i = 0; i < listaDeConsumiveis.size(); i++) {
+                if (listaDeConsumiveis.get(i) == consumivelSelecionado) { // Comparação de instância
+                    indiceConsumivel = i;
+                    break;
+                }
+            }
+
+            if (indiceConsumivel != -1) {
+                personagem.getGerenciadorDeInventario().usarItemConsumivel(indiceConsumivel);
+                // GerenciadorDeInventario.usarItemConsumivel já loga e remove do inventário
+                atualizarAtributosGUI();
+                atualizarExibicaoInventario();
+                logEvento(personagem.getNome() + " usou " + consumivelSelecionado.getNome() + ".");
+            } else {
+                logEvento("Erro ao tentar usar " + consumivelSelecionado.getNome() + ": não encontrado na lista específica.");
+            }
+        });
+    }
+
+    private void abrirDialogoDescartarItem() {
+        List<Item> todosOsItens = new ArrayList<>(personagem.getInventario().getItens()); // Copia para evitar ConcurrentModificationException se a lista for alterada
+        if (todosOsItens.isEmpty()) {
+            mostrarAlerta("Descartar Item", "Inventário vazio. Nada para descartar.");
+            logEvento("Inventário vazio, nada para descartar.");
+            return;
+        }
+
+        ObservableList<Item> itensObservaveis = FXCollections.observableArrayList(todosOsItens);
+
+        Dialog<Item> dialog = new Dialog<>();
+        dialog.setTitle("Descartar Item");
+        dialog.setHeaderText("Escolha um item para descartar:");
+        dialog.getDialogPane().setStyle(obterEstiloPainelInterno());
+        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().clear();
+
+
+        ListView<Item> listView = new ListView<>(itensObservaveis);
+        listView.setCellFactory(lv -> new ListCell<Item>() {
+            @Override
+            protected void updateItem(Item item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getNome() + " (x" + item.getQuantidade() + ")");
+                if (item != null) setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, TAMANHO_FONTE_PEQUENA_ESCOLHA));
+            }
+        });
+        dialog.getDialogPane().setContent(listView);
+
+        ButtonType descartarButtonType = new ButtonType("Descartar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(descartarButtonType, ButtonType.CANCEL);
+
+        Node descartarButtonNode = dialog.getDialogPane().lookupButton(descartarButtonType);
+        descartarButtonNode.setDisable(true);
+        listView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> descartarButtonNode.setDisable(newVal == null));
+
+        for(ButtonType bt : dialog.getDialogPane().getButtonTypes()){
+            Button b = (Button) dialog.getDialogPane().lookupButton(bt);
+            if (b != null) b.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
+        }
+
+        dialog.setResultConverter(dialogButton -> dialogButton == descartarButtonType ? listView.getSelectionModel().getSelectedItem() : null);
+
+        Optional<Item> resultadoItem = dialog.showAndWait();
+        resultadoItem.ifPresent(itemSelecionado -> {
+            TextInputDialog qtdDialog = new TextInputDialog("1");
+            qtdDialog.setTitle("Quantidade para Descartar");
+            qtdDialog.setHeaderText("Descartar " + itemSelecionado.getNome());
+            qtdDialog.setContentText("Quantidade (máx " + itemSelecionado.getQuantidade() + "):");
+            ((Stage) qtdDialog.getDialogPane().getScene().getWindow()).getIcons().clear();
+            ((Button) qtdDialog.getDialogPane().lookupButton(ButtonType.OK)).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
+            ((Button) qtdDialog.getDialogPane().lookupButton(ButtonType.CANCEL)).setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, TAMANHO_FONTE_CORPO_ESCOLHA));
+
+
+            Optional<String> resultadoQtd = qtdDialog.showAndWait();
+            resultadoQtd.ifPresent(s -> {
+                try {
+                    int quantidade = Integer.parseInt(s);
+                    if (quantidade > 0 && quantidade <= itemSelecionado.getQuantidade()) {
+                        // Encontrar o índice do item na lista principal do inventário
+                        int indiceItemPrincipal = -1;
+                        List<Item> inventarioAtual = personagem.getInventario().getItens();
+                        for(int i=0; i < inventarioAtual.size(); i++){
+                            if(inventarioAtual.get(i) == itemSelecionado){ // Comparação de instância
+                                indiceItemPrincipal = i;
+                                break;
+                            }
+                        }
+                        if(indiceItemPrincipal != -1){
+                            personagem.getInventario().removerItem(indiceItemPrincipal, quantidade);
+                            logEvento(personagem.getNome() + " descartou " + quantidade + " de " + itemSelecionado.getNome() + ".");
+                            atualizarExibicaoInventario();
+                        } else {
+                            logEvento("Erro ao descartar: item não encontrado no inventário principal.");
+                        }
+                    } else {
+                        mostrarAlerta("Quantidade Inválida", "Por favor, insira um número válido entre 1 e " + itemSelecionado.getQuantidade() + ".");
+                        logEvento("Tentativa de descarte com quantidade inválida.");
+                    }
+                } catch (NumberFormatException ex) {
+                    mostrarAlerta("Entrada Inválida", "Por favor, insira um número para a quantidade.");
+                    logEvento("Tentativa de descarte com entrada não numérica.");
+                }
+            });
+        });
+    }
+
+    // --- FIM: Métodos para Gerenciamento de Inventário ---
 
 
     public static void main(String[] args) {
