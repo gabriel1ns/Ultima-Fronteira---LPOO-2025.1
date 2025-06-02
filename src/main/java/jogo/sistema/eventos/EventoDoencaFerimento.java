@@ -3,14 +3,13 @@ package jogo.sistema.eventos;
 import jogo.construtores.itens.consumiveis.ConstrutorRemedio;
 import jogo.enums.itens.consumiveis.RemediosEnum;
 import jogo.enums.personagem.PersonagemAtributosEnum;
-// import jogo.sistema.Inventario; // Not directly used
 import jogo.sistema.Personagem;
 import jogo.sistema.itens.Item;
 import jogo.sistema.itens.consumiveis.ConsumivelRemedio;
-import jogo.utils.InputOutput; // Make sure this is imported
+import jogo.utils.InputOutput; 
 
 public class EventoDoencaFerimento extends Evento {
-    private final InputOutput io = new InputOutput(); // Uses the global logger if set
+    private final InputOutput io = new InputOutput(); 
 
     private final int efeitoNegativo;
     private final RemediosEnum remedioParaCura;
@@ -32,8 +31,7 @@ public class EventoDoencaFerimento extends Evento {
 
         if (indiceNaListaPrincipal != -1) {
             Item itemEncontrado = personagem.getInventario().getItens().get(indiceNaListaPrincipal);
-            if (itemEncontrado instanceof ConsumivelRemedio) {
-                ConsumivelRemedio remedio = (ConsumivelRemedio) itemEncontrado;
+            if (itemEncontrado instanceof ConsumivelRemedio remedio) {
 
                 io.print("[EVENTO " + getNome() + "] Remédio '" + remedio.getNome() + "' encontrado. Usando automaticamente.");
 
@@ -70,11 +68,8 @@ public class EventoDoencaFerimento extends Evento {
 
     @Override
     public String toString() {
-        // This is printed by GerenciadorDeEventos using its own io instance,
-        // so it will also use the global logger.
-        // Ensure no trailing newline if the logger method adds one.
-        return  super.toString() + // From Evento.java: "Evento: " + descricao
+        return  super.toString() + 
                 "\nDuração: " + super.getDuracao() + " turno" + (super.getDuracao() > 1? "s" : "") +
-                "\nPode se curar com: " + remedioParaCura.getNOME(); // No trailing \n
+                "\nPode se curar com: " + remedioParaCura.getNOME(); 
     }
 }

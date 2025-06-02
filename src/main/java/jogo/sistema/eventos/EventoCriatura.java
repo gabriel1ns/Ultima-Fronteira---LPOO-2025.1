@@ -28,10 +28,6 @@ public class EventoCriatura extends Evento {
         personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -1*dano);
     }
 
-    private void adicionarEspolios(Personagem personagem) {
-        // TODO
-    }
-
     public boolean serAtacada(ItemArma arma, Personagem personagem) {
 
         if(arma.getAlcance() < getDistancia())
@@ -43,7 +39,6 @@ public class EventoCriatura extends Evento {
             io.print(personagem.getNome() + " derrotou " + super.getNome());
 
             super.setDuracao(0);
-            adicionarEspolios(personagem);
         }
 
         return true;

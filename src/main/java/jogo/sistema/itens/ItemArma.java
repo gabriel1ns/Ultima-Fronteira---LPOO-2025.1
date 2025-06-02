@@ -7,8 +7,6 @@ public class ItemArma extends Item implements IItemPerecivel {
     private final int alcance;
     private int durabilidade;
     
-    // TODO adicionar sistema de municao
-
     public ItemArma(String nome, int peso, int durabilidade, int dano, int alcance, int quantidade) {
         super(nome, TIPO, peso, quantidade);
 
