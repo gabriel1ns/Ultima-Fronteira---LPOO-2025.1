@@ -55,13 +55,20 @@ public class EventoDescoberta extends Evento {
 
     }
 
+
     @Override
     public String toString() {
         String itens = "";
         for(Item item : this.itensDescobertos)
             itens += item.getNome() + ", ";
 
+
+        if (itens.endsWith(", ")) {
+            itens = itens.substring(0, itens.length() - 2);
+        }
+
         return  super.toString() +
-                "Recursos encontrados: " + itens + "\n";
+                "\nRecursos encontrados: " + itens;
     }
+
 }

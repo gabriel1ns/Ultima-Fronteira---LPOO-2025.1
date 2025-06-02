@@ -25,10 +25,12 @@ public class EventoClimatico extends Evento {
         super.decrementarDuracao();
     }
 
+
     @Override
     public String toString() {
-        return  super.toString() + 
-                "Duração: " + super.getDuracao() + " turno" + (super.getDuracao() > 1? "s" : "") + "\n";
+        return  super.toString() +
+                "\nDuração: " + super.getDuracao() + " turno" + (super.getDuracao() > 1? "s" : ""); // Removed trailing "\n"
     }
+
 
 }

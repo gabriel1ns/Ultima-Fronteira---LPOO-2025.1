@@ -9,7 +9,7 @@ import jogo.sistema.Personagem;
 import jogo.sistema.eventos.Evento;
 import jogo.sistema.eventos.EventoClimatico;
 import jogo.sistema.eventos.EventoCriatura;
-import jogo.utils.InputOutput;
+import jogo.utils.InputOutput; // This InputOutput instance will print to console
 
 
 public class GerenciadorDeEventos {
@@ -20,7 +20,7 @@ public class GerenciadorDeEventos {
 
     private ArrayList<Evento> eventosAtivos;
 
-    private final InputOutput io = new InputOutput();
+    private final InputOutput io = new InputOutput(); // Logs from this instance go to console
 
     public GerenciadorDeEventos(Ambiente ambiente, Personagem personagem) {
         this.ambiente = ambiente;
@@ -43,22 +43,25 @@ public class GerenciadorDeEventos {
         }
 
         Random seletorDeEvento = new Random();
-        int indiceAleatorio = seletorDeEvento.nextInt(bolhaDeEventos.size());   
-        
+        if (bolhaDeEventos.isEmpty()) {
+            // io.print("Nenhum evento possível para este ambiente no momento."); // To console
+            return;
+        }
+        int indiceAleatorio = seletorDeEvento.nextInt(bolhaDeEventos.size());
+
         try {
             Evento evento = ConstrutorEvento.construir(bolhaDeEventos.get(indiceAleatorio));
             eventosAtivos.add(evento);
+            // io.print("Novo evento adicionado: " + evento.getNome()); // To console
 
         } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Erro ao construir evento: " + e.getMessage());
         }
-
-        
     }
 
     public boolean executarEventos() {
         ArrayList<Evento> eventosParaRemocao = new ArrayList<>();
-        
+
         if(eventosAtivos.isEmpty())
             return false;
 
@@ -69,30 +72,37 @@ public class GerenciadorDeEventos {
                 eventosParaRemocao.add(evento);
                 continue;
             }
+            // This io.print will go to console, not the GUI log area.
+            // The GUI's logEvento in TelaDeEscolha should ideally be used.
+            io.print(evento.toString()); // Describes the event to the console.
 
-            io.print(evento.toString());
-            io.getInput();
+            // REMOVED: io.getInput(); // This was blocking the GUI thread.
 
-            evento.executar(personagem);
+            evento.executar(personagem); // Personagem actions within will log to console via Personagem's io.
         }
 
-        for(Evento evento: eventosParaRemocao)
+        for(Evento evento: eventosParaRemocao) {
+            // io.print("Evento finalizado e removido: " + evento.getNome()); // To console
             eventosAtivos.remove(evento);
+        }
 
         return true;
     }
 
     public void fugirDeEventoCriatura(EventoCriatura criatura) {
-        int chanceDeSucesso = 7;
+        int chanceDeSucesso = 7; // 70% chance
 
         Random random = new Random();
-        boolean resultado = random.nextInt(10) <= chanceDeSucesso;
-        
-        if(resultado)
-            eventosAtivos.remove(criatura);
+        boolean resultado = random.nextInt(10) < chanceDeSucesso; // 0-6 is success (7 numbers)
 
-        io.print(personagem.getNome() + (resultado? "" : " não") + " fugiu de " + criatura.getNome());
-        io.getInput();
+        if(resultado) {
+            io.print(personagem.getNome() + " conseguiu fugir de " + criatura.getNome() + "!"); // To console
+            eventosAtivos.remove(criatura);
+        } else {
+            io.print(personagem.getNome() + " não conseguiu fugir de " + criatura.getNome() + "."); // To console
+            // Creature might attack if escape fails, typically handled in the next phase or creature's turn.
+        }
+        // REMOVED: io.getInput(); // Not needed for GUI
     }
 
     public EventoCriatura buscarEventoCriaturaAtivo() {
@@ -107,12 +117,14 @@ public class GerenciadorDeEventos {
     }
 
     public void setAmbiente(Ambiente ambiente) {
-        
+
         // settando duração em 0 pra não remover os eventos enquanto itero pela coleção,
         // deixando o executarEventos cuidar disso
         for(Evento evento: eventosAtivos) {
-            if(evento instanceof EventoClimatico eventoClimatico)
+            if(evento instanceof EventoClimatico eventoClimatico) {
+                // io.print("Evento climático " + eventoClimatico.getNome() + " encerrado devido à mudança de ambiente."); // To console
                 eventoClimatico.setDuracao(0);
+            }
         }
 
         this.ambiente = ambiente;
@@ -129,5 +141,4 @@ public class GerenciadorDeEventos {
     public void setEventosAtivos(ArrayList<Evento> eventosAtivos) {
         this.eventosAtivos = eventosAtivos;
     }
-
-} 
+}

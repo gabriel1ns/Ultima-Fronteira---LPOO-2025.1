@@ -1,19 +1,33 @@
 package jogo.utils;
 
 import java.util.Scanner;
+import java.util.function.Consumer; // Import Consumer
 
 public class InputOutput {
-    // TODO migrar I/O do console pra GUI
+    // TODO migrar I/O do console pra GUI (print part is being addressed)
 
     private final Scanner scanner;
+    private static Consumer<String> globalLogger = null;
 
     public InputOutput() {
+
         scanner = new Scanner(System.in);
     }
 
-    public void print(String mensagem) {
-        System.out.println("\n" + mensagem);
+
+    public static void setGlobalLogger(Consumer<String> logger) {
+        globalLogger = logger;
     }
+
+
+    public void print(String mensagem) {
+        if (globalLogger != null) {
+            globalLogger.accept(mensagem);
+        } else {
+            System.out.println("\n" + mensagem);
+        }
+    }
+
 
     public String getInput() {
         return scanner.nextLine();
@@ -26,28 +40,29 @@ public class InputOutput {
 
     public int decisaoEmIntervalo(String mensagem, Object[] opcoes) {
         print(mensagem);
-        
+
         int indice = -1;
+
 
         do {
             for(int i = 0; i < opcoes.length; i++)
                 print(i+1 + ". " + opcoes[i].toString());
 
             print("Escolha: ");
-    
+
             try {
-                // parseInt joga NumberFormatException
                 indice = Integer.parseInt(getInput());
 
-                if(indice < 0 || indice > opcoes.length) 
+                if(indice <= 0 || indice > opcoes.length)
                     throw new NumberFormatException();
-                
+
             } catch(NumberFormatException e) {
                 print("Escolha inválida!");
+                indice = -1;
             }
 
-        } while(indice < 0 || indice > opcoes.length);
-    
+        } while(indice <= 0 || indice > opcoes.length);
+
         print("");
 
         return indice-1;
