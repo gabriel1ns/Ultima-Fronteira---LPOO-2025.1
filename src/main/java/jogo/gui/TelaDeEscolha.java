@@ -1137,6 +1137,8 @@ public class TelaDeEscolha extends Application {
             }
         }
 
+        // Atualiza atributos no GUI APÓS os efeitos passivos e de eventos,
+        // mas ANTES da checagem de morte, para que a morte seja refletida se ocorrer.
         if(personagem != null) atualizarAtributosGUI();
 
         if (personagem != null && !jogoFinalizado) {
@@ -1159,15 +1161,42 @@ public class TelaDeEscolha extends Application {
                 if(jogoFinalizado && !modoInfinitoAtivo) return; // Só retorna se o jogo realmente acabou E não ativou modo infinito
             }
 
-            if (personagem.getInventario().estaCheio()) {
+            // --- START: MODIFICATION FOR FORCED DISCARD ---
+            while (personagem.getInventario().estaCheio()) { //
                 int diff = personagem.getInventario().getQuantidadeItens() - personagem.getInventario().getCapacidadeMaxima();
-                logEvento("AVISO: Inventário cheio! Excesso de " + diff + (diff == 1 ? " item." : " itens.") + " Será necessário descartar.");
+                String itemOuItens = (diff == 1 ? " item" : " itens");
+                logEvento("!!! INVENTÁRIO CHEIO !!!");
+                logEvento(personagem.getNome() + " precisa descartar " + diff + itemOuItens + " para continuar.");
+
+                // Show a modal alert to make it very clear to the user what they need to do.
+                mostrarAlerta("Inventário Lotado – Ação Necessária",
+                        "Seu inventário excedeu a capacidade em " + diff + itemOuItens + ".\n" +
+                                "Você DEVE descartar itens para prosseguir com o jogo.");
+
+                abrirDialogoDescartarItem(); // This method handles the actual discard UI and logic
+
+                // The abrirDialogoDescartarItem method itself calls atualizarExibicaoInventario
+                // if a discard happens. We also need to update attributes.
+                atualizarAtributosGUI();
+                // atualizarExibicaoInventario(); // Called within abrirDialogoDescartarItem if discard occurs,
+                // but calling again here ensures UI consistency if player cancels discard.
+                // Let's make sure it's called after the dialog regardless.
+
+                if (!personagem.getInventario().estaCheio()) {
+                    logEvento("Inventário não está mais superlotado. O turno pode ser finalizado.");
+                } else {
+                    // If still full, the loop continues, and they will be prompted again.
+                    logEvento("Inventário AINDA está superlotado. É necessário descartar mais.");
+                }
             }
+            // --- END: MODIFICATION FOR FORCED DISCARD ---
         }
 
-        atualizarExibicaoInventario();
-        atualizarAtributosGUI();
-        atualizarInterfaceAcoes();
+        // Final UI updates for the turn before awaiting next player action
+        atualizarExibicaoInventario(); // Ensure it's definitely up-to-date
+        atualizarAtributosGUI();      // Ensure attributes are final for the turn
+        atualizarInterfaceAcoes();    // Update available actions based on new state
+
         if (!jogoFinalizado) {
             logEvento("--- Aguardando sua próxima ação ---");
         }
