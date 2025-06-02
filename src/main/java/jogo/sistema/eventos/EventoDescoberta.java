@@ -44,7 +44,7 @@ public class EventoDescoberta extends Evento {
                 return;
             }
 
-            personagem.getGerenciadorDeInventario().usarPerecivel(indice);
+            personagem.getGerenciadorDeInventario().usarPerecivel(itemNecessario);
             io.print(personagem.getNome() + " utilizou " + item.getNome());
         }
 

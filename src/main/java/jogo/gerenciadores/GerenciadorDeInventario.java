@@ -171,13 +171,12 @@ public class GerenciadorDeInventario {
 
     }
 
-    public void usarPerecivel(int indice) {
-        IItemPerecivel perecivel = (IItemPerecivel) inventario.getItens().get(indice);
+    public void usarPerecivel(IItemPerecivel perecivel) {
 
         perecivel.decrementarDurabilidade();
 
         if(perecivel.estaPerecido())
-            inventario.removerItem(indice, 1);
+            inventario.removerItem(inventario.encontrarItem((Item) perecivel), 1);
     }
 
     public void usarItemArma(EventoCriatura criatura) {
@@ -193,7 +192,7 @@ public class GerenciadorDeInventario {
 
         if(criatura.serAtacada(arma, personagem)) {
             io.print(personagem.getNome() + " atacou " + criatura.getNome() + " com " + arma.getNome());
-            usarPerecivel(indice);    
+            usarPerecivel(arma);    
         } else {
             io.print(arma.getNome() + " não tem alcance suficiente para " + criatura.getNome());
         }    

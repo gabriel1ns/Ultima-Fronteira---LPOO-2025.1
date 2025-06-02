@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>22.0.1</javafx.version>
         <javafx.main.class>jogo.gui.Launcher</javafx.main.class>
-        <jdk.executable.path>C:\Users\Pichau\.jdks\openjdk-23.0.2\bin\java.exe</jdk.executable.path>
+        <jdk.executable.path>/home/agil/dev/jvm/jdk-23_linux-x64_bin/jdk-23.0.2/bin/java</jdk.executable.path>
     </properties>
 
     <repositories>
