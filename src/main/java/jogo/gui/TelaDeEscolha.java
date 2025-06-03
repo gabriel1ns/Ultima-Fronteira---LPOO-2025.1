@@ -130,6 +130,9 @@ public class TelaDeEscolha extends Application {
     private static final int TAMANHO_FONTE_BOTAO_INICIO_CUSTOM = 24;
 
 
+    private static final String BASE_PATH_IMAGENS_AMBIENTE = "/res/imgAmbientes/";
+
+
     private ProgressBar barraVida;
     private ProgressBar barraFome;
     private ProgressBar barraSede;
@@ -814,13 +817,45 @@ public class TelaDeEscolha extends Application {
     }
 
     private void atualizarRotuloAmbiente() {
-        if (this.rotuloNomeAmbienteAtual != null && this.ambienteAtual != null) {
-            this.rotuloNomeAmbienteAtual.setText(" Ambiente Atual: " + this.ambienteAtual.getNome());
-        } else if (this.rotuloNomeAmbienteAtual != null) {
-            this.rotuloNomeAmbienteAtual.setText(" Ambiente Atual: Desconhecido");
+        String nomeAmbienteParaExibir = "Desconhecido";
+        String nomeArquivoImagem = null;
+
+        if (this.ambienteAtual != null) {
+            nomeAmbienteParaExibir = this.ambienteAtual.getNome();
+
+            String nomeBase = capitalizePrimeLetterOnly(this.ambienteAtual.getNome().replaceAll("/", "_"));
+            nomeArquivoImagem = BASE_PATH_IMAGENS_AMBIENTE + nomeBase + ".png";
         }
+
+        if (this.rotuloNomeAmbienteAtual != null) {
+            this.rotuloNomeAmbienteAtual.setText(" Ambiente Atual: " + nomeAmbienteParaExibir);
+        }
+
         if (this.visualizadorImagemAmbiente != null) {
-            this.visualizadorImagemAmbiente.setImage(null);
+            if (nomeArquivoImagem != null) {
+                try {
+                    InputStream streamImagem = getClass().getResourceAsStream(nomeArquivoImagem);
+                    if (streamImagem != null) {
+                        Image imagemAmbiente = new Image(streamImagem);
+                        if (imagemAmbiente.isError()) {
+                            System.err.println("Erro ao carregar imagem do ambiente: " + nomeArquivoImagem +
+                                    (imagemAmbiente.getException() != null ? " - " + imagemAmbiente.getException().getMessage() : " (Causa desconhecida)"));
+                            this.visualizadorImagemAmbiente.setImage(null);
+                        } else {
+                            this.visualizadorImagemAmbiente.setImage(imagemAmbiente);
+                        }
+                    } else {
+                        System.err.println("Recurso de imagem do ambiente não encontrado (stream nulo): " + nomeArquivoImagem);
+                        this.visualizadorImagemAmbiente.setImage(null);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Falha EXCEPCIONAL ao carregar imagem do ambiente '" + nomeAmbienteParaExibir + "' de '" + nomeArquivoImagem + "': " + e.getMessage());
+                    e.printStackTrace(System.err);
+                    this.visualizadorImagemAmbiente.setImage(null);
+                }
+            } else {
+                this.visualizadorImagemAmbiente.setImage(null);
+            }
         }
     }
 
@@ -939,8 +974,9 @@ public class TelaDeEscolha extends Application {
         painelExibicaoAmbiente.setMinSize(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO, TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO);
 
         this.visualizadorImagemAmbiente = new ImageView();
-        this.visualizadorImagemAmbiente.setFitHeight(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO * 1.5);
-        this.visualizadorImagemAmbiente.setFitWidth(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO * 2.0);
+
+        this.visualizadorImagemAmbiente.fitWidthProperty().bind(painelExibicaoAmbiente.widthProperty());
+        this.visualizadorImagemAmbiente.fitHeightProperty().bind(painelExibicaoAmbiente.heightProperty());
         this.visualizadorImagemAmbiente.setPreserveRatio(true);
         this.visualizadorImagemAmbiente.setSmooth(true);
 
@@ -948,23 +984,31 @@ public class TelaDeEscolha extends Application {
         textoAlternativo.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.NORMAL, 18));
         textoAlternativo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
 
+
         this.visualizadorImagemAmbiente.imageProperty().addListener((obs, oldImg, newImg) -> {
             boolean hasText = painelExibicaoAmbiente.getChildren().contains(textoAlternativo);
             boolean hasImage = painelExibicaoAmbiente.getChildren().contains(this.visualizadorImagemAmbiente);
 
             if (newImg == null) {
-                if (!hasText) painelExibicaoAmbiente.getChildren().add(textoAlternativo);
                 if (hasImage) painelExibicaoAmbiente.getChildren().remove(this.visualizadorImagemAmbiente);
+                if (!hasText) painelExibicaoAmbiente.getChildren().add(textoAlternativo);
             } else {
                 if (hasText) painelExibicaoAmbiente.getChildren().remove(textoAlternativo);
                 if (!hasImage) painelExibicaoAmbiente.getChildren().add(this.visualizadorImagemAmbiente);
             }
         });
-        painelExibicaoAmbiente.getChildren().add(textoAlternativo);
+
+
+        if (this.visualizadorImagemAmbiente.getImage() == null) {
+            painelExibicaoAmbiente.getChildren().add(textoAlternativo);
+        } else {
+            painelExibicaoAmbiente.getChildren().add(this.visualizadorImagemAmbiente);
+        }
 
         containerAmbiente.getChildren().addAll(this.rotuloNomeAmbienteAtual, painelExibicaoAmbiente);
         return containerAmbiente;
     }
+
 
     private VBox criarSecaoInventarioJogo() {
         VBox containerInventario = new VBox(10);
