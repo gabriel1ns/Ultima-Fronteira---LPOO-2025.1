@@ -124,6 +124,7 @@ public class TelaDeEscolha extends Application {
 
 
     private static final String FONT_PATH_START_SCREEN = "/res/PressStart2P-Regular.ttf";
+    private static final String BACKGROUND_IMAGE_PATH = "/res/ImagemBGInicial.png";
 
 
     private static final int TAMANHO_FONTE_TITULO_INICIO_CUSTOM = 36;
@@ -224,26 +225,20 @@ public class TelaDeEscolha extends Application {
 
     private void mostrarTelaDeInicio(Stage stage) {
         stage.setTitle("Ultima Fronteira");
-
         StackPane rootInicio = new StackPane();
 
-
         try {
-
-            InputStream backgroundStream = getClass().getResourceAsStream("/res/ImagemBGInicial.png");
+            InputStream backgroundStream = getClass().getResourceAsStream(BACKGROUND_IMAGE_PATH);
             if (backgroundStream != null) {
                 Image backgroundImage = new Image(backgroundStream);
                 ImageView backgroundImageView = new ImageView(backgroundImage);
                 backgroundImageView.setPreserveRatio(false);
                 backgroundImageView.setSmooth(true);
-
-
                 backgroundImageView.fitWidthProperty().bind(rootInicio.widthProperty());
                 backgroundImageView.fitHeightProperty().bind(rootInicio.heightProperty());
-
                 rootInicio.getChildren().add(backgroundImageView);
             } else {
-                System.err.println("Error: Could not find background image: /res/PressStart2P-Regular.ttf");
+                System.err.println("Error: Could not find background image: " + BACKGROUND_IMAGE_PATH);
                 rootInicio.setStyle("-fx-background-color: #2c3e50;");
             }
         } catch (Exception e) {
@@ -251,7 +246,6 @@ public class TelaDeEscolha extends Application {
             e.printStackTrace();
             rootInicio.setStyle("-fx-background-color: #2c3e50;");
         }
-
 
         Font titleCustomFont = null;
         try {
@@ -272,7 +266,6 @@ public class TelaDeEscolha extends Application {
         tituloJogo.setFont(titleCustomFont);
         tituloJogo.setFill(Color.WHITE);
 
-
         DropShadow dropShadow = new DropShadow();
         dropShadow.setColor(Color.BLACK);
         dropShadow.setRadius(5);
@@ -280,17 +273,13 @@ public class TelaDeEscolha extends Application {
         dropShadow.setOffsetY(3);
         tituloJogo.setEffect(dropShadow);
 
-
         StartScreenMenuItem botaoJogar = new StartScreenMenuItem("JOGAR", () -> mostrarTelaDeSelecaoPersonagem(stage));
-
         VBox layoutVertical = new VBox(60);
         layoutVertical.getChildren().addAll(tituloJogo, botaoJogar);
         layoutVertical.setAlignment(Pos.CENTER);
 
-
         rootInicio.getChildren().add(layoutVertical);
         StackPane.setAlignment(layoutVertical, Pos.CENTER);
-
 
         Scene cenaInicio = new Scene(rootInicio, LARGURA_JANELA_ESCOLHA, ALTURA_JANELA_ESCOLHA);
         stage.setScene(cenaInicio);
@@ -298,6 +287,77 @@ public class TelaDeEscolha extends Application {
         stage.show();
     }
 
+
+    private void mostrarTelaComunitariaFimDeJogo(Stage stage, String tituloTexto) {
+        stage.setTitle("Ultima Fronteira - Fim de Jogo");
+        StackPane rootPane = new StackPane();
+
+        try {
+            InputStream backgroundStream = getClass().getResourceAsStream(BACKGROUND_IMAGE_PATH);
+            if (backgroundStream != null) {
+                Image backgroundImage = new Image(backgroundStream);
+                ImageView backgroundImageView = new ImageView(backgroundImage);
+                backgroundImageView.setPreserveRatio(false);
+                backgroundImageView.setSmooth(true);
+                backgroundImageView.fitWidthProperty().bind(rootPane.widthProperty());
+                backgroundImageView.fitHeightProperty().bind(rootPane.heightProperty());
+                rootPane.getChildren().add(backgroundImageView);
+            } else {
+                System.err.println("Error: Could not find background image for end screen: " + BACKGROUND_IMAGE_PATH);
+                rootPane.setStyle("-fx-background-color: #2c3e50;");
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading background image for end screen: " + e.getMessage());
+            e.printStackTrace();
+            rootPane.setStyle("-fx-background-color: #2c3e50;");
+        }
+
+        Font titleCustomFont = null;
+        try {
+            URL fontUrl = getClass().getResource(FONT_PATH_START_SCREEN);
+            if (fontUrl != null) {
+                titleCustomFont = Font.loadFont(fontUrl.toExternalForm(), TAMANHO_FONTE_TITULO_INICIO_CUSTOM);
+            } else {
+                System.err.println("Error: Could not find font resource for end screen title: " + FONT_PATH_START_SCREEN);
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading end screen title font: " + e.getMessage());
+        }
+        if (titleCustomFont == null) {
+            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM);
+        }
+
+        Text tituloTela = new Text(tituloTexto);
+        tituloTela.setFont(titleCustomFont);
+        tituloTela.setFill(Color.WHITE);
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.BLACK);
+        dropShadow.setRadius(5);
+        dropShadow.setOffsetX(3);
+        dropShadow.setOffsetY(3);
+        tituloTela.setEffect(dropShadow);
+
+        StartScreenMenuItem botaoVoltar = new StartScreenMenuItem("VOLTAR", () -> mostrarTelaDeInicio(stage));
+        VBox layoutVertical = new VBox(60);
+        layoutVertical.getChildren().addAll(tituloTela, botaoVoltar);
+        layoutVertical.setAlignment(Pos.CENTER);
+
+        rootPane.getChildren().add(layoutVertical);
+        StackPane.setAlignment(layoutVertical, Pos.CENTER);
+
+        Scene cenaFim = new Scene(rootPane, LARGURA_JANELA_ESCOLHA, ALTURA_JANELA_ESCOLHA);
+        stage.setScene(cenaFim);
+        stage.centerOnScreen();
+    }
+
+    private void mostrarTelaDeVitoria(Stage stage) {
+        mostrarTelaComunitariaFimDeJogo(stage, "VOCÊ VENCEU!");
+    }
+
+    private void mostrarTelaDeDerrota(Stage stage) {
+        mostrarTelaComunitariaFimDeJogo(stage, "VOCÊ MORREU!");
+    }
 
 
     public static class StartScreenMenuItem extends StackPane {
@@ -823,6 +883,7 @@ public class TelaDeEscolha extends Application {
         if (this.ambienteAtual != null) {
             nomeAmbienteParaExibir = this.ambienteAtual.getNome();
 
+
             String nomeBase = capitalizePrimeLetterOnly(this.ambienteAtual.getNome().replaceAll("/", "_"));
             nomeArquivoImagem = BASE_PATH_IMAGENS_AMBIENTE + nomeBase + ".png";
         }
@@ -1000,9 +1061,13 @@ public class TelaDeEscolha extends Application {
 
 
         if (this.visualizadorImagemAmbiente.getImage() == null) {
-            painelExibicaoAmbiente.getChildren().add(textoAlternativo);
+            if (!painelExibicaoAmbiente.getChildren().contains(textoAlternativo)) {
+                painelExibicaoAmbiente.getChildren().add(textoAlternativo);
+            }
         } else {
-            painelExibicaoAmbiente.getChildren().add(this.visualizadorImagemAmbiente);
+            if (!painelExibicaoAmbiente.getChildren().contains(this.visualizadorImagemAmbiente)) {
+                painelExibicaoAmbiente.getChildren().add(this.visualizadorImagemAmbiente);
+            }
         }
 
         containerAmbiente.getChildren().addAll(this.rotuloNomeAmbienteAtual, painelExibicaoAmbiente);
@@ -1211,7 +1276,7 @@ public class TelaDeEscolha extends Application {
     }
 
     private void atualizarInterfaceAcoes() {
-        if (this.jogoFinalizado) {
+        if (this.jogoFinalizado && !this.modoInfinitoAtivo) {
             botaoAcaoPrincipal.setDisable(true);
             botaoMudarAmbiente.setDisable(true);
             botaoDescansar.setDisable(true);
@@ -1234,14 +1299,14 @@ public class TelaDeEscolha extends Application {
             String nomeCriatura = criaturaAtiva.getNome();
             this.botaoAcaoPrincipal.setText("Batalhar " + nomeCriatura);
             this.botaoAcaoPrincipal.setOnAction(e -> {
-                if (this.jogoFinalizado) return;
+                if (this.jogoFinalizado && !this.modoInfinitoAtivo) return;
                 abrirDialogoSelecaoArma(criaturaAtiva);
             });
 
             this.botaoMudarAmbiente.setDisable(true);
             this.botaoDescansar.setText("Tentar Fugir");
             this.botaoDescansar.setOnAction(e -> {
-                if (this.jogoFinalizado) return;
+                if (this.jogoFinalizado && !this.modoInfinitoAtivo) return;
                 this.gerenciadorDeEventos.fugirDeEventoCriatura(criaturaAtiva);
                 aplicarEfeitosDeFimDeTurno(true);
             });
@@ -1250,7 +1315,7 @@ public class TelaDeEscolha extends Application {
             this.botaoAcaoPrincipal.setText("Explorar");
             this.botaoAcaoPrincipal.setOnAction(e -> {
                 try {
-                    if (this.jogoFinalizado) return;
+                    if (this.jogoFinalizado && !this.modoInfinitoAtivo) return;
                     if (this.personagem == null) { logEvento("ERRO: Personagem não definido."); return; }
                     if (this.ambienteAtual == null) { logEvento("ERRO: Ambiente atual não definido."); this.botaoAcaoPrincipal.setDisable(true); return; }
                     if (this.gerenciadorDeEventos == null) { logEvento("ERRO: Gerenciador de eventos não definido."); return; }
@@ -1279,7 +1344,7 @@ public class TelaDeEscolha extends Application {
 
             this.botaoDescansar.setText("Descansar");
             this.botaoDescansar.setOnAction(ev -> {
-                if (this.jogoFinalizado) return;
+                if (this.jogoFinalizado && !this.modoInfinitoAtivo) return;
                 if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
                     logEvento(this.personagem.getNome() + " não pode descansar durante um combate!");
                     return;
@@ -1296,10 +1361,10 @@ public class TelaDeEscolha extends Application {
     }
 
     private void aplicarEfeitosDeFimDeTurno(boolean acaoDoJogador) {
-        if (jogoFinalizado && acaoDoJogador && turnoAtual > 0) {
+        if (jogoFinalizado && !modoInfinitoAtivo && acaoDoJogador && turnoAtual > 0) {
+
             atualizarAtributosGUI();
             atualizarExibicaoInventario();
-            atualizarInterfaceAcoes();
             return;
         }
 
@@ -1312,7 +1377,7 @@ public class TelaDeEscolha extends Application {
             this.gerenciadorDeEventos.executarEventos();
         }
 
-        if (personagem != null && !jogoFinalizado) {
+        if (personagem != null && (!jogoFinalizado || modoInfinitoAtivo) ) {
             if (acaoDoJogador) {
                 personagem.mudarAtributo(PersonagemAtributosEnum.FOME, -5);
                 personagem.mudarAtributo(PersonagemAtributosEnum.SEDE, -2);
@@ -1336,14 +1401,15 @@ public class TelaDeEscolha extends Application {
 
         if(personagem != null) atualizarAtributosGUI();
 
-        if (personagem != null && !jogoFinalizado) {
+        if (personagem != null && (!jogoFinalizado || modoInfinitoAtivo)) {
             if (personagem.getAtributo(PersonagemAtributosEnum.VIDA) <= 0) {
-                finalizarJogo("Fim de Jogo: " + personagem.getNome() + " não sobreviveu."); return;
+                finalizarJogo("Fim de Jogo: " + personagem.getNome() + " não sobreviveu.");
+                return;
             }
 
             if (!this.modoInfinitoAtivo && turnoAtual >= Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA) {
                 finalizarJogoComOpcaoDeContinuar("Vitória por Sobrevivência!", personagem.getNome() + " sobreviveu " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos!");
-                if(jogoFinalizado) return;
+                if(jogoFinalizado && !modoInfinitoAtivo) return;
             }
 
             Item jangadaParaVerificar = ConstrutorItem.construir(FerramentasEnum.JANGADA, 1);
@@ -1353,26 +1419,29 @@ public class TelaDeEscolha extends Application {
                 if(jogoFinalizado && !modoInfinitoAtivo) return;
             }
 
-            while (personagem.getInventario().estaCheio()) {
-                int diff = personagem.getInventario().getQuantidadeItens() - personagem.getInventario().getCapacidadeMaxima();
-                String itemOuItens = (diff == 1 ? " item" : " itens");
-                logEvento("!!! INVENTÁRIO CHEIO !!!");
-                logEvento(personagem.getNome() + " precisa descartar " + diff + itemOuItens + " para continuar.");
 
-                mostrarAlerta("Inventário Lotado – Ação Necessária",
-                        "Seu inventário excedeu a capacidade em " + diff + itemOuItens + ".\n" +
-                                "Você DEVE descartar itens para prosseguir com o jogo.");
+            if (!jogoFinalizado || modoInfinitoAtivo) {
+                while (personagem.getInventario().estaCheio()) {
+                    int diff = personagem.getInventario().getQuantidadeItens() - personagem.getInventario().getCapacidadeMaxima();
+                    String itemOuItens = (diff == 1 ? " item" : " itens");
+                    logEvento("!!! INVENTÁRIO CHEIO !!!");
+                    logEvento(personagem.getNome() + " precisa descartar " + diff + itemOuItens + " para continuar.");
 
-                abrirDialogoDescartarItem();
+                    mostrarAlerta("Inventário Lotado – Ação Necessária",
+                            "Seu inventário excedeu a capacidade em " + diff + itemOuItens + ".\n" +
+                                    "Você DEVE descartar itens para prosseguir com o jogo.");
 
-                atualizarAtributosGUI();
-                atualizarExibicaoInventario();
+                    abrirDialogoDescartarItem();
 
+                    atualizarAtributosGUI();
+                    atualizarExibicaoInventario();
 
-                if (!personagem.getInventario().estaCheio()) {
-                    logEvento("Inventário não está mais superlotado. O turno pode ser finalizado.");
-                } else {
-                    logEvento("Inventário AINDA está superlotado. É necessário descartar mais.");
+                    if (!personagem.getInventario().estaCheio()) {
+                        logEvento("Inventário não está mais superlotado. O turno pode ser finalizado.");
+                    } else {
+                        logEvento("Inventário AINDA está superlotado. É necessário descartar mais.");
+
+                    }
                 }
             }
         }
@@ -1380,7 +1449,8 @@ public class TelaDeEscolha extends Application {
         atualizarExibicaoInventario();
         atualizarAtributosGUI();
         atualizarInterfaceAcoes();
-        if (!jogoFinalizado) {
+
+        if (!jogoFinalizado || modoInfinitoAtivo) {
             logEvento("--- Aguardando sua próxima ação ---");
         }
     }
@@ -1388,8 +1458,9 @@ public class TelaDeEscolha extends Application {
     private void finalizarJogo(String mensagem) {
         this.jogoFinalizado = true;
         logEvento(mensagem);
-        mostrarAlerta("Jogo Encerrado", mensagem);
-        atualizarInterfaceAcoes();
+
+        mostrarTelaDeDerrota(this.palcoPrincipal);
+
     }
 
     private void finalizarJogoComOpcaoDeContinuar(String tituloVitoria, String mensagemVitoria) {
@@ -1400,7 +1471,7 @@ public class TelaDeEscolha extends Application {
             return;
         }
 
-        this.jogoFinalizado = true;
+
         logEvento(mensagemVitoria);
 
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -1425,10 +1496,13 @@ public class TelaDeEscolha extends Application {
             this.jogoFinalizado = false;
             this.modoInfinitoAtivo = true;
             logEvento("Modo infinito ativado! O jogo continua...");
+            atualizarInterfaceAcoes();
         } else {
+
+            this.jogoFinalizado = true;
             logEvento("Jogo finalizado pelo jogador após vitória.");
+            mostrarTelaDeVitoria(this.palcoPrincipal);
         }
-        atualizarInterfaceAcoes();
     }
 
     private void mostrarAlerta(String titulo, String conteudo) {
