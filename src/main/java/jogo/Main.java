@@ -1,48 +1,82 @@
 package jogo;
-import jogo.ambiente.Ambiente;
+import jogo.construtores.ConstrutorItem;
+import jogo.construtores.ConstrutorPersonagem;
+import jogo.enums.itens.FerramentasEnum;
+import jogo.enums.personagem.PersonagemAtributosEnum;
+import jogo.enums.personagem.PersonagemClassesEnum;
 import jogo.gerenciadores.GerenciadorDeAmbientes;
-import jogo.itens.consumiveis.agua.Agua;
-import jogo.itens.consumiveis.alimentos.AlimentoFruta;
-import jogo.itens.ferramentas.FerramentaPicareta;
-import jogo.itens.materiais.MaterialMadeira;
-import jogo.itens.materiais.MaterialPedra;
-import jogo.personagem.Personagem;
+import jogo.sistema.Ambiente;
+import jogo.sistema.Personagem;
 import jogo.sistema.Turno;
+import jogo.sistema.itens.Item;
 import jogo.utils.InputOutput;
 
 public class Main {
     public static void main(String[] args) {
         InputOutput io = new InputOutput();
 
-        io.print("Bem-vindo ao ÚLTIMA FRONTEIRA!");
+        io.print("Bem-vindo a ÚLTIMA FRONTEIRA!");
+        io.print("Você é um naufragado que agora se encontra numa ilha isolada de tudo e todos");
+        io.print("Você terá " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos para tentar sobreviver, ou construir uma jangada para fugir da ilha. Boa sorte!\n");
 
-        String nomePersonagem = io.getInput("Diga o seu nome");
-        int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", Personagem.CLASSES, Personagem.CLASSES.length);
+        String nomePersonagem = io.getInput("Diga o seu nome (ou deixe em branco para ser 'Aventureiro')");
+        int escolhaClassePersonagem = io.decisaoEmIntervalo("Decida sua classe", PersonagemClassesEnum.values());
 
-        Personagem personagem = Personagem.novoPersonagem(nomePersonagem, escolhaClassePersonagem);
+        PersonagemClassesEnum classePersonagem = PersonagemClassesEnum.SOBREVIVENTE; 
         
-        // DBG - REMOVER OU ALTERAR DEPOIS
-        personagem.getInventario().adicionarItem(new AlimentoFruta());
-        personagem.getInventario().adicionarItem(new Agua(true, 20));
-        personagem.getInventario().adicionarItem(new FerramentaPicareta());
-        personagem.getInventario().adicionarItem(new MaterialPedra(2));
-        personagem.getInventario().adicionarItem(new MaterialMadeira(2));
-        System.out.println("Tome uma colher de chá, receba itens básicos pra começar a sua jornada:");
-        System.out.println(personagem.getInventario());
+        for(PersonagemClassesEnum classe: PersonagemClassesEnum.values()) {
+            if(escolhaClassePersonagem == classe.ordinal()) {
+                classePersonagem = classe;
+                break;
+            }
+        }
+        
+        Personagem personagem = ConstrutorPersonagem.construirPersonagem(nomePersonagem, classePersonagem);
 
         GerenciadorDeAmbientes gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
         Ambiente ambienteInicial = gerenciadorDeAmbientes.sortearAmbiente();
-        //Ambiente ambienteInicial = new AmbienteCaverna();
+        // DBG
+        //ambienteInicial = ConstrutorAmbiente.construir(AmbientesEnum.DBG);
 
         Turno turno = new Turno(personagem, ambienteInicial, gerenciadorDeAmbientes, io);
+
+        Item jangada = ConstrutorItem.construir(FerramentasEnum.JANGADA, 1);
 
         for (int i = 1;;i++) {
             io.print("Turno" + i);
             turno.iniciarTurno();
 
-            if(personagem.getVida() == 0) break;
+            if(personagem.getAtributo(PersonagemAtributosEnum.VIDA) == 0) break;
             io.print("");
-        } // resolver saida do turno quando implementar as outras classes que faltam
+
+            if(i == Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA) {
+                io.print("PARABÉNS!");
+                io.print(personagem.getNome() + "conseguiu sobreviver por " + Turno.QUANTIDADE_DE_TURNOS_PARA_VITORIA + " turnos!");
+
+                int escolha = io.decisaoEmIntervalo("O que deseja fazer?", new String[]{
+                    "Finalizar o jogo",
+                    "Continuar no modo infinito"
+                });
+
+                if(escolha == 0) break;
+            }
+
+
+
+            if(personagem.getInventario().encontrarItem(jangada) != -1) {
+                io.print("PARABÉNS!");
+                io.print(personagem.getNome() + " construiu uma Jangada e conseguiu fugir da ilha!");
+
+                int escolha = io.decisaoEmIntervalo("O que deseja fazer?", new String[]{
+                    "Finalizar o jogo",
+                    "Continuar no modo infinito"
+                });
+
+                if(escolha == 0) break;
+            
+                personagem.getInventario().removerItem(jangada, 1);
+            }
+        }
 
         io.print("Fim do jogo!");
     }
