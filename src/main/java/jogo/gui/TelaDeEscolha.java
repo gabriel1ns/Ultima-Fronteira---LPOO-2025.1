@@ -130,8 +130,9 @@ public class TelaDeEscolha extends Application {
     private static final int TAMANHO_FONTE_TITULO_INICIO_CUSTOM = 36;
     private static final int TAMANHO_FONTE_BOTAO_INICIO_CUSTOM = 24;
 
-
     private static final String BASE_PATH_IMAGENS_AMBIENTE = "/res/imgAmbientes/";
+    private static final String BASE_PATH_IMAGENS_ITEM = "/res/imgItens/"; // NOVO
+    private static final double TAMANHO_IMAGEM_ITEM_INVENTARIO = 45; // NOVO
 
 
     private ProgressBar barraVida;
@@ -239,12 +240,12 @@ public class TelaDeEscolha extends Application {
                 rootInicio.getChildren().add(backgroundImageView);
             } else {
                 System.err.println("Error: Could not find background image: " + BACKGROUND_IMAGE_PATH);
-                rootInicio.setStyle("-fx-background-color: #2c3e50;");
+                rootInicio.setStyle("-fx-background-color: #2c3e50;"); // Fallback color
             }
         } catch (Exception e) {
             System.err.println("Error loading background image: " + e.getMessage());
             e.printStackTrace();
-            rootInicio.setStyle("-fx-background-color: #2c3e50;");
+            rootInicio.setStyle("-fx-background-color: #2c3e50;"); // Fallback color
         }
 
         Font titleCustomFont = null;
@@ -259,7 +260,7 @@ public class TelaDeEscolha extends Application {
             System.err.println("Error loading title font: " + e.getMessage());
         }
         if (titleCustomFont == null) {
-            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM);
+            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM); // Fallback font
         }
 
         Text tituloJogo = new Text("ULTIMA FRONTEIRA");
@@ -304,12 +305,12 @@ public class TelaDeEscolha extends Application {
                 rootPane.getChildren().add(backgroundImageView);
             } else {
                 System.err.println("Error: Could not find background image for end screen: " + BACKGROUND_IMAGE_PATH);
-                rootPane.setStyle("-fx-background-color: #2c3e50;");
+                rootPane.setStyle("-fx-background-color: #2c3e50;"); // Fallback color
             }
         } catch (Exception e) {
             System.err.println("Error loading background image for end screen: " + e.getMessage());
             e.printStackTrace();
-            rootPane.setStyle("-fx-background-color: #2c3e50;");
+            rootPane.setStyle("-fx-background-color: #2c3e50;"); // Fallback color
         }
 
         Font titleCustomFont = null;
@@ -324,7 +325,7 @@ public class TelaDeEscolha extends Application {
             System.err.println("Error loading end screen title font: " + e.getMessage());
         }
         if (titleCustomFont == null) {
-            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM);
+            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM); // Fallback font
         }
 
         Text tituloTela = new Text(tituloTexto);
@@ -882,8 +883,6 @@ public class TelaDeEscolha extends Application {
 
         if (this.ambienteAtual != null) {
             nomeAmbienteParaExibir = this.ambienteAtual.getNome();
-
-
             String nomeBase = capitalizePrimeLetterOnly(this.ambienteAtual.getNome().replaceAll("/", "_"));
             nomeArquivoImagem = BASE_PATH_IMAGENS_AMBIENTE + nomeBase + ".png";
         }
@@ -1035,7 +1034,6 @@ public class TelaDeEscolha extends Application {
         painelExibicaoAmbiente.setMinSize(TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO, TAMANHO_MIN_IMAGEM_AMBIENTE_JOGO);
 
         this.visualizadorImagemAmbiente = new ImageView();
-
         this.visualizadorImagemAmbiente.fitWidthProperty().bind(painelExibicaoAmbiente.widthProperty());
         this.visualizadorImagemAmbiente.fitHeightProperty().bind(painelExibicaoAmbiente.heightProperty());
         this.visualizadorImagemAmbiente.setPreserveRatio(true);
@@ -1044,7 +1042,6 @@ public class TelaDeEscolha extends Application {
         Label textoAlternativo = new Label("\"Visão do Ambiente\"");
         textoAlternativo.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.NORMAL, 18));
         textoAlternativo.setTextFill(Color.web(COR_TEXTO_MARROM_ESCURO));
-
 
         this.visualizadorImagemAmbiente.imageProperty().addListener((obs, oldImg, newImg) -> {
             boolean hasText = painelExibicaoAmbiente.getChildren().contains(textoAlternativo);
@@ -1059,7 +1056,6 @@ public class TelaDeEscolha extends Application {
             }
         });
 
-
         if (this.visualizadorImagemAmbiente.getImage() == null) {
             if (!painelExibicaoAmbiente.getChildren().contains(textoAlternativo)) {
                 painelExibicaoAmbiente.getChildren().add(textoAlternativo);
@@ -1072,6 +1068,14 @@ public class TelaDeEscolha extends Application {
 
         containerAmbiente.getChildren().addAll(this.rotuloNomeAmbienteAtual, painelExibicaoAmbiente);
         return containerAmbiente;
+    }
+
+    // Helper method to generate item image filenames
+    private String getItemImageFilename(String itemName) {
+        if (itemName == null || itemName.isEmpty()) {
+            return "default.png"; // Or some placeholder for unknown items
+        }
+        return itemName.replace(" ", "_") + ".png";
     }
 
 
@@ -1102,18 +1106,14 @@ public class TelaDeEscolha extends Application {
     }
 
     private void atualizarExibicaoInventario() {
-        if (this.gradeInventario == null) {
-            return;
-        }
+        if (this.gradeInventario == null) return;
         if (this.personagem == null || this.personagem.getInventario() == null) {
             this.gradeInventario.getChildren().clear();
             return;
         }
 
         List<Item> itensAtuais = this.personagem.getInventario().getItens();
-
         this.gradeInventario.getChildren().clear();
-
         int capacidadeInventario = this.personagem.getInventario().getCapacidadeMaxima();
         int numLinhas = (int) Math.ceil((double) capacidadeInventario / COLS_INVENTARIO_JOGO);
 
@@ -1122,8 +1122,8 @@ public class TelaDeEscolha extends Application {
             for (int i = 0; i < numLinhas; i++) {
                 RowConstraints restricaoLinha = new RowConstraints();
                 restricaoLinha.setVgrow(Priority.SOMETIMES);
-                restricaoLinha.setMinHeight(50);
-                restricaoLinha.setPrefHeight(60);
+                restricaoLinha.setMinHeight(55); // Adjusted for slightly larger images/text
+                restricaoLinha.setPrefHeight(65);
                 this.gradeInventario.getRowConstraints().add(restricaoLinha);
             }
         }
@@ -1134,6 +1134,7 @@ public class TelaDeEscolha extends Application {
                 this.gradeInventario.getColumnConstraints().add(restricaoColuna);
             }
         }
+
 
         for (int slotIndex = 0; slotIndex < capacidadeInventario; slotIndex++) {
             int linhaIdx = slotIndex / COLS_INVENTARIO_JOGO;
@@ -1149,24 +1150,66 @@ public class TelaDeEscolha extends Application {
             espacoItem.setStroke(Color.web(COR_TEXTO_MARROM_ESCURO));
             espacoItem.setArcWidth(5);
             espacoItem.setArcHeight(5);
-
             espacoItem.widthProperty().bind(celula.widthProperty().subtract(4));
             espacoItem.heightProperty().bind(celula.heightProperty().subtract(4));
-
-            celula.getChildren().add(espacoItem);
+            celula.getChildren().add(espacoItem); // Base layer for the slot
 
             if (slotIndex < itensAtuais.size()) {
                 Item item = itensAtuais.get(slotIndex);
-                String itemText = item.getNome();
-                itemText += " (x" + item.getQuantidade() + ")";
+                String itemImageFilename = getItemImageFilename(item.getNome());
+                Image itemImage = null;
 
-                Label itemLabel = new Label(itemText);
-                itemLabel.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.NORMAL, TAMANHO_FONTE_PEQUENA_ESCOLHA - 2));
-                itemLabel.setTextFill(Color.web(TEXTO_BOTAO_CLARO));
-                itemLabel.setWrapText(true);
-                itemLabel.setTextAlignment(TextAlignment.CENTER);
-                itemLabel.setPadding(new Insets(3));
-                celula.getChildren().add(itemLabel);
+                try {
+                    InputStream imageStream = getClass().getResourceAsStream(BASE_PATH_IMAGENS_ITEM + itemImageFilename);
+                    if (imageStream != null) {
+                        itemImage = new Image(imageStream);
+                        if (itemImage.isError()) {
+                            System.err.println("Erro ao carregar imagem do item: " + BASE_PATH_IMAGENS_ITEM + itemImageFilename + (itemImage.getException() != null ? " - " + itemImage.getException().getMessage() : ""));
+                            itemImage = null;
+                        }
+                    } else {
+                        // Optional: Log if image file is not found (can be verbose)
+                        // System.out.println("Imagem do item não encontrada: " + BASE_PATH_IMAGENS_ITEM + itemImageFilename);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Exceção ao carregar imagem do item " + itemImageFilename + ": " + e.getMessage());
+                    itemImage = null;
+                }
+
+                if (itemImage != null && !itemImage.isError()) {
+                    ImageView itemImageView = new ImageView(itemImage);
+                    itemImageView.setFitHeight(TAMANHO_IMAGEM_ITEM_INVENTARIO);
+                    itemImageView.setFitWidth(TAMANHO_IMAGEM_ITEM_INVENTARIO);
+                    itemImageView.setPreserveRatio(true);
+                    itemImageView.setSmooth(true);
+                    celula.getChildren().add(itemImageView);
+
+                    if (item.getQuantidade() > 0) {
+                        Label quantityLabel = new Label("x" + item.getQuantidade());
+                        quantityLabel.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.BOLD, 11));
+                        quantityLabel.setTextFill(Color.WHITE);
+                        quantityLabel.setStyle("-fx-background-color: rgba(0,0,0,0.65); -fx-padding: 1 3 1 3; -fx-background-radius: 3;");
+                        StackPane.setAlignment(quantityLabel, Pos.BOTTOM_RIGHT);
+                        quantityLabel.setTranslateX(-2);
+                        quantityLabel.setTranslateY(-2);
+                        celula.getChildren().add(quantityLabel);
+                    }
+                } else {
+                    // Fallback: show text if image not found or failed to load
+                    String itemText = item.getNome();
+                    if (item.getQuantidade() > 1) {
+                        itemText += "\n(x" + item.getQuantidade() + ")";
+                    } else {
+                        itemText += "\n(x1)";
+                    }
+                    Label itemLabel = new Label(itemText);
+                    itemLabel.setFont(Font.font(FAMILIA_FONTE_MEDIEVAL, FontWeight.NORMAL, TAMANHO_FONTE_PEQUENA_ESCOLHA - 3));
+                    itemLabel.setTextFill(Color.web(TEXTO_BOTAO_CLARO));
+                    itemLabel.setWrapText(true);
+                    itemLabel.setTextAlignment(TextAlignment.CENTER);
+                    itemLabel.setPadding(new Insets(2));
+                    celula.getChildren().add(itemLabel);
+                }
             }
             this.gradeInventario.add(celula, colIdx, linhaIdx);
         }
@@ -1193,7 +1236,7 @@ public class TelaDeEscolha extends Application {
 
 
         this.botaoMudarAmbiente.setOnAction(e -> {
-            if (this.jogoFinalizado) return;
+            if (this.jogoFinalizado && !this.modoInfinitoAtivo) return;
             if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
                 logEvento(this.personagem.getNome() + " está em combate e não pode mudar de ambiente!");
                 return;
@@ -1224,7 +1267,7 @@ public class TelaDeEscolha extends Application {
         });
 
         this.botaoDescansar.setOnAction(e -> {
-            if (this.jogoFinalizado) return;
+            if (this.jogoFinalizado && !this.modoInfinitoAtivo) return;
             if (this.gerenciadorDeEventos != null && this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
                 logEvento(this.personagem.getNome() + " não pode descansar durante um combate! Use 'Tentar Fugir'.");
                 return;
@@ -1237,14 +1280,14 @@ public class TelaDeEscolha extends Application {
         });
 
         botaoGerenciarInventario.setOnAction(e -> {
-            if (this.jogoFinalizado) return;
+            if (this.jogoFinalizado && !this.modoInfinitoAtivo) return;
             logEvento(this.nomePersonagemParaAcoes + " acessa o inventário.");
             abrirDialogoGerenciamentoInventario();
         });
 
 
         this.botaoUsarHabilidadeEspecial.setOnAction(e -> {
-            if (this.jogoFinalizado) return;
+            if (this.jogoFinalizado && !this.modoInfinitoAtivo) return;
             if (this.gerenciadorDeEventos.buscarEventoCriaturaAtivo() != null) {
                 logEvento(personagem.getNome() + " não pode usar habilidade em combate!");
                 return;
@@ -1362,7 +1405,6 @@ public class TelaDeEscolha extends Application {
 
     private void aplicarEfeitosDeFimDeTurno(boolean acaoDoJogador) {
         if (jogoFinalizado && !modoInfinitoAtivo && acaoDoJogador && turnoAtual > 0) {
-
             atualizarAtributosGUI();
             atualizarExibicaoInventario();
             return;
@@ -1419,7 +1461,6 @@ public class TelaDeEscolha extends Application {
                 if(jogoFinalizado && !modoInfinitoAtivo) return;
             }
 
-
             if (!jogoFinalizado || modoInfinitoAtivo) {
                 while (personagem.getInventario().estaCheio()) {
                     int diff = personagem.getInventario().getQuantidadeItens() - personagem.getInventario().getCapacidadeMaxima();
@@ -1440,7 +1481,6 @@ public class TelaDeEscolha extends Application {
                         logEvento("Inventário não está mais superlotado. O turno pode ser finalizado.");
                     } else {
                         logEvento("Inventário AINDA está superlotado. É necessário descartar mais.");
-
                     }
                 }
             }
@@ -1458,9 +1498,7 @@ public class TelaDeEscolha extends Application {
     private void finalizarJogo(String mensagem) {
         this.jogoFinalizado = true;
         logEvento(mensagem);
-
         mostrarTelaDeDerrota(this.palcoPrincipal);
-
     }
 
     private void finalizarJogoComOpcaoDeContinuar(String tituloVitoria, String mensagemVitoria) {
@@ -1470,7 +1508,6 @@ public class TelaDeEscolha extends Application {
             atualizarInterfaceAcoes();
             return;
         }
-
 
         logEvento(mensagemVitoria);
 
@@ -1498,7 +1535,6 @@ public class TelaDeEscolha extends Application {
             logEvento("Modo infinito ativado! O jogo continua...");
             atualizarInterfaceAcoes();
         } else {
-
             this.jogoFinalizado = true;
             logEvento("Jogo finalizado pelo jogador após vitória.");
             mostrarTelaDeVitoria(this.palcoPrincipal);
