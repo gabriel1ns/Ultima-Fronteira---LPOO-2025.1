@@ -1,0 +1,365 @@
+classDiagram
+direction LR
+    class Main {
+	    +main(String[]) : void
+    }
+    class Personagem {
+	    -nome: String
+	    -classe: String
+	    -habilidadeEspecial: String
+	    -atributos: int[]
+	    -inventario: Inventario
+	    -gerenciadorDeInventario: GerenciadorDeInventario
+	    -habilidadeEspecialCooldown: int
+	    +Personagem(String, String, String, int, int, int, int, int, int, Item[])
+	    +getInventario() : Inventario
+	    +mudarAtributo(PersonagemAtributosEnum, int) : void
+	    +setAtributo(PersonagemAtributosEnum, int) : void
+	    +getAtributo(PersonagemAtributosEnum) : int
+	    -normalizarValorAtributo(PersonagemAtributosEnum, int) : int
+	    +usarHabilidadeEspecial() : void
+	    +getNome() : String
+	    +getGerenciadorDeInventario() : GerenciadorDeInventario
+	    +getClasse() : String
+	    +getHabilidadeEspecialCooldown() : int
+	    +setHabilidadeEspecialCooldown(int) : void
+	    +toString() : String
+    }
+    class Inventario {
+	    -capacidadeMaxima: int
+	    -quantidadeItens: int
+	    -itens: ArrayList[]
+	    +Inventario(int, Item[])
+	    +encontrarItem(Item) : int
+	    +encontrarItem(Item, int, int, boolean) : int
+	    +adicionarItem(Item) : void
+	    +removerItem(int, int) : boolean
+	    +removerItem(Item, int) : boolean
+	    +alterarQuantidadeDeItens(int) : void
+	    +estaCheio() : boolean
+	    +estaVazio() : boolean
+	    +getItens() : ArrayList
+	    +getItens(int) : ArrayList
+	    +getCapacidadeMaxima() : int
+	    +getQuantidadeItens() : int
+	    +setQuantidadeItens(int) : void
+	    +toString() : String
+    }
+    class Item {
+	    +QUANTIDADE_MAXIMA: int
+	    -nome: String
+	    -tipo: String
+	    -peso: int
+	    -quantidade: int
+	    +Item(String, String, int, int)
+	    +mudarQuantidade(int) : void
+	    +getNome() : String
+	    +getTipo() : String
+	    +getPeso() : int
+	    +getQuantidade() : int
+	    +setQuantidade(int) : void
+	    +toString() : String
+    }
+    class IItemPerecivel {
+	    +decrementarDurabilidade() : void
+	    +estaPerecido() : boolean
+    }
+    class ItemArma {
+	    -dano: int
+	    -alcance: int
+	    -durabilidade: int
+	    +ItemArma(String, int, int, int, int, int)
+	    +decrementarDurabilidade() : void
+	    +estaPerecido() : boolean
+	    +getDurabilidade() : int
+	    +setDurabilidade(int) : void
+	    +getDano() : int
+	    +getAlcance() : int
+	    +toString() : String
+    }
+    class ItemFerramenta {
+	    -durabilidade: int
+	    +ItemFerramenta(String, int, int, int)
+	    +decrementarDurabilidade() : void
+	    +estaPerecido() : boolean
+	    +getDurabilidade() : int
+	    +setDurabilidade(int) : void
+	    +toString() : String
+    }
+    class ItemMaterial {
+	    -ID: int
+	    +ItemMaterial(String, int, int, int)
+	    +ItemMaterial(ItemMaterial)
+	    +getID() : int
+    }
+    class Consumivel {
+	    -atributoAfetado: PersonagemAtributosEnum
+	    -efeito: int
+	    +Consumivel(String, int, int, PersonagemAtributosEnum, int)
+	    +getAtributoAfetado() : PersonagemAtributosEnum
+	    +getEfeito() : int
+	    +consumir(Personagem) : void
+    }
+    class ConsumivelAgua {
+	    -pureza: boolean
+	    -volume: int
+	    +ConsumivelAgua(boolean, int)
+	    +consumir(Personagem) : void
+	    +setPureza(boolean) : void
+	    +setVolume(int) : void
+	    +getPureza() : boolean
+	    +getVolume() : int
+	    +toString() : String
+    }
+    class ConsumivelAlimento {
+	    -valorNutricional: int
+	    -prazoDeValidade: int
+	    +ConsumivelAlimento(String, int, int, int, int)
+	    +consumir(Personagem) : void
+	    +estaPerecido() : boolean
+	    +decrementarDurabilidade() : void
+	    +getValorNutricional() : int
+	    +getPrazoDeValidade() : int
+	    +toString() : String
+    }
+    class ConsumivelRemedio {
+	    +ConsumivelRemedio(String, int, int, int)
+	    +toString() : String
+    }
+    class Evento {
+	    -nome: String
+	    -descricao: String
+	    -duracao: int
+	    +Evento(String, String, int)
+	    +executar(Personagem) : void
+	    +decrementarDuracao() : void
+	    +getNome() : String
+	    +getDescricao() : String
+	    +getDuracao() : int
+	    +setDuracao(int) : void
+	    +toString() : String
+    }
+    class EventoClimatico {
+	    -atributosAfetados: PersonagemAtributosEnum[]
+	    -efeitos: int[]
+	    +EventoClimatico(String, String, int, PersonagemAtributosEnum[], int[])
+	    +executar(Personagem) : void
+	    +toString() : String
+    }
+    class EventoCriatura {
+	    -vida: int
+	    -dano: int
+	    -distancia: int
+	    +EventoCriatura(String, String, int, int, int)
+	    +executar(Personagem) : void
+	    +serAtacada(ItemArma, Personagem) : boolean
+	    +setVida(int) : void
+	    +setDano(int) : void
+	    +setDistancia(int) : void
+	    +getVida() : int
+	    +getDano() : int
+	    +getDistancia() : int
+	    +toString() : String
+    }
+    class EventoDescoberta {
+	    -itensDescobertos: Item[]
+	    -itemNecessario: IItemPerecivel
+	    +EventoDescoberta(String, String, Enum[], int[], IItemPerecivel)
+	    +executar(Personagem) : void
+	    +toString() : String
+    }
+    class EventoDoencaFerimento {
+	    -efeitoNegativo: int
+	    -remedioParaCura: RemediosEnum
+	    +EventoDoencaFerimento(String, String, int, int, RemediosEnum)
+	    +executar(Personagem) : void
+	    +getEfeitoNegativo() : int
+	    +getRemedioParaCura() : RemediosEnum
+	    +toString() : String
+    }
+    class Ambiente {
+	    -nome: String
+	    -descricao: String
+	    -eventosPossiveis: Enum[]
+	    -probabilidadeDeEventos: int[]
+	    -dificuldadeDeExploracao: int
+	    +Ambiente(String, String, Enum[], int[], int)
+	    +getNome() : String
+	    +getDescricao() : String
+	    +getDificuldadeDeExploracao() : int
+	    +getEventosPossiveis() : Enum[]
+	    +getProbabilidadeDeEventos() : int[]
+	    +toString() : String
+    }
+    class GerenciadorDeEventos {
+	    -ambiente: Ambiente
+	    -personagem: Personagem
+	    -eventosAtivos: ArrayList
+	    +GerenciadorDeEventos(Ambiente, Personagem)
+	    +adicionarEventoAleatorio() : void
+	    +executarEventos() : boolean
+	    +fugirDeEventoCriatura(EventoCriatura) : void
+	    +buscarEventoCriaturaAtivo() : EventoCriatura
+	    +getAmbiente() : Ambiente
+	    +setAmbiente(Ambiente) : void
+	    +getPersonagem() : Personagem
+	    +getEventosAtivos() : ArrayList
+	    +setEventosAtivos(ArrayList) : void
+    }
+    class GerenciadorDeAmbientes {
+	    -ambientes: List
+	    -indiceAtual: int
+	    +GerenciadorDeAmbientes()
+	    +getAmbientes() : List
+	    +sortearAmbiente() : Ambiente
+    }
+    class GerenciadorDeInventario {
+	    -mapaDeCombinacoes: HashMap~
+	    -personagem: Personagem
+	    -inventario: Inventario
+	    +GerenciadorDeInventario(Personagem)
+	    -calcularIdDaCombinacao(ItemMaterial[]) : int
+	    -calcularIdDaCombinacao(MateriaisEnum[], int[]) : int
+	    +removerItens() : void
+	    +combinarMateriais() : void
+	    +combinarMateriais(ItemMaterial[]) : void
+	    +usarPerecivel(IItemPerecivel) : void
+	    +usarItemArma(EventoCriatura) : void
+	    +usarItemArma(int, EventoCriatura) : void
+	    +usarItemConsumivel() : void
+	    +usarItemConsumivel(int) : void
+	    +decrementarValidadeDosAlimentos() : void
+    }
+    class Turno {
+	    +QUANTIDADE_DE_TURNOS_PARA_VITORIA: int
+	    -personagem: Personagem
+	    -ambienteAtual: Ambiente
+	    -gerenciadorDeAmbientes: GerenciadorDeAmbientes
+	    -gerenciadorDeEventos: GerenciadorDeEventos
+	    -dSede: int
+	    -dFome: int
+	    -dEnergia: int
+	    +Turno(Personagem, Ambiente, GerenciadorDeAmbientes, InputOutput)
+	    +iniciarTurno() : void
+	    -faseDeInicio() : void
+	    -faseDeAcao() : void
+	    -faseDeManutencao() : void
+	    -faseDeEventos() : void
+	    -faseDeAtaque(EventoCriatura) : void
+	    -gerenciarInventario() : void
+    }
+    class InputOutput {
+	    -scanner: Scanner
+	    -globalLogger: Consumer
+	    +InputOutput()
+	    +setGlobalLogger(Consumer) : void
+	    +print(String) : void
+	    +print(String, boolean) : void
+	    +getInput() : String
+	    +getInput(String) : String
+	    +decisaoEmIntervalo(String, Object[]) : int
+    }
+    class IntMath {
+	    +pow(int, int) : int
+    }
+    class PersonagemAtributosEnum {
+    }
+    class PersonagemClassesEnum {
+    }
+    class ItensEnum {
+    }
+    class ArmasEnum {
+    }
+    class RemediosEnum {
+    }
+    class EventosEnum {
+    }
+    class EventosClimaticosEnum {
+    }
+    class EventosCriaturasEnum {
+    }
+    class EventosDescobertasEnum {
+    }
+    class EventosDoencaFerimentosEnum {
+    }
+    class AmbientesEnum {
+    }
+    class CombinacoesEnum {
+    }
+    class MateriaisEnum {
+    }
+    class Scanner {
+    }
+    class Consumer {
+    }
+    class UntitledClass {
+    }
+
+	<<abstrata>> Item
+	<<interface>> IItemPerecivel
+	<<abstrata>> Consumivel
+	<<abstrata>> Evento
+
+    Main "1" --> "1" Turno : usa
+    Main "1" --> "1" Personagem : cria
+    Main "1" --> "1" GerenciadorDeAmbientes : cria
+    Main "1" --> "1" Ambiente : inicializa com
+    Turno "1" --> "1" Personagem : gerencia
+    Turno "1" --> "1" Ambiente : atual
+    Turno "1" --> "1" GerenciadorDeAmbientes : usa
+    Turno "1" --> "1" GerenciadorDeEventos : usa
+    Turno "1" --> "1" InputOutput : usa
+    Personagem "1" *-- "1" Inventario : possui
+    Personagem "1" *-- "1" GerenciadorDeInventario : possui
+    Personagem "1" --> PersonagemAtributosEnum : usa enum
+    Personagem "1" --> PersonagemClassesEnum : usa enum
+    Personagem "1" --> Item : inicializa com
+    Inventario "1" *-- "0..*" Item : contém
+    Inventario "1" --> ItensEnum : usa enum
+    Inventario "1" --> ArmasEnum : usa enum (para Punhos)
+    Item <|-- ItemArma
+    Item <|-- ItemFerramenta
+    Item <|-- ItemMaterial
+    Item <|-- Consumivel
+    IItemPerecivel <|.. ItemArma
+    IItemPerecivel <|.. ItemFerramenta
+    IItemPerecivel <|.. ConsumivelAlimento
+    Consumivel <|-- ConsumivelAgua
+    Consumivel <|-- ConsumivelAlimento
+    Consumivel <|-- ConsumivelRemedio
+    Consumivel "1" --> PersonagemAtributosEnum : afeta
+    Evento <|-- EventoClimatico
+    Evento <|-- EventoCriatura
+    Evento <|-- EventoDescoberta
+    Evento <|-- EventoDoencaFerimento
+    Evento "1" --> Personagem : afeta
+    EventoClimatico "1" --> PersonagemAtributosEnum : afeta
+    EventoDescoberta "1" --> Item : descobre
+    EventoDescoberta "1" --> IItemPerecivel : requer
+    EventoDoencaFerimento "1" --> RemediosEnum : requer
+    EventoCriatura "1" --> ItemArma : interage com
+    GerenciadorDeEventos "1" *-- "0..*" Evento : gerencia eventos ativos
+    GerenciadorDeEventos "1" --> Ambiente : opera em
+    GerenciadorDeEventos "1" --> Personagem : afeta
+    GerenciadorDeEventos "1" --> InputOutput : usa
+    GerenciadorDeEventos "1" --> EventosEnum : usa enum
+    GerenciadorDeEventos "1" --> EventosClimaticosEnum : usa enum
+    GerenciadorDeEventos "1" --> EventosCriaturasEnum : usa enum
+    GerenciadorDeEventos "1" --> EventosDescobertasEnum : usa enum
+    GerenciadorDeEventos "1" --> EventosDoencaFerimentosEnum : usa enum
+    GerenciadorDeAmbientes "1" *-- "0..*" Ambiente : gerencia ambientes disponíveis
+    GerenciadorDeAmbientes "1" --> AmbientesEnum : usa enum
+    GerenciadorDeInventario "1" --> Personagem : gerencia inventário para
+    GerenciadorDeInventario "1" --> Inventario : usa
+    GerenciadorDeInventario "1" --> InputOutput : usa
+    GerenciadorDeInventario "1" --> IntMath : usa
+    GerenciadorDeInventario "1" --> CombinacoesEnum : usa enum
+    GerenciadorDeInventario "1" --> ItensEnum : usa enum
+    GerenciadorDeInventario "1" --> MateriaisEnum : usa enum
+    GerenciadorDeInventario "1" --> IItemPerecivel : usa
+    GerenciadorDeInventario "1" --> ItemArma : usa
+    GerenciadorDeInventario "1" --> Consumivel : usa
+    GerenciadorDeInventario "1" --> EventoCriatura : interage com
+    InputOutput "1" --> Scanner : usa
+    InputOutput "1" --> Consumer : usa
+    GerenciadorDeAmbientes -- UntitledClass
