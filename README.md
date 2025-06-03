@@ -110,8 +110,8 @@ Um diagrama de classes foi feito em código Mermaid com o auxílio de inteligên
 
 O projeto foi desenvolvido ao longo da cadeira de Linguagens de Programação Orientda a Objetos, do curso de Engenharia da Computção pela Escola Politécnica de Pernambuco, por
     
-- [Nicholas Saraiva](https://github.com/gabriel1ns)
-- [Gabriel Lins](https://github.com/Agiliis)
+- [Nicholas Saraiva](https://github.com/Agiliis)
+- [Gabriel Lins](https://github.com/gabriel1ns)
 
 sob a tutela do professor Bruno Fernandes e do mestrando Agostinho Freire.
 
