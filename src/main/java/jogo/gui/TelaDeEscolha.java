@@ -74,6 +74,7 @@ import jogo.sistema.itens.ItemArma;
 import jogo.sistema.itens.ItemFerramenta;
 import jogo.sistema.itens.ItemMaterial;
 import jogo.sistema.itens.consumiveis.Consumivel;
+import jogo.sistema.itens.consumiveis.ConsumivelAgua;
 import jogo.sistema.itens.consumiveis.ConsumivelAlimento;
 
 
@@ -131,8 +132,8 @@ public class TelaDeEscolha extends Application {
     private static final int TAMANHO_FONTE_BOTAO_INICIO_CUSTOM = 24;
 
     private static final String BASE_PATH_IMAGENS_AMBIENTE = "/res/imgAmbientes/";
-    private static final String BASE_PATH_IMAGENS_ITEM = "/res/imgItens/"; // NOVO
-    private static final double TAMANHO_IMAGEM_ITEM_INVENTARIO = 45; // NOVO
+    private static final String BASE_PATH_IMAGENS_ITEM = "/res/imgItens/";
+    private static final double TAMANHO_IMAGEM_ITEM_INVENTARIO = 50;
 
 
     private ProgressBar barraVida;
@@ -240,12 +241,12 @@ public class TelaDeEscolha extends Application {
                 rootInicio.getChildren().add(backgroundImageView);
             } else {
                 System.err.println("Error: Could not find background image: " + BACKGROUND_IMAGE_PATH);
-                rootInicio.setStyle("-fx-background-color: #2c3e50;"); // Fallback color
+                rootInicio.setStyle("-fx-background-color: #2c3e50;");
             }
         } catch (Exception e) {
             System.err.println("Error loading background image: " + e.getMessage());
             e.printStackTrace();
-            rootInicio.setStyle("-fx-background-color: #2c3e50;"); // Fallback color
+            rootInicio.setStyle("-fx-background-color: #2c3e50;");
         }
 
         Font titleCustomFont = null;
@@ -260,7 +261,7 @@ public class TelaDeEscolha extends Application {
             System.err.println("Error loading title font: " + e.getMessage());
         }
         if (titleCustomFont == null) {
-            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM); // Fallback font
+            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM);
         }
 
         Text tituloJogo = new Text("ULTIMA FRONTEIRA");
@@ -305,12 +306,12 @@ public class TelaDeEscolha extends Application {
                 rootPane.getChildren().add(backgroundImageView);
             } else {
                 System.err.println("Error: Could not find background image for end screen: " + BACKGROUND_IMAGE_PATH);
-                rootPane.setStyle("-fx-background-color: #2c3e50;"); // Fallback color
+                rootPane.setStyle("-fx-background-color: #2c3e50;");
             }
         } catch (Exception e) {
             System.err.println("Error loading background image for end screen: " + e.getMessage());
             e.printStackTrace();
-            rootPane.setStyle("-fx-background-color: #2c3e50;"); // Fallback color
+            rootPane.setStyle("-fx-background-color: #2c3e50;");
         }
 
         Font titleCustomFont = null;
@@ -325,7 +326,7 @@ public class TelaDeEscolha extends Application {
             System.err.println("Error loading end screen title font: " + e.getMessage());
         }
         if (titleCustomFont == null) {
-            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM); // Fallback font
+            titleCustomFont = Font.font("Monospaced", FontWeight.BOLD, TAMANHO_FONTE_TITULO_INICIO_CUSTOM);
         }
 
         Text tituloTela = new Text(tituloTexto);
@@ -1070,12 +1071,19 @@ public class TelaDeEscolha extends Application {
         return containerAmbiente;
     }
 
-    // Helper method to generate item image filenames
+
     private String getItemImageFilename(String itemName) {
         if (itemName == null || itemName.isEmpty()) {
-            return "default.png"; // Or some placeholder for unknown items
+            return "default.png";
         }
-        return itemName.replace(" ", "_") + ".png";
+
+        String normalized = Normalizer.normalize(itemName, Normalizer.Form.NFD);
+
+        normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        normalized = normalized.replace(" ", "_");
+        normalized = normalized.replaceAll("[^a-zA-Z0-9_]", "");
+
+        return normalized + ".png";
     }
 
 
@@ -1122,8 +1130,8 @@ public class TelaDeEscolha extends Application {
             for (int i = 0; i < numLinhas; i++) {
                 RowConstraints restricaoLinha = new RowConstraints();
                 restricaoLinha.setVgrow(Priority.SOMETIMES);
-                restricaoLinha.setMinHeight(55); // Adjusted for slightly larger images/text
-                restricaoLinha.setPrefHeight(65);
+                restricaoLinha.setMinHeight(60);
+                restricaoLinha.setPrefHeight(70);
                 this.gradeInventario.getRowConstraints().add(restricaoLinha);
             }
         }
@@ -1152,12 +1160,23 @@ public class TelaDeEscolha extends Application {
             espacoItem.setArcHeight(5);
             espacoItem.widthProperty().bind(celula.widthProperty().subtract(4));
             espacoItem.heightProperty().bind(celula.heightProperty().subtract(4));
-            celula.getChildren().add(espacoItem); // Base layer for the slot
+            celula.getChildren().add(espacoItem);
 
             if (slotIndex < itensAtuais.size()) {
                 Item item = itensAtuais.get(slotIndex);
                 String itemImageFilename = getItemImageFilename(item.getNome());
                 Image itemImage = null;
+
+
+                if (item instanceof ConsumivelAgua) {
+                    ConsumivelAgua agua = (ConsumivelAgua) item;
+                    if (agua.getPureza()) {
+                        itemImageFilename = getItemImageFilename("Agua_Pura");
+                    } else {
+                        itemImageFilename = getItemImageFilename("Agua_Impura");
+                    }
+                }
+
 
                 try {
                     InputStream imageStream = getClass().getResourceAsStream(BASE_PATH_IMAGENS_ITEM + itemImageFilename);
@@ -1168,8 +1187,7 @@ public class TelaDeEscolha extends Application {
                             itemImage = null;
                         }
                     } else {
-                        // Optional: Log if image file is not found (can be verbose)
-                        // System.out.println("Imagem do item não encontrada: " + BASE_PATH_IMAGENS_ITEM + itemImageFilename);
+
                     }
                 } catch (Exception e) {
                     System.err.println("Exceção ao carregar imagem do item " + itemImageFilename + ": " + e.getMessage());
@@ -1195,7 +1213,6 @@ public class TelaDeEscolha extends Application {
                         celula.getChildren().add(quantityLabel);
                     }
                 } else {
-                    // Fallback: show text if image not found or failed to load
                     String itemText = item.getNome();
                     if (item.getQuantidade() > 1) {
                         itemText += "\n(x" + item.getQuantidade() + ")";
