@@ -408,7 +408,7 @@ public class TelaDeEscolha extends Application {
 
     private void inicializarClassesParaExibicao() {
         classesParaExibicao = new ArrayList<>();
-        String basePathImagens = "res/imgPersonagens/";
+        String basePathImagens = "/res/imgPersonagens/";
 
         for (PersonagemClassesEnum classeEnum : PersonagemClassesEnum.values()) {
             String nomeDisplay = capitalizeString(classeEnum.name().replace("_", " "));
