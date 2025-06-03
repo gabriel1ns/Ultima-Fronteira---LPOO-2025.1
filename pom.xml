@@ -11,7 +11,7 @@
     <properties>
         <maven.compiler.release>23</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jdk.executable.path>/home/agil/dev/jvm/jdk-23_linux-x64_bin/jdk-23.0.2/bin/java</jdk.executable.path>
+        <exec.mainClass>jogo.Main</exec.mainClass>
     </properties>
 
     <repositories>
