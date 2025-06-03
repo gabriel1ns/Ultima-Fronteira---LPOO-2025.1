@@ -113,6 +113,6 @@ O projeto foi desenvolvido ao longo da cadeira de Linguagens de Programação Or
 - [Nicholas Saraiva](https://github.com/Agiliis)
 - [Gabriel Lins](https://github.com/gabriel1ns)
 
-sob a tutela do professor Bruno Fernandes e do mestrando Agostinho Freire.
+sob a tutela do professor Bruno Fernandes e do doutorando Agostinho Freire.
 
 O repositório está sob a [licença do MIT](./LICENSE)
