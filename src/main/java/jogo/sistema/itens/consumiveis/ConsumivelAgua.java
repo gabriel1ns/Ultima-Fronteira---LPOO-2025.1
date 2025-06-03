@@ -19,7 +19,7 @@ public class ConsumivelAgua extends Consumivel {
         super.consumir(personagem);
 
         if(!getPureza()) 
-            personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, volume);
+            personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -1*volume);
     }
 
     final public void setPureza(boolean pureza) {

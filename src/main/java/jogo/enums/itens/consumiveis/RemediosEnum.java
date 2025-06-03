@@ -1,30 +1,34 @@
 package jogo.enums.itens.consumiveis;
 
-public enum RemediosEnum {
-    CURA_UNIVERSAL("Cura universal", 10, 100),
-    REMENDOS("Remendos de tecido", 2, 5),
-    CHA_DE_FOLHAS("Chá de folhas", 5, 10),
-    ANTIDOTO("Antídoto", 2, 20);
+public enum RemediosEnum {    
+    REMENDOS
+    ("Remendos de tecido", 2, 5),
+    
+    CHA_DE_FOLHAS
+    ("Chá de folhas", 5, 10),
+    
+    ANTIDOTO
+    ("Antídoto", 2, 20);
 
-    private final String NOME;
-    private final int PESO;
-    private final int EFEITO;
+    private final String nome;
+    private final int peso;
+    private final int efeito;
 
     private RemediosEnum(String nome, int peso, int efeito) {
-        this.NOME = nome;
-        this.PESO = peso;
-        this.EFEITO = efeito;
+        this.nome = nome;
+        this.peso = peso;
+        this.efeito = efeito;
     }
 
-    public String getNOME() {
-        return NOME;
+    public String getNome() {
+        return nome;
     }
 
-    public int getPESO() {
-        return PESO;
+    public int getPeso() {
+        return peso;
     }
 
-    public int getEFEITO() {
-        return EFEITO;
+    public int getEfeito() {
+        return efeito;
     }
 }

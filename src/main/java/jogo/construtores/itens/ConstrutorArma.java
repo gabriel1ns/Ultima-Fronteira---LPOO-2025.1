@@ -5,6 +5,13 @@ import jogo.sistema.itens.ItemArma;
 
 public class ConstrutorArma {
     public static ItemArma construirArma(ArmasEnum arma, int quantidade) {
-        return new ItemArma(arma.getNome(), arma.getPeso(), arma.getDurabilidade(), arma.getDano(), arma.getAlcance(), quantidade);
+        return new ItemArma(
+            arma.getNome(), 
+            arma.getPeso(), 
+            arma.getDurabilidade(), 
+            arma.getDano(), 
+            arma.getAlcance(), 
+            quantidade
+        );
     }
 }

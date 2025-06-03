@@ -9,7 +9,7 @@ import jogo.sistema.Personagem;
 import jogo.sistema.eventos.Evento;
 import jogo.sistema.eventos.EventoClimatico;
 import jogo.sistema.eventos.EventoCriatura;
-import jogo.utils.InputOutput; // This InputOutput instance will print to console
+import jogo.utils.InputOutput;
 
 
 public class GerenciadorDeEventos {
@@ -20,7 +20,7 @@ public class GerenciadorDeEventos {
 
     private ArrayList<Evento> eventosAtivos;
 
-    private final InputOutput io = new InputOutput(); // Logs from this instance go to console
+    private final InputOutput io = new InputOutput();
 
     public GerenciadorDeEventos(Ambiente ambiente, Personagem personagem) {
         this.ambiente = ambiente;
@@ -70,11 +70,9 @@ public class GerenciadorDeEventos {
                 eventosParaRemocao.add(evento);
                 continue;
             }
-            // This io.print will go to console, not the GUI log area.
-            // The GUI's logEvento in TelaDeEscolha should ideally be used.
-            io.print(evento.toString(), true); // Describes the event to the console.
+            io.print(evento.toString(), true);
 
-            evento.executar(personagem); // Personagem actions within will log to console via Personagem's io.
+            evento.executar(personagem); 
         }
 
         for(Evento evento: eventosParaRemocao) {
@@ -85,17 +83,16 @@ public class GerenciadorDeEventos {
     }
 
     public void fugirDeEventoCriatura(EventoCriatura criatura) {
-        int chanceDeSucesso = 7; // 70% chance
+        int chanceDeSucesso = 7; // 70%
 
-        Random random = new Random();
-        boolean resultado = random.nextInt(10) < chanceDeSucesso; // 0-6 is success (7 numbers)
+        Random rng = new Random();
+        boolean resultado = rng.nextInt(11) < chanceDeSucesso; // 0 <= rng <= 10 
 
         if(resultado) {
-            io.print(personagem.getNome() + " conseguiu fugir de " + criatura.getNome() + "!", true); // To console
+            io.print(personagem.getNome() + " conseguiu fugir de " + criatura.getNome() + "!", true); 
             eventosAtivos.remove(criatura);
         } else {
-            io.print(personagem.getNome() + " não conseguiu fugir de " + criatura.getNome() + ".", true); // To console
-            // Creature might attack if escape fails, typically handled in the next phase or creature's turn.
+            io.print(personagem.getNome() + " não conseguiu fugir de " + criatura.getNome() + ".", true); 
         }
     }
 
@@ -116,7 +113,6 @@ public class GerenciadorDeEventos {
         // deixando o executarEventos cuidar disso
         for(Evento evento: eventosAtivos) {
             if(evento instanceof EventoClimatico eventoClimatico) {
-                // io.print("Evento climático " + eventoClimatico.getNome() + " encerrado devido à mudança de ambiente."); // To console
                 eventoClimatico.setDuracao(0);
             }
         }

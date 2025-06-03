@@ -35,7 +35,8 @@ public class Main {
 
         GerenciadorDeAmbientes gerenciadorDeAmbientes = new GerenciadorDeAmbientes();
         Ambiente ambienteInicial = gerenciadorDeAmbientes.sortearAmbiente();
-        //Ambiente ambienteInicial = ConstrutorAmbiente.construir(AmbientesEnum.MONTANHA);
+        // DBG
+        //ambienteInicial = ConstrutorAmbiente.construir(AmbientesEnum.DBG);
 
         Turno turno = new Turno(personagem, ambienteInicial, gerenciadorDeAmbientes, io);
 

@@ -33,7 +33,7 @@ public class EventoDoencaFerimento extends Evento {
             Item itemEncontrado = personagem.getInventario().getItens().get(indiceNaListaPrincipal);
             if (itemEncontrado instanceof ConsumivelRemedio remedio) {
 
-                io.print("[EVENTO " + getNome() + "] Remédio '" + remedio.getNome() + "' encontrado. Usando automaticamente.");
+                io.print("Remédio '" + remedio.getNome() + "' encontrado. Usando automaticamente.");
 
                 int duracaoReduzidaPeloRemedio = remedio.getEfeito();
                 remedio.consumir(personagem);
@@ -43,16 +43,16 @@ public class EventoDoencaFerimento extends Evento {
                 remedioUsadoAutomaticamente = true;
 
                 if (super.getDuracao() == 0) {
-                    io.print("[EVENTO " + getNome() + "] Curado com " + remedio.getNome() + "!");
+                    io.print(personagem.getNome() + " curado com " + remedio.getNome() + "!");
                     return;
                 } else {
-                    io.print("[EVENTO " + getNome() + "] Usou " + remedio.getNome() + ". Duração restante do evento: " + super.getDuracao());
+                    io.print(personagem.getNome() + " usou " + remedio.getNome() + ". Duração restante do evento: " + super.getDuracao());
                 }
             }
         }
 
         if (!remedioUsadoAutomaticamente) {
-            io.print("[EVENTO " + getNome() + "] Afeta " + personagem.getNome() + " (sem remédio usado ou encontrado).");
+            io.print(getNome() + " afeta " + personagem.getNome() + " (sem remédio usado ou encontrado).");
         }
         personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, efeitoNegativo);
         super.decrementarDuracao();
@@ -70,6 +70,6 @@ public class EventoDoencaFerimento extends Evento {
     public String toString() {
         return  super.toString() + 
                 "\nDuração: " + super.getDuracao() + " turno" + (super.getDuracao() > 1? "s" : "") +
-                "\nPode se curar com: " + remedioParaCura.getNOME(); 
+                "\nPode se curar com: " + remedioParaCura.getNome(); 
     }
 }

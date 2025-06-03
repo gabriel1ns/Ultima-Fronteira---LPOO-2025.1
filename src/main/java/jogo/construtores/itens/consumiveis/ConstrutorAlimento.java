@@ -5,7 +5,12 @@ import jogo.sistema.itens.consumiveis.ConsumivelAlimento;
 
 public class ConstrutorAlimento {
     public static ConsumivelAlimento construirAlimento(AlimentosEnum alimento, int quantidade) {
-        return new ConsumivelAlimento(alimento.getNOME(), alimento.getPESO(), 
-        alimento.getVALOR_NUTRICIONAL(), alimento.getPRAZO_DE_VALIDADE(), quantidade);
+        return new ConsumivelAlimento(
+            alimento.getNome(), 
+            alimento.getPeso(), 
+            alimento.getValorNutricional(), 
+            alimento.getPrazoDeValidade(), 
+            quantidade
+        );
     }
 }

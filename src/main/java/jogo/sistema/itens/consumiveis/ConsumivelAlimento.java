@@ -20,7 +20,7 @@ public class ConsumivelAlimento extends Consumivel implements IItemPerecivel {
         super.consumir(personagem);
 
         if(estaPerecido())
-            personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, valorNutricional);
+            personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -1*valorNutricional);
     }
 
     @Override

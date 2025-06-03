@@ -16,6 +16,7 @@ import jogo.sistema.itens.Item;
 import jogo.sistema.itens.ItemArma;
 import jogo.sistema.itens.ItemMaterial;
 import jogo.sistema.itens.consumiveis.Consumivel;
+import jogo.sistema.itens.consumiveis.ConsumivelAlimento;
 import jogo.utils.InputOutput;
 import jogo.utils.IntMath;
 
@@ -54,7 +55,8 @@ public class GerenciadorDeInventario {
         // calcula o número identificador de cada combinação a partir da fórmula
         // somatório_(através dos materiais combinados)[ quantidade_do_material * (QUANTIDADE_MAXIMA(4 no momento)+1) ^ (ID_do_material)
         // em que quantidade_do_material deverá ser menor que QUANTIDADE_MAXIMA e o ID_do_material de todos os materiais são distintos,
-        // assim permitindo que toda combinação de itens gere um inteiro único        
+        // assim permitindo que toda combinação de itens gere um inteiro único   
+        // ( é como calcular um número na base [QUANTIDADE_MAXIMA + 1] )     
         for(ItemMaterial material: materiaisCombinados) 
             combinacaoID += material.getQuantidade() * IntMath.pow(Item.QUANTIDADE_MAXIMA, material.getID());
 
@@ -87,6 +89,10 @@ public class GerenciadorDeInventario {
             if(indice == -1) break;
 
             int quantidade = Integer.parseInt(io.getInput("Digite a quantidade: "));
+            if(quantidade > inventario.getItens().get(indice).getQuantidade()) {
+                io.print("Quantidade inválida!");
+                continue;
+            }
 
             io.print(personagem.getNome() + " descartou " + quantidade + " " + itens.get(indice).getNome() + "(s)");
 
@@ -105,9 +111,7 @@ public class GerenciadorDeInventario {
             return;
         }
 
-        //ArrayList<ItemMaterial> materiaisEscolhidos = new ArrayList<>();
         HashMap<String, Item> materiaisEscolhidos = new HashMap<>();
-        //HashSet<Integer> indicesMarcados = new HashSet<>();
 
         while(true) {
             int indice = io.decisaoEmIntervalo("Escolha os materiais, ou digite 0 para parar", materiais.toArray(ItemMaterial[]::new));
@@ -175,8 +179,10 @@ public class GerenciadorDeInventario {
 
         perecivel.decrementarDurabilidade();
 
-        if(perecivel.estaPerecido())
+        if(perecivel.estaPerecido()) {
+            io.print(((Item) perecivel).getNome() + " quebrou!");
             inventario.removerItem(inventario.encontrarItem((Item) perecivel), 1);
+        }        
     }
 
     public void usarItemArma(EventoCriatura criatura) {
@@ -214,11 +220,20 @@ public class GerenciadorDeInventario {
     public void usarItemConsumivel(int indice) {
         Consumivel consumivel = (Consumivel) inventario.getItens(ItensEnum.CONSUMIVEL.getIndice()).get(indice);
 
-        consumivel.consumir(personagem);
         io.print(personagem.getNome() + " consumiu " + consumivel.getNome());
+        consumivel.consumir(personagem);
         
         inventario.removerItem(consumivel, 1);
     }
 
-    
+    public void decrementarValidadeDosAlimentos() {
+        for(Item consumivel: inventario.getItens(ItensEnum.CONSUMIVEL.getIndice())){
+            if(consumivel instanceof ConsumivelAlimento alimento) {
+                alimento.decrementarDurabilidade();
+            
+                if(alimento.estaPerecido())
+                    io.print(alimento.getNome() + " está vencido!");
+            }
+        }
+    }    
 }

@@ -68,12 +68,11 @@ public class EventoCriatura extends Evento {
         return distancia;
     }
 
-    // ...
     @Override
     public String toString() {
         return  super.toString() +
                 "\nVida: " + this.vida +
                 "\nDano: " + this.dano +
-                "\nDistancia: " + this.distancia; // Removed trailing "\n"
+                "\nDistancia: " + this.distancia; 
     }
 }

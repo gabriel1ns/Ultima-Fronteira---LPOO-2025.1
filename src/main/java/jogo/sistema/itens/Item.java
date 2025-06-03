@@ -5,6 +5,7 @@ public abstract class Item {
 
     final private String nome;
     final private String tipo;
+    // TODO interação com o peso dos itens e o inventário
     final private int peso;
 
     private int quantidade;

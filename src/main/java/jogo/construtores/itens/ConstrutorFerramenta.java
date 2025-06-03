@@ -5,6 +5,11 @@ import jogo.sistema.itens.ItemFerramenta;
 
 public class ConstrutorFerramenta {
     public static ItemFerramenta construirFerramenta(FerramentasEnum ferramenta, int quantidade) {
-        return new ItemFerramenta(ferramenta.getNOME(), ferramenta.getEFICIENCIA(), ferramenta.getPESO(), ferramenta.getDURABILIDADE(), quantidade);
+        return new ItemFerramenta(
+            ferramenta.getNome(), 
+            ferramenta.getPeso(), 
+            ferramenta.getDurabilidade(), 
+            quantidade
+        );
     }
 }

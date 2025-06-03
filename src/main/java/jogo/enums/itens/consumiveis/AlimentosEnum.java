@@ -1,36 +1,43 @@
 package jogo.enums.itens.consumiveis;
 
 public enum AlimentosEnum {
-    FRUTAS_SILVESTRES("Frutas silvestres", 1, 10, 10),
-    CARNE("Carne", 5, 20, 15),
-    PEIXE("Peixe", 3, 15, 15),
-    FEIJOES_ENLATADOS("Feijões enlatados", 5, 15, 30);
+    FRUTAS_SILVESTRES
+    ("Frutas silvestres", 1, 10, 10),
+    
+    CARNE
+    ("Carne", 5, 20, 15),
+    
+    PEIXE
+    ("Peixe", 3, 15, 15),
+    
+    FEIJOES_ENLATADOS
+    ("Feijões enlatados", 5, 15, 30);
 
-    private final String NOME;
-    private final int PESO;
-    private final int VALOR_NUTRICIONAL;
-    private final int PRAZO_DE_VALIDADE;
+    private final String nome;
+    private final int peso;
+    private final int valorNutricional;
+    private final int prazoDeValidade;
 
     private AlimentosEnum(String nome, int peso, int valorNutricional, int prazoDeValidade) {
-        this.NOME = nome;
-        this.PESO = peso;
-        this.VALOR_NUTRICIONAL = valorNutricional;
-        this.PRAZO_DE_VALIDADE = prazoDeValidade;
+        this.nome = nome;
+        this.peso = peso;
+        this.valorNutricional = valorNutricional;
+        this.prazoDeValidade = prazoDeValidade;
     }
 
-    public String getNOME() {
-        return NOME;
+    public String getNome() {
+        return nome;
     }
 
-    public int getPESO() {
-        return PESO;
+    public int getPeso() {
+        return peso;
     }
 
-    public int getVALOR_NUTRICIONAL() {
-        return VALOR_NUTRICIONAL;
+    public int getValorNutricional() {
+        return valorNutricional;
     }
 
-    public int getPRAZO_DE_VALIDADE() {
-        return PRAZO_DE_VALIDADE;
+    public int getPrazoDeValidade() {
+        return prazoDeValidade;
     }
 }

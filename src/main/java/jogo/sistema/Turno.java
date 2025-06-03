@@ -143,6 +143,8 @@ public class Turno {
     }
 
     private void faseDeManutencao() {
+        personagem.getGerenciadorDeInventario().decrementarValidadeDosAlimentos();
+
         if(personagem.getAtributo(PersonagemAtributosEnum.FOME) == 0) {
             io.print(personagem.getNome() + " está com fome!");
             personagem.mudarAtributo(PersonagemAtributosEnum.VIDA, -5);

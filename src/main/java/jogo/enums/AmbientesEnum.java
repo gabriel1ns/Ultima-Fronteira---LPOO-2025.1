@@ -6,6 +6,12 @@ import jogo.enums.eventos.EventosDescobertasEnum;
 import jogo.enums.eventos.EventosDoencaFerimentosEnum;
 
 public enum AmbientesEnum {
+    // as probabilidades relativas de cada evento são definidas como
+    // * 1 - chance baixa
+    // * 3 - chance mediana
+    // * 5 - chance alta 
+    // quanto mais eventos num ambiente, mais bem distribuídas essas chances serão
+
     CAVERNA
     ("Caverna", "Um ambiente subterrâneo que pode oferecer abrigo contra o clima, mas esconde perigos desconhecidos",
     new Enum[]{
@@ -24,7 +30,7 @@ public enum AmbientesEnum {
         5,
         3,
         3,
-        1
+        3
     },
     5),
 
@@ -102,7 +108,18 @@ public enum AmbientesEnum {
         5,
         3
     },
-    5);
+    5),
+    
+    // DBG
+    // ("DBG", "DBG",
+    // new Enum[]{
+    //     EventosDoencaFerimentosEnum.CORTE
+    // },
+    // new int[]{
+    //     5
+    // },
+    // 1)
+    ;
     
     private final String nome;
     private final String descricao;

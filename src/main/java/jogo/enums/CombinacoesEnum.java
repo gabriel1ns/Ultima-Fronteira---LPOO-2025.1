@@ -107,10 +107,10 @@ public enum CombinacoesEnum {
         MateriaisEnum.CORDA
     },
     new int[]{
-        3,
-        3,
-        3,
-        3
+        4,
+        4,
+        4,
+        4
     },
     FerramentasEnum.JANGADA,
     1);

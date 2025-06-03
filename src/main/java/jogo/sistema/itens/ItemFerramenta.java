@@ -3,13 +3,11 @@ package jogo.sistema.itens;
 public class ItemFerramenta extends Item implements IItemPerecivel {
     private static final String TIPO = "Ferramenta";
 
-    private final int eficiencia;
     private int durabilidade;
 
-    public ItemFerramenta(String nome, int eficiencia, int peso, int durabilidade, int quantidade) {
+    public ItemFerramenta(String nome, int peso, int durabilidade, int quantidade) {
         super(nome, TIPO, peso, quantidade);
 
-        this.eficiencia = eficiencia;
         this.durabilidade = durabilidade;
     }
 
@@ -31,14 +29,9 @@ public class ItemFerramenta extends Item implements IItemPerecivel {
         this.durabilidade = durabilidade;
     }
 
-    public int getEficiencia() {
-        return eficiencia;
-    }
-
     @Override
     public String toString() {
         return  super.toString() + 
-                "Eficiencia: " + eficiencia + "\n" +
                 "Durabilidade: " + durabilidade + "\n";
     }
 
